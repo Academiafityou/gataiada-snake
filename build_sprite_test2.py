@@ -1,29 +1,38 @@
-from PIL import Image
+from PIL import Image, ImageFilter
 import numpy as np
 import base64
 import io
 import os
 
 TARGET_SIZE = 128
-
 img = Image.open(r'C:\Users\Fit You\Desktop\Projeto do Vini\cats\sprite sheet simy.png')
-arr = np.array(img)
+arr = np.array(img).astype(float)
 bg = arr[0, 0]
 
-def remove_green_bg(pixels):
-    dist = np.sqrt(np.sum((pixels.astype(float) - bg.astype(float)) ** 2, axis=2))
-    return np.where(dist > 80, 255, 0).astype(np.uint8)
+# HSV-based green removal: only remove pixels that are pure green hue
+r, g, b = arr[:,:,0]/255, arr[:,:,1]/255, arr[:,:,2]/255
+cmax = np.maximum(np.maximum(r, g), b)
+cmin = np.minimum(np.minimum(r, g), b)
+delta = cmax - cmin
+
+h = np.zeros_like(cmax)
+mask_r = (cmax == r) & (delta > 0)
+mask_g = (cmax == g) & (delta > 0)
+mask_b = (cmax == b) & (delta > 0)
+h[mask_r] = (60 * ((g[mask_r] - b[mask_r]) / delta[mask_r]) + 360) % 360
+h[mask_g] = (60 * ((b[mask_g] - r[mask_g]) / delta[mask_g]) + 120) % 360
+h[mask_b] = (60 * ((r[mask_b] - g[mask_b]) / delta[mask_b]) + 240) % 360
+h[delta == 0] = 0
+s = np.where(cmax > 0, delta / cmax, 0)
+is_green = (h > 80) & (h < 150) & (s > 0.3) & (cmax > 0.3)
 
 frames_def = [
-    # Row 1: 1=parado, 2=andando, 3=andando
     ('idle',    124, 283,   22, 179),
     ('walk1',   418, 586,   22, 179),
     ('walk2',   709, 869,   22, 179),
-    # Row 2: 4=andando, 5=pulando, 6=abaixado
     ('walk3',   125, 294,  204, 356),
     ('jump_up', 423, 570,  204, 356),
     ('crouch',  698, 879,  204, 356),
-    # Row 3: 7=pulando, 8=morte, 9=vitoria
     ('jump_dn', 121, 304,  384, 544),
     ('death',   424, 605,  384, 544),
     ('victory', 700, 850,  384, 544),
@@ -35,20 +44,43 @@ os.makedirs(output_dir, exist_ok=True)
 b64_frames = {}
 
 for name, x1, x2, y1, y2 in frames_def:
-    crop = arr[y1:y2+1, x1:x2+1, :3]
-    alpha = remove_green_bg(crop)
-    rgba = np.dstack([crop, alpha])
-    result = Image.fromarray(rgba, 'RGBA')
-    result.thumbnail((TARGET_SIZE, TARGET_SIZE), Image.LANCZOS)
+    crop = arr[y1:y2+1, x1:x2+1]
+    crop_mask = is_green[y1:y2+1, x1:x2+1]
+
+    # Create RGBA with alpha = 0 for green, 255 for everything else
+    rgba = np.zeros((crop.shape[0], crop.shape[1], 4), dtype=np.uint8)
+    rgba[:, :, :3] = crop.astype(np.uint8)
+    rgba[:, :, 3] = np.where(~crop_mask, 255, 0).astype(np.uint8)
+
+    # Find tight bounding box of FG pixels
+    fg_ys, fg_xs = np.where(rgba[:, :, 3] > 0)
+    if len(fg_ys) == 0:
+        continue
+
+    pad = 4
+    ty1 = max(0, fg_ys.min() - pad)
+    ty2 = min(rgba.shape[0] - 1, fg_ys.max() + pad)
+    tx1 = max(0, fg_xs.min() - pad)
+    tx2 = min(rgba.shape[1] - 1, fg_xs.max() + pad)
+
+    tight = Image.fromarray(rgba[ty1:ty2+1, tx1:tx2+1], 'RGBA')
+
+    # Scale to fill 128x128 (cover, not contain)
+    tw, th = tight.size
+    scale = max(TARGET_SIZE / tw, TARGET_SIZE / th)
+    nw, nh = max(1, int(tw * scale)), max(1, int(th * scale))
+    tight = tight.resize((nw, nh), Image.LANCZOS)
+
     final = Image.new('RGBA', (TARGET_SIZE, TARGET_SIZE), (0, 0, 0, 0))
-    ox = (TARGET_SIZE - result.width) // 2
-    oy = (TARGET_SIZE - result.height) // 2
-    final.paste(result, (ox, oy), result)
+    ox = (TARGET_SIZE - nw) // 2
+    oy = (TARGET_SIZE - nh) // 2
+    final.paste(tight, (ox, oy), tight)
+
     final.save(os.path.join(output_dir, f'{name}.png'))
     buf = io.BytesIO()
     final.save(buf, format='PNG')
     b64_frames[name] = 'data:image/png;base64,' + base64.b64encode(buf.getvalue()).decode('ascii')
-    print(f'{name}: {result.width}x{result.height} (from {x2-x1+1}x{y2-y1+1})')
+    print(f'{name}: tight=({tx1},{ty1})-({tx2},{ty2}) {tx2-tx1+1}x{ty2-ty1+1} -> {nw}x{nh} -> 128x128')
 
 sprites_js = ',\n'.join([f'    "{k}": "{v}"' for k, v in b64_frames.items()])
 
