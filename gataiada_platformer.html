@@ -70,6 +70,7 @@ var hotelImg=new Image(); hotelImg.src='cats/hotel_clean.png';
 var espacoImg=new Image(); espacoImg.src='cats/espaco_clean.png';
 var xepaBossImg=new Image(); xepaBossImg.src='cats/xepa_boss_cleaned.png';
 var xepaEnemyImg=new Image(); xepaEnemyImg.src='cats/xepa_enemy_cleaned.png';
+var pitoFaraImg=new Image(); pitoFaraImg.src='cats/pito_fara_cleaned.png';
 
 var GRAVITY = 0.45;
 var TILE = 32;
@@ -533,7 +534,8 @@ function updatePlayer(){
     player.grounded=false;
     var colL2=Math.floor(player.x/TILE), colR2=Math.floor((player.x+player.w)/TILE);
     var rowB2=Math.floor((player.y+player.h)/TILE);
-    if(getTile(colL2,rowB2)>0||getTile(colR2,rowB2)>0){ player.grounded=true; if(getCatPower()!=='Triple Jump') player.jumpCount=0; }
+    var colL2x=Math.floor(newX/TILE), colR2x=Math.floor((newX+player.w)/TILE);
+    if(getTile(colL2,rowB2)>0||getTile(colR2,rowB2)>0||getTile(colL2x,rowB2)>0||getTile(colR2x,rowB2)>0){ player.grounded=true; if(getCatPower()!=='Triple Jump') player.jumpCount=0; }
 
     var rowCurT=Math.floor(player.y/TILE), rowCurB=Math.floor((player.y+player.h-1)/TILE);
     var blockedX=false;
@@ -541,9 +543,13 @@ function updatePlayer(){
     if(!blockedX) player.x=newX; else player.vx=0;
 
     var blockedY=false;
-    var colL3=Math.floor(player.x/TILE), colR3=Math.floor((player.x+player.w)/TILE);
+    var colLv=Math.floor(player.x/TILE), colRv=Math.floor((player.x+player.w)/TILE);
     var rowTN=Math.floor(newY/TILE), rowBN=Math.floor((newY+player.h)/TILE);
-    for(var r=rowTN;r<=rowBN;r++) for(var c=colL3;c<=colR3;c++){ var t=getTile(c,r); if(t===1||t===2||t===5||t===7){ if(player.vy>0){ player.y=r*TILE-player.h; player.grounded=true; player.jumpCount=0; } else player.y=(r+1)*TILE; blockedY=true; break; } if(blockedY) break; }
+    if(player.vy>=0){
+        for(var r=rowBN;r>=rowTN;r--) for(var c=colLv;c<=colRv;c++){ var t=getTile(c,r); if(t===1||t===2||t===5||t===7){ player.y=r*TILE-player.h; player.grounded=true; player.jumpCount=0; blockedY=true; break; } if(blockedY) break; }
+    } else {
+        for(var r=rowTN;r<=rowBN;r++) for(var c=colLv;c<=colRv;c++){ var t=getTile(c,r); if(t===1||t===2||t===5||t===7){ var pushY=(r+1)*TILE; var hr=Math.floor(pushY/TILE); if(getTile(c,hr)>0){ for(var rr=r+1;rr<TILE_ROWS;rr++){ if(getTile(c,rr)===0){ pushY=rr*TILE; break; } } } player.y=pushY; blockedY=true; break; } if(blockedY) break; }
+    }
     if(!blockedY) player.y=newY; else player.vy=0;
 
     player.wallTouchL=false; player.wallTouchR=false; player.wallSliding=false;
@@ -738,6 +744,28 @@ function drawHouseBG(){
     X.restore();
 }
 
+function drawDesertBG(){
+    var grad=X.createLinearGradient(0,0,0,H);
+    grad.addColorStop(0,'#1a0a2e'); grad.addColorStop(0.3,'#2e1a0a'); grad.addColorStop(0.5,'#D4A017'); grad.addColorStop(1,'#C8A84E');
+    X.fillStyle=grad; X.fillRect(0,0,W,H);
+    X.fillStyle='rgba(255,200,50,0.08)';
+    for(var i=0;i<3;i++){ X.beginPath(); X.arc(W*0.7+i*80,80,60+i*30,0,Math.PI*2); X.fill(); }
+    var px1=100-cameraX*0.05, px2=500-cameraX*0.08, px3=850-cameraX*0.03;
+    X.fillStyle='#8B7355'; X.beginPath(); X.moveTo(px1,280); X.lineTo(px1+120,100); X.lineTo(px1+240,280); X.closePath(); X.fill();
+    X.fillStyle='#7A6545'; X.beginPath(); X.moveTo(px1+10,280); X.lineTo(px1+120,108); X.lineTo(px1+120,280); X.closePath(); X.fill();
+    X.fillStyle='#9B8365'; X.beginPath(); X.moveTo(px2,280); X.lineTo(px2+180,60); X.lineTo(px2+360,280); X.closePath(); X.fill();
+    X.fillStyle='#8A7255'; X.beginPath(); X.moveTo(px2+15,280); X.lineTo(px2+180,68); X.lineTo(px2+180,280); X.closePath(); X.fill();
+    X.fillStyle='#A09070'; X.beginPath(); X.moveTo(px3,280); X.lineTo(px3+90,140); X.lineTo(px3+180,280); X.closePath(); X.fill();
+    X.fillStyle='#C8A84E'; X.fillRect(0,280,W,2);
+    X.strokeStyle='rgba(218,165,32,0.3)'; X.lineWidth=1;
+    for(var l=0;l<5;l++){ X.beginPath(); X.moveTo(0,282+l*8); X.lineTo(W,282+l*8); X.stroke(); }
+    X.fillStyle='#DAA520'; var obX=300-cameraX*0.12;
+    X.fillRect(obX,240,8,40); X.fillRect(obX+60,230,8,50); X.fillRect(obX+120,245,8,35);
+    X.beginPath(); X.moveTo(obX+4,240); X.lineTo(obX-4,234); X.lineTo(obX+12,234); X.closePath(); X.fill();
+    X.beginPath(); X.moveTo(obX+64,230); X.lineTo(obX+56,222); X.lineTo(obX+72,222); X.closePath(); X.fill();
+    X.beginPath(); X.moveTo(obX+124,245); X.lineTo(obX+116,238); X.lineTo(obX+132,238); X.closePath(); X.fill();
+}
+
 function drawTitle(){
     var t=titleTimer;
     X.clearRect(0,0,W,H);
@@ -844,6 +872,7 @@ function drawWorldMap(){
 function drawLevel(){
     var L=LEVELS[game.currentLevel];
     if(game.currentLevel===0) drawHouseBG();
+    else if(game.currentLevel===1) drawDesertBG();
     else{ var grad=X.createLinearGradient(0,0,0,H); grad.addColorStop(0,L.bg1); grad.addColorStop(1,L.bg2); X.fillStyle=grad; X.fillRect(0,0,W,H); }
 
     X.save(); X.translate(-cameraX,0);
@@ -918,6 +947,12 @@ function drawLevel(){
             X.translate(boss.x+boss.w/2,boss.y+boss.h/2);
             X.scale(boss.vx<0?1:-1,1);
             X.drawImage(odairSprite,-boss.w/2,-boss.h/2,boss.w,boss.h);
+            X.restore();
+        } else if(game.currentLevel===1&&pitoFaraImg.complete&&pitoFaraImg.naturalWidth>0){
+            X.save();
+            X.translate(boss.x+boss.w/2,boss.y+boss.h/2);
+            X.scale(boss.vx<0?1:-1,1);
+            X.drawImage(pitoFaraImg,-boss.w/2,-boss.h/2,boss.w,boss.h);
             X.restore();
         } else if(game.currentLevel===6&&xepaBossImg.complete&&xepaBossImg.naturalWidth>0){
             X.save();
