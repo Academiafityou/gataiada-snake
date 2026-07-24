@@ -140,6 +140,7 @@ canvas {{ display:block; image-rendering:pixelated; width:960px; height:540px; }
 </style>
 </head>
 <body>
+<video id="introVid" src="cats/abertura plataforma.mp4" muted loop style="position:absolute;left:-9999px;"></video>
 <canvas id="game" tabindex="0" style="display:block;margin:0 auto;"></canvas>
 <script>
 var C = document.getElementById('game');
@@ -147,6 +148,13 @@ var X = C.getContext('2d');
 var W = 960, H = 540;
 C.width = W; C.height = H;
 C.focus(); C.addEventListener('click', function(){{ C.focus(); }});
+
+var introVid=document.getElementById('introVid');
+var introPlaying=false;
+function tryPlayIntro(){{ if(!introPlaying&&introVid){{ introVid.play().then(function(){{ introPlaying=true; }}).catch(function(){{}}); }} }}
+tryPlayIntro();
+document.addEventListener('keydown',tryPlayIntro,false);
+document.addEventListener('click',tryPlayIntro,false);
 
 var CATS = [
 {portraits_js}];
@@ -835,7 +843,15 @@ function drawHouseBG(){{
 function drawTitle(){{
     var t=titleTimer;
     X.clearRect(0,0,W,H);
-    X.fillStyle='rgba(0,0,0,0.5)'; X.fillRect(0,0,W,H);
+    if(introPlaying&&introVid&&introVid.readyState>=2){{
+        var vw=introVid.videoWidth, vh=introVid.videoHeight;
+        var scale=Math.max(W/vw,H/vh);
+        var dw=vw*scale, dh=vh*scale;
+        X.drawImage(introVid,(W-dw)/2,(H-dh)/2,dw,dh);
+        X.fillStyle='rgba(0,0,0,0.4)'; X.fillRect(0,0,W,H);
+    }} else {{
+        X.fillStyle='#0d0520'; X.fillRect(0,0,W,H);
+    }}
     X.font='bold 48px Courier New'; X.textAlign='center';
     X.strokeStyle='#000'; X.lineWidth=4; X.strokeText('GATAIADA',W/2,H/2-40);
     X.fillStyle='#ff99cc'; X.fillText('GATAIADA',W/2,H/2-40);
