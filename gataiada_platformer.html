@@ -1059,7 +1059,7 @@ function draw(){
     }
 }
 
-function loop(t){ var dt=t-lastTime; lastTime=t; update(dt); draw(); requestAnimationFrame(loop); }
+function loop(t){ try{ var dt=t-lastTime; lastTime=t; update(dt); draw(); } catch(e){ X.fillStyle='#000'; X.fillRect(0,0,W,H); X.fillStyle='#ff0000'; X.font='bold 18px Courier New'; X.textAlign='center'; X.fillText('ERRO:',W/2,H/2-30); X.font='12px Courier New'; X.fillText(e.message,W/2,H/2); X.fillText(e.stack?e.stack.split('\n')[1]||'':'',W/2,H/2+20); } requestAnimationFrame(loop); }
 
 document.addEventListener('keydown',function(e){
     keys[e.key]=true;
