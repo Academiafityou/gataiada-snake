@@ -140,7 +140,7 @@ canvas {{ display:block; image-rendering:pixelated; width:960px; height:540px; }
 </style>
 </head>
 <body>
-<video id="introVid" src="cats/abertura plataforma.mp4" muted loop style="position:absolute;left:-9999px;"></video>
+<video id="introVid" src="cats/abertura_plataforma.mp4" muted loop style="position:absolute;left:-9999px;"></video>
 <canvas id="game" tabindex="0" style="display:block;margin:0 auto;"></canvas>
 <script>
 var C = document.getElementById('game');
