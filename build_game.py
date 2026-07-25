@@ -1399,7 +1399,7 @@ function draw(){{
         case 'gameover': drawLevel(); drawGameOver(); break;
     }}
     X.fillStyle='rgba(255,255,255,0.3)'; X.font='9px Courier New'; X.textAlign='left';
-    X.fillText('F:'+frameCount+' S:'+game.state+' L:'+game.currentLevel,4,H-4);
+    X.fillText('F:'+frameCount+' S:'+game.state+' L:'+game.currentLevel+' boss:'+(boss?boss.alive:0)+' pxy:'+Math.round(player.x)+','+Math.round(player.y)+' lw:'+levelWidth,4,H-4);
 }}
 
 var frameCount=0;
