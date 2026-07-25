@@ -1390,6 +1390,7 @@ function update(dt){{
 
 function draw(){{
     X.clearRect(0,0,W,H);
+    try{{
     switch(game.state){{
         case 'title': drawTitle(); break;
         case 'select': drawCharSelect(); break;
@@ -1398,6 +1399,7 @@ function draw(){{
         case 'levelcomplete': drawLevel(); drawLevelComplete(); break;
         case 'gameover': drawLevel(); drawGameOver(); break;
     }}
+    }} catch(drawErr){{ X.fillStyle='#f00'; X.font='bold 14px Courier New'; X.textAlign='center'; X.fillText('DRAW ERROR: '+(drawErr.message||drawErr),W/2,30); }}
     X.fillStyle='rgba(0,0,0,0.85)'; X.fillRect(W/2-200,H/2-60,400,120);
     X.strokeStyle='#ff0'; X.lineWidth=2; X.strokeRect(W/2-200,H/2-60,400,120);
     X.font='bold 16px Courier New'; X.fillStyle='#ff0'; X.textAlign='center';
@@ -1407,6 +1409,7 @@ function draw(){{
     X.fillText('px='+Math.round(player.x)+' py='+Math.round(player.y),W/2,H/2+10);
     X.fillText('level='+game.currentLevel+' lw='+levelWidth+' state='+game.state,W/2,H/2+30);
     X.fillText('frame='+frameCount,W/2,H/2+50);
+    if(frameCount===60) alert('BOSS DEBUG: boss='+(boss?'EXISTS alive='+boss.alive:'NULL')+' level='+game.currentLevel+' lw='+levelWidth);
 }}
 
 var frameCount=0;
