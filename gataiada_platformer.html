@@ -614,10 +614,10 @@ function updateEnemies(){
 
 function updateBoss(){
     if(!boss||!boss.alive) return;
-    boss.phaseTimer++; boss.attackTimer++; boss.vy+=GRAVITY;
     var dx=player.x-boss.x;
     var speed=boss.big?0.6:1.5;
     if(Math.abs(dx)<500){
+        boss.phaseTimer++; boss.attackTimer++; boss.vy+=GRAVITY;
         boss.vx=dx>0?speed:-speed; boss.x+=boss.vx;
         var rowB=Math.floor((boss.y+boss.h)/TILE);
         var colL=Math.floor(boss.x/TILE), colR=Math.floor((boss.x+boss.w)/TILE);
@@ -633,18 +633,22 @@ function updateBoss(){
             if(boss.big) projectiles.push({x:boss.x+boss.w/2,y:boss.y+boss.h/3,vx:bvx*0.7,vy:-5,w:12,h:12,friendly:false,life:120});
             spawnParticles(boss.x+boss.w/2,boss.y+boss.h/2,boss.color,5);
         }
+    } else {
+        boss.vy=0; boss.vx=0;
     }
-    if(rectOverlap(player,boss)&&player.invincible<=0) playerHit(1);
-    for(var i=projectiles.length-1;i>=0;i--){ var p=projectiles[i]; if(!p.friendly&&rectOverlap(player,p)){ playerHit(1); projectiles.splice(i,1); } }
-    bossSpecialTimer++;
-    if(game.currentLevel===4&&bossSpecialTimer%120===0){
-        for(var si=0;si<8;si++){ var ang=si*Math.PI/4; sneezeClouds.push({x:boss.x+boss.w/2,y:boss.y+boss.h/2,vx:Math.cos(ang)*3,vy:Math.sin(ang)*3,life:60,r:25}); }
-        spawnParticles(boss.x+boss.w/2,boss.y+boss.h/2,'#fff',12);
-    }
-    if(game.currentLevel===5&&bossSpecialTimer%90===0){
-        var lx=boss.x+boss.w/2+(Math.random()-0.5)*400;
-        lightningBolts.push({x:lx,y:0,h:H-80,life:25,w:6,flash:15});
-        for(var li=0;li<5;li++){ spawnParticles(lx,H-80-TILE,'#ffff00',3); }
+    if(Math.abs(dx)<600){
+        if(rectOverlap(player,boss)&&player.invincible<=0) playerHit(1);
+        for(var i=projectiles.length-1;i>=0;i--){ var p=projectiles[i]; if(!p.friendly&&rectOverlap(player,p)){ playerHit(1); projectiles.splice(i,1); } }
+        bossSpecialTimer++;
+        if(game.currentLevel===4&&bossSpecialTimer%120===0){
+            for(var si=0;si<8;si++){ var ang=si*Math.PI/4; sneezeClouds.push({x:boss.x+boss.w/2,y:boss.y+boss.h/2,vx:Math.cos(ang)*3,vy:Math.sin(ang)*3,life:60,r:25}); }
+            spawnParticles(boss.x+boss.w/2,boss.y+boss.h/2,'#fff',12);
+        }
+        if(game.currentLevel===5&&bossSpecialTimer%90===0){
+            var lx=boss.x+boss.w/2+(Math.random()-0.5)*400;
+            lightningBolts.push({x:lx,y:0,h:H-80,life:25,w:6,flash:15});
+            for(var li=0;li<5;li++){ spawnParticles(lx,H-80-TILE,'#ffff00',3); }
+        }
     }
     for(var i=sneezeClouds.length-1;i>=0;i--){ var sc=sneezeClouds[i]; sc.x+=sc.vx; sc.y+=sc.vy; sc.life--; sc.r+=0.3; if(sc.life<=0){ sneezeClouds.splice(i,1); continue; } if(rectOverlap(player,{x:sc.x-sc.r/2,y:sc.y-sc.r/2,w:sc.r,h:sc.r})&&player.invincible<=0){ playerHit(1); } }
     for(var i=lightningBolts.length-1;i>=0;i--){ var lb=lightningBolts[i]; lb.life--; lb.flash--; if(lb.life<=0){ lightningBolts.splice(i,1); continue; } if(lb.flash<=0&&Math.abs(player.x+player.w/2-lb.x)<lb.w+player.w/2){ playerHit(1); lightningBolts.splice(i,1); } }
@@ -657,7 +661,7 @@ function updateProjectiles(){
         if(p.life<=0){ projectiles.splice(i,1); continue; }
         if(p.friendly&&boss&&boss.alive&&rectOverlap(p,boss)){
             boss.hp--; spawnParticles(p.x,p.y,'#ff0000',8); projectiles.splice(i,1);
-            if(boss.hp<=0){ boss.alive=false; game.score+=2000; spawnParticles(boss.x+boss.w/2,boss.y+boss.h/2,'#ff00ff',40); game.state='levelcomplete'; levelCompleteTimer=150; game.levelsUnlocked[Math.min(game.currentLevel+1,6)]=true; }
+            if(boss.hp<=0){ boss.alive=false; game.score+=2000; game.defeatedBossName=boss.name||'BOSS'; spawnParticles(boss.x+boss.w/2,boss.y+boss.h/2,'#ff00ff',40); for(var ci=0;ci<30;ci++){ spawnParticles(boss.x+Math.random()*boss.w,boss.y+Math.random()*boss.h,['#ff00ff','#ffcc00','#00ffcc','#ff6600','#ffff00'][Math.floor(Math.random()*5)],6); } game.state='levelcomplete'; levelCompleteTimer=180; game.levelsUnlocked[Math.min(game.currentLevel+1,6)]=true; }
         }
     }
 }
@@ -983,7 +987,7 @@ function drawLevel(){
     }
 
     if(boss&&boss.alive){
-        if(game.currentLevel===0&&odairSprite.complete){
+        if(game.currentLevel===0&&odairSprite.complete&&odairSprite.naturalWidth>0){
             X.save();
             X.translate(boss.x+boss.w/2,boss.y+boss.h/2);
             X.scale(boss.vx<0?1:-1,1);
@@ -1038,7 +1042,6 @@ function drawLevel(){
         X.font='bold 8px Courier New'; X.fillStyle='#ffcc00'; X.textAlign='center'; X.fillText(boss.name||'BOSS',boss.x+boss.w/2,boss.y-28);
     }
 
-    X.save(); X.translate(-cameraX,0);
     for(var i=0;i<lightningBolts.length;i++){ var lb=lightningBolts[i];
         if(lb.flash>0){ X.fillStyle='rgba(255,255,255,0.3)'; X.fillRect(0,0,W*3,H); }
         X.strokeStyle='#FFFF00'; X.lineWidth=lb.w; X.shadowColor='#00FFFF'; X.shadowBlur=20;
@@ -1056,7 +1059,6 @@ function drawLevel(){
         X.fillStyle='rgba(200,200,255,'+(sc.life/60*0.3)+')';
         X.beginPath(); X.arc(sc.x+5,sc.y-3,sc.r*0.7,0,Math.PI*2); X.fill();
     }
-    X.restore();
 
     if(player.invincible<=0||Math.floor(Date.now()/50)%2===0) drawSprite(player.animState,player.x,player.y,player.w,player.h,player.facing);
 
@@ -1134,10 +1136,20 @@ function drawLevel(){
 }
 
 function drawLevelComplete(){
-    X.fillStyle='rgba(0,0,0,0.7)'; X.fillRect(0,0,W,H);
-    X.font='bold 36px Courier New'; X.textAlign='center'; X.fillStyle='#ffcc00'; X.fillText('FASE COMPLETA!',W/2,H/2-40);
-    X.font='18px Courier New'; X.fillStyle='#fff'; X.fillText('Score: '+game.score,W/2,H/2+10); X.fillText('Saches: '+game.coins,W/2,H/2+40);
-    if(levelCompleteTimer<100){ X.font='14px Courier New'; X.fillStyle=(Math.floor(Date.now()/400)%2===0)?'#fff':'#ffcc66'; X.fillText('ENTER para continuar',W/2,H/2+90); }
+    X.fillStyle='rgba(0,0,0,0.75)'; X.fillRect(0,0,W,H);
+    X.textAlign='center';
+    for(var fi=0;fi<8;fi++){ var fx=(W*0.15+fi*W*0.1)+Math.sin(frameCount*0.03+fi)*40; var fy=80+Math.cos(frameCount*0.04+fi*1.5)*30; var cols=['#ff00ff','#ffcc00','#00ffcc','#ff6600','#ffff00','#ff4488','#44ff88','#4488ff']; X.fillStyle=cols[fi]; X.shadowColor=cols[fi]; X.shadowBlur=15; X.beginPath(); for(var si=0;si<6;si++){ var a=si*Math.PI/3+frameCount*0.05; var r1=8+Math.sin(frameCount*0.1+si)*3; var r2=16+Math.cos(frameCount*0.08+si)*5; if(si===0) X.moveTo(fx+Math.cos(a)*r2,fy+Math.sin(a)*r2); else X.lineTo(fx+Math.cos(a)*r2,fy+Math.sin(a)*r2); var a2=a+Math.PI/6; X.lineTo(fx+Math.cos(a2)*r1,fy+Math.sin(a2)*r1); } X.closePath(); X.fill(); X.shadowBlur=0; }
+    X.font='bold 40px Courier New'; X.fillStyle='#ffcc00'; X.shadowColor='#ff6600'; X.shadowBlur=20; X.fillText('VITÓRIA!',W/2,H/2-70); X.shadowBlur=0;
+    X.font='bold 20px Courier New'; X.fillStyle='#ff99cc'; X.fillText(game.defeatedBossName+' derrotado!',W/2,H/2-30);
+    X.font='16px Courier New'; X.fillStyle='#fff'; X.fillText('Score: '+game.score,W/2,H/2+10); X.fillText('Sachês: '+game.coins,W/2,H/2+35);
+    if(levelCompleteTimer<120){
+        var btnW=200, btnH=40, btnX=W/2-btnW/2, btnY=H/2+65;
+        var hover=mouseX>=btnX&&mouseX<=btnX+btnW&&mouseY>=btnY&&mouseY<=btnY+btnH;
+        X.fillStyle=hover?'#00ccff':'#0088cc'; X.shadowColor='#00ccff'; X.shadowBlur=hover?15:0;
+        X.beginPath(); X.roundRect(btnX,btnY,btnW,btnH,8); X.fill(); X.shadowBlur=0;
+        X.strokeStyle='#fff'; X.lineWidth=2; X.beginPath(); X.roundRect(btnX,btnY,btnW,btnH,8); X.stroke();
+        X.font='bold 16px Courier New'; X.fillStyle='#fff'; X.fillText('CONTINUAR',W/2,btnY+27);
+    }
 }
 
 function drawGameOver(){
@@ -1218,7 +1230,7 @@ document.addEventListener('keydown',function(e){
             if(e.key==='Escape') game.state='worldmap';
             var num=parseInt(e.key); if(!isNaN(num)&&num>=0&&num<=6){ try{ game.currentLevel=num; generateLevel(game.currentLevel); }catch(e){ alert('Erro ao gerar fase: '+e.message); } }
             break;
-        case 'levelcomplete': if(e.key==='Enter'&&levelCompleteTimer<100) game.state='worldmap'; break;
+        case 'levelcomplete': if((e.key==='Enter'||e.key===' ')&&levelCompleteTimer<120) game.state='worldmap'; break;
         case 'gameover':
             if(e.key==='Enter'&&gameOverTimer<80){ game.lives=7; game.chances=3; game.score=0; game.coins=0; game.grown=false; player.w=player.baseW; player.h=player.baseH; game.state='title'; }
             break;
@@ -1263,6 +1275,10 @@ C.addEventListener('click',function(e){
         game.state='worldmap'; mapIndex=0;
     }
     if(game.state==='worldmap'&&mapHoverIndex>=0&&game.levelsUnlocked[mapHoverIndex]){ try{ game.currentLevel=mapHoverIndex; generateLevel(game.currentLevel); game.state='playing'; }catch(e){ alert('Erro ao gerar fase: '+e.message); } }
+    if(game.state==='levelcomplete'&&levelCompleteTimer<120){
+        var btnW=200, btnH=40, btnX=W/2-btnW/2, btnY=H/2+65;
+        if(mouseX>=btnX&&mouseX<=btnX+btnW&&mouseY>=btnY&&mouseY<=btnY+btnH) game.state='worldmap';
+    }
 });
 requestAnimationFrame(loop);
 </script>

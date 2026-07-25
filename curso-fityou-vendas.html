@@ -1,0 +1,1862 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FITYOU - Curso de Vendas pelo WhatsApp</title>
+    <link rel="icon" href="logo-fityou.png" type="image/png">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #FF6B2C;
+            --primary-dark: #E55A1B;
+            --primary-light: #FF8F5C;
+            --secondary: #1A1A2E;
+            --accent-gold: #F5A623;
+            --accent-blue: #2196F3;
+            --bg-dark: #0a0a0f;
+            --bg-card: #14141f;
+            --bg-card-hover: #1a1a2e;
+            --text-primary: #ffffff;
+            --text-secondary: #a0a0b8;
+            --text-muted: #6b6b80;
+            --border-color: #2a2a3e;
+            --gradient-primary: linear-gradient(135deg, #FF6B2C, #F5A623);
+            --gradient-blue: linear-gradient(135deg, #2196F3, #1976D2);
+            --gradient-hero: linear-gradient(135deg, #1A1A2E 0%, #0a0a0f 50%, #1a1205 100%);
+            --shadow-glow: 0 0 40px rgba(255, 107, 44, 0.15);
+            --wpp-green: #25D366;
+            --wpp-dark: #128C7E;
+            --wpp-teal: #075E54;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bg-dark); }
+        ::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 4px; }
+
+        /* NAV */
+        .navbar {
+            position: fixed; top: 0; width: 100%; z-index: 1000;
+            padding: 15px 0; transition: all 0.3s;
+            background: rgba(10, 10, 15, 0.85);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 107, 44, 0.1);
+        }
+        .navbar.scrolled { padding: 10px 0; background: rgba(10, 10, 15, 0.95); }
+        .nav-container { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; padding: 0 30px; }
+        .nav-logo { display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 1.3rem; text-decoration: none; color: var(--text-primary); }
+        .nav-logo-icon { width: 40px; height: 40px; background: var(--gradient-primary); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; overflow: hidden; flex-shrink: 0; }
+        .nav-logo-icon img { width: 100%; height: 100%; object-fit: contain; }
+        .nav-links { display: flex; list-style: none; gap: 25px; align-items: center; }
+        .nav-links a { color: var(--text-secondary); text-decoration: none; font-weight: 500; font-size: 0.85rem; transition: color 0.3s; }
+        .nav-links a:hover { color: var(--primary); }
+        .nav-cta { background: var(--gradient-primary) !important; color: white !important; padding: 10px 22px !important; border-radius: 50px; font-weight: 600 !important; transition: transform 0.3s, box-shadow 0.3s !important; }
+        .nav-cta:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(255, 107, 44, 0.4); }
+        .hamburger { display: none; flex-direction: column; cursor: pointer; gap: 5px; }
+        .hamburger span { width: 25px; height: 2px; background: var(--text-primary); transition: 0.3s; }
+
+        /* HERO */
+        .hero { min-height: 100vh; display: flex; align-items: center; position: relative; overflow: hidden; padding: 100px 30px 60px; }
+        .hero-bg { position: absolute; inset: 0; background: radial-gradient(ellipse at 20% 50%, rgba(255, 107, 44, 0.08) 0%, transparent 60%), radial-gradient(ellipse at 80% 20%, rgba(245, 166, 35, 0.06) 0%, transparent 50%), radial-gradient(ellipse at 50% 80%, rgba(33, 150, 243, 0.04) 0%, transparent 50%); }
+        .hero-fachada { position: absolute; inset: 0; background: url('fachada.png') center/cover no-repeat; opacity: 0.4; z-index: 0; }
+        .hero-fachada::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(10,10,15,0.3) 0%, rgba(10,10,15,0.7) 100%); }
+
+        .floating-icon { position: absolute; font-size: 2rem; opacity: 0.08; animation: floatIcon 6s ease-in-out infinite; }
+        .floating-icon:nth-child(1) { top: 15%; left: 10%; animation-delay: 0s; }
+        .floating-icon:nth-child(2) { top: 60%; right: 8%; animation-delay: 2s; }
+        .floating-icon:nth-child(3) { bottom: 20%; left: 20%; animation-delay: 4s; }
+        .floating-icon:nth-child(4) { top: 30%; right: 25%; animation-delay: 1s; }
+        @keyframes floatIcon { 0%, 100% { transform: translateY(0) rotate(0deg); } 50% { transform: translateY(-20px) rotate(10deg); } }
+
+        .hero-content { max-width: 1200px; margin: 0 auto; width: 100%; display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; position: relative; z-index: 2; }
+        .hero-text { animation: fadeInUp 1s ease; }
+        .hero-badge { display: inline-flex; align-items: center; gap: 8px; background: rgba(255, 107, 44, 0.1); border: 1px solid rgba(255, 107, 44, 0.3); padding: 8px 20px; border-radius: 50px; font-size: 0.85rem; font-weight: 500; color: var(--primary); margin-bottom: 25px; }
+        .hero-badge .pulse { width: 8px; height: 8px; background: var(--primary); border-radius: 50%; animation: pulse 2s infinite; }
+        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(255, 107, 44, 0.7); } 70% { box-shadow: 0 0 0 10px rgba(255, 107, 44, 0); } 100% { box-shadow: 0 0 0 0 rgba(255, 107, 44, 0); } }
+
+        .hero h1 { font-size: 3.2rem; font-weight: 900; line-height: 1.1; margin-bottom: 20px; }
+        .hero h1 .gradient-text { background: var(--gradient-primary); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        .hero h1 .blue-text { background: var(--gradient-blue); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        .hero-description { font-size: 1.1rem; color: var(--text-secondary); line-height: 1.7; margin-bottom: 35px; }
+        .hero-stats { display: flex; gap: 40px; margin-bottom: 40px; }
+        .hero-stat-number { font-size: 2rem; font-weight: 800; color: var(--primary); }
+        .hero-stat-label { font-size: 0.85rem; color: var(--text-muted); margin-top: 2px; }
+
+        .hero-buttons { display: flex; gap: 15px; flex-wrap: wrap; }
+        .btn-primary { background: var(--gradient-primary); color: white; border: none; padding: 16px 36px; border-radius: 50px; font-size: 1rem; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 10px; transition: all 0.3s; text-decoration: none; font-family: inherit; }
+        .btn-primary:hover { transform: translateY(-3px); box-shadow: 0 12px 35px rgba(255, 107, 44, 0.4); }
+        .btn-secondary { background: rgba(255, 255, 255, 0.05); color: var(--text-primary); border: 1px solid var(--border-color); padding: 16px 36px; border-radius: 50px; font-size: 1rem; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 10px; transition: all 0.3s; text-decoration: none; font-family: inherit; }
+        .btn-secondary:hover { background: rgba(255, 255, 255, 0.1); border-color: var(--primary); }
+
+        /* Phone Mockup */
+        .hero-visual { animation: fadeInUp 1s ease 0.3s backwards; }
+        .phone-mockup { width: 300px; height: 580px; background: #1a1a2e; border-radius: 40px; border: 3px solid var(--border-color); margin: 0 auto; position: relative; overflow: hidden; box-shadow: var(--shadow-glow), 0 25px 60px rgba(0,0,0,0.5); }
+        .phone-notch { width: 120px; height: 25px; background: var(--bg-dark); border-radius: 0 0 15px 15px; margin: 0 auto; position: relative; z-index: 5; }
+        .phone-screen { height: calc(100% - 25px); overflow: hidden; }
+        .wpp-header { background: var(--wpp-teal); padding: 15px; display: flex; align-items: center; gap: 12px; }
+        .wpp-avatar { width: 35px; height: 35px; background: var(--gradient-primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.9rem; }
+        .wpp-header-info h4 { font-size: 0.85rem; font-weight: 600; }
+        .wpp-header-info span { font-size: 0.7rem; color: rgba(255,255,255,0.7); }
+        .wpp-chat { padding: 15px; background: #0b141a; height: calc(100% - 65px); display: flex; flex-direction: column; justify-content: flex-end; gap: 8px; }
+        .chat-bubble { max-width: 80%; padding: 8px 12px; border-radius: 12px; font-size: 0.75rem; line-height: 1.4; animation: bubbleIn 0.5s ease backwards; }
+        .chat-bubble.received { background: #1f2c34; color: #e9edef; border-bottom-left-radius: 4px; align-self: flex-start; }
+        .chat-bubble.sent { background: #005c4b; color: #e9edef; border-bottom-right-radius: 4px; align-self: flex-end; }
+        .chat-bubble:nth-child(1) { animation-delay: 0.5s; }
+        .chat-bubble:nth-child(2) { animation-delay: 1s; }
+        .chat-bubble:nth-child(3) { animation-delay: 1.5s; }
+        .chat-bubble:nth-child(4) { animation-delay: 2s; }
+        .chat-bubble:nth-child(5) { animation-delay: 2.5s; }
+        @keyframes bubbleIn { from { opacity: 0; transform: translateY(10px) scale(0.9); } to { opacity: 1; transform: translateY(0) scale(1); } }
+
+        /* PROGRESS */
+        .progress-section { padding: 30px 30px 0; max-width: 1200px; margin: 0 auto; }
+        .progress-bar-container { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 16px; padding: 20px 25px; display: flex; align-items: center; gap: 20px; }
+        .progress-info { min-width: 200px; }
+        .progress-info h3 { font-size: 0.9rem; font-weight: 600; margin-bottom: 4px; }
+        .progress-info span { font-size: 0.8rem; color: var(--text-muted); }
+        .progress-track { flex: 1; height: 10px; background: rgba(255,255,255,0.05); border-radius: 10px; overflow: hidden; }
+        .progress-fill { height: 100%; background: var(--gradient-primary); border-radius: 10px; width: 0%; transition: width 1s ease; }
+        .progress-percent { font-size: 1.3rem; font-weight: 800; color: var(--primary); min-width: 60px; text-align: right; }
+
+        /* SECTIONS */
+        .section { padding: 80px 30px; max-width: 1200px; margin: 0 auto; }
+        .section-header { text-align: center; margin-bottom: 50px; }
+        .section-tag { display: inline-block; background: rgba(255, 107, 44, 0.1); color: var(--primary); padding: 6px 18px; border-radius: 50px; font-size: 0.8rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 15px; }
+        .section-header h2 { font-size: 2.5rem; font-weight: 800; margin-bottom: 15px; }
+        .section-header p { color: var(--text-secondary); font-size: 1.1rem; max-width: 600px; margin: 0 auto; }
+
+        /* MODULES */
+        .modules-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 20px; }
+        .module-card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 20px; padding: 30px; cursor: pointer; transition: all 0.4s; position: relative; overflow: hidden; }
+        .module-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: var(--gradient-primary); transform: scaleX(0); transition: transform 0.4s; }
+        .module-card:hover { border-color: rgba(255, 107, 44, 0.3); transform: translateY(-5px); box-shadow: var(--shadow-glow); }
+        .module-card:hover::before { transform: scaleX(1); }
+        .module-card.completed { border-color: rgba(255, 107, 44, 0.2); }
+        .module-card.completed::before { transform: scaleX(1); }
+        .module-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px; }
+        .module-number { width: 45px; height: 45px; background: rgba(255, 107, 44, 0.1); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1rem; color: var(--primary); }
+        .module-card.completed .module-number { background: var(--gradient-primary); color: white; }
+        .module-status { font-size: 0.75rem; padding: 4px 12px; border-radius: 50px; font-weight: 600; }
+        .status-available { background: rgba(255, 107, 44, 0.1); color: var(--primary); }
+        .status-completed { background: rgba(255, 107, 44, 0.2); color: var(--primary); }
+        .module-card h3 { font-size: 1.15rem; font-weight: 700; margin-bottom: 8px; }
+        .module-card p { color: var(--text-secondary); font-size: 0.9rem; line-height: 1.5; margin-bottom: 20px; }
+        .module-topics { display: flex; flex-wrap: wrap; gap: 6px; }
+        .module-topic { background: rgba(255,255,255,0.04); padding: 4px 12px; border-radius: 6px; font-size: 0.75rem; color: var(--text-muted); }
+        .module-progress { margin-top: 20px; }
+        .module-progress-bar { height: 4px; background: rgba(255,255,255,0.05); border-radius: 4px; overflow: hidden; }
+        .module-progress-fill { height: 100%; background: var(--primary); border-radius: 4px; transition: width 0.5s ease; }
+
+        /* LESSON PANEL */
+        .lesson-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(10px); z-index: 2000; display: none; opacity: 0; transition: opacity 0.3s; }
+        .lesson-overlay.active { display: flex; opacity: 1; align-items: center; justify-content: center; }
+        .lesson-panel { width: 90%; max-width: 800px; max-height: 85vh; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 24px; overflow: hidden; display: flex; flex-direction: column; animation: slideUp 0.4s ease; }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        .lesson-header { padding: 25px 30px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; }
+        .lesson-header h2 { font-size: 1.1rem; font-weight: 700; }
+        .lesson-close { width: 36px; height: 36px; background: rgba(255,255,255,0.05); border: none; border-radius: 10px; color: var(--text-primary); font-size: 1.2rem; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.3s; }
+        .lesson-close:hover { background: rgba(255,59,48,0.1); color: #ff3b30; }
+        .lesson-body { padding: 30px; overflow-y: auto; flex: 1; }
+        .lesson-content { display: none; }
+        .lesson-content.active { display: block; animation: fadeIn 0.4s ease; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .lesson-content h3 { font-size: 1.3rem; font-weight: 700; margin-bottom: 15px; color: var(--primary); }
+        .lesson-content h4 { font-size: 1.05rem; font-weight: 700; margin: 20px 0 10px; color: var(--accent-gold); }
+        .lesson-content p { color: var(--text-secondary); line-height: 1.8; margin-bottom: 15px; font-size: 0.95rem; }
+        .lesson-content ul { list-style: none; margin: 15px 0; }
+        .lesson-content ul li { padding: 10px 0 10px 30px; position: relative; color: var(--text-secondary); line-height: 1.6; }
+        .lesson-content ul li::before { content: '✓'; position: absolute; left: 0; color: var(--primary); font-weight: 700; }
+
+        .tip-box { background: rgba(255, 107, 44, 0.08); border: 1px solid rgba(255, 107, 44, 0.2); border-radius: 12px; padding: 20px; margin: 20px 0; }
+        .tip-box h4 { color: var(--primary); font-size: 0.9rem; font-weight: 700; margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
+        .tip-box p, .tip-box li { font-size: 0.9rem; }
+
+        .example-box { background: rgba(245, 166, 35, 0.08); border: 1px solid rgba(245, 166, 35, 0.2); border-radius: 12px; padding: 20px; margin: 20px 0; }
+        .example-box h4 { color: var(--accent-gold); font-size: 0.9rem; font-weight: 700; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+
+        .wrong-box { background: rgba(255, 59, 48, 0.08); border: 1px solid rgba(255, 59, 48, 0.2); border-radius: 12px; padding: 20px; margin: 20px 0; }
+        .wrong-box h4 { color: #ff3b30; font-size: 0.9rem; font-weight: 700; margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
+
+        .example-chat { background: #0b141a; border-radius: 12px; padding: 15px; margin-top: 10px; }
+        .example-chat .chat-bubble { max-width: 85%; margin-bottom: 8px; font-size: 0.8rem; }
+
+        .plan-box { background: rgba(33, 150, 243, 0.08); border: 1px solid rgba(33, 150, 243, 0.2); border-radius: 12px; padding: 20px; margin: 20px 0; }
+        .plan-box h4 { color: var(--accent-blue); font-size: 0.9rem; font-weight: 700; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+
+        /* TEMPLATES */
+        .templates-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px; }
+        .template-card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 16px; padding: 25px; transition: all 0.3s; cursor: pointer; }
+        .template-card:hover { border-color: rgba(255, 107, 44, 0.3); transform: translateY(-3px); }
+        .template-icon { width: 50px; height: 50px; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; margin-bottom: 15px; }
+        .template-card h3 { font-size: 1.05rem; font-weight: 700; margin-bottom: 8px; }
+        .template-card > p { color: var(--text-secondary); font-size: 0.85rem; line-height: 1.5; margin-bottom: 15px; }
+        .template-preview { background: #0b141a; border-radius: 10px; padding: 0 15px; font-size: 0.78rem; color: var(--text-secondary); line-height: 1.6; max-height: 0; overflow: hidden; transition: max-height 0.4s ease, padding 0.4s; }
+        .template-card.expanded .template-preview { max-height: 600px; padding: 15px; }
+        .copy-btn { display: inline-flex; align-items: center; gap: 6px; background: rgba(255, 107, 44, 0.1); color: var(--primary); border: none; padding: 8px 16px; border-radius: 8px; font-size: 0.8rem; font-weight: 600; cursor: pointer; transition: all 0.3s; font-family: inherit; }
+        .copy-btn:hover { background: rgba(255, 107, 44, 0.2); }
+
+        /* OBJECTIONS */
+        .objection-card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 16px; margin-bottom: 12px; overflow: hidden; transition: all 0.3s; }
+        .objection-card:hover { border-color: rgba(255, 107, 44, 0.3); }
+        .objection-header { padding: 20px 25px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
+        .objection-question { display: flex; align-items: center; gap: 15px; }
+        .objection-icon { width: 40px; height: 40px; background: rgba(245, 166, 35, 0.1); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; flex-shrink: 0; }
+        .objection-header h4 { font-size: 0.95rem; font-weight: 600; }
+        .objection-toggle { width: 28px; height: 28px; background: rgba(255,255,255,0.05); border-radius: 8px; display: flex; align-items: center; justify-content: center; transition: transform 0.3s; font-size: 0.8rem; color: var(--text-muted); }
+        .objection-card.open .objection-toggle { transform: rotate(180deg); }
+        .objection-body { max-height: 0; overflow: hidden; transition: max-height 0.4s ease; }
+        .objection-card.open .objection-body { max-height: 800px; }
+        .objection-content { padding: 0 25px 25px; }
+        .objection-content p { color: var(--text-secondary); font-size: 0.9rem; line-height: 1.7; margin-bottom: 10px; }
+
+        /* SIMULATOR */
+        .simulator { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 20px; padding: 30px; margin-top: 30px; }
+        .simulator h3 { font-size: 1.2rem; font-weight: 700; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
+        .sim-scenario { background: rgba(255,255,255,0.03); border-radius: 12px; padding: 20px; margin-bottom: 20px; }
+        .sim-scenario p { color: var(--text-secondary); font-size: 0.9rem; line-height: 1.6; }
+        .sim-chat { background: #0b141a; border-radius: 12px; padding: 15px; margin-bottom: 20px; min-height: 100px; display: flex; flex-direction: column; gap: 8px; }
+        .sim-input { display: flex; gap: 10px; }
+        .sim-input input { flex: 1; background: rgba(255,255,255,0.05); border: 1px solid var(--border-color); border-radius: 10px; padding: 12px 16px; color: var(--text-primary); font-size: 0.9rem; font-family: inherit; outline: none; transition: border-color 0.3s; }
+        .sim-input input:focus { border-color: var(--primary); }
+        .sim-input button { background: var(--gradient-primary); color: white; border: none; padding: 12px 20px; border-radius: 10px; font-weight: 600; cursor: pointer; font-family: inherit; font-size: 0.9rem; transition: all 0.3s; }
+        .sim-input button:hover { box-shadow: 0 5px 20px rgba(255, 107, 44, 0.3); }
+        .sim-feedback { margin-top: 15px; padding: 15px; border-radius: 10px; font-size: 0.85rem; line-height: 1.6; display: none; }
+        .sim-feedback.good { display: block; background: rgba(37, 211, 102, 0.1); border: 1px solid rgba(37, 211, 102, 0.2); color: var(--wpp-green); }
+        .sim-feedback.ok { display: block; background: rgba(245, 166, 35, 0.1); border: 1px solid rgba(245, 166, 35, 0.2); color: var(--accent-gold); }
+        .sim-feedback.bad { display: block; background: rgba(255, 59, 48, 0.1); border: 1px solid rgba(255, 59, 48, 0.2); color: #ff3b30; }
+
+        .ai-analysis { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 16px; padding: 25px; margin-top: 20px; display: none; }
+        .ai-analysis h4 { font-size: 1rem; font-weight: 700; margin-bottom: 15px; display: flex; align-items: center; gap: 8px; }
+        .ai-scores { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-bottom: 15px; }
+        .ai-score-item { background: rgba(255,255,255,0.03); border-radius: 10px; padding: 12px; }
+        .ai-score-label { font-size: 0.8rem; color: var(--text-muted); margin-bottom: 6px; }
+        .ai-score-bar { height: 6px; background: rgba(255,255,255,0.05); border-radius: 6px; overflow: hidden; }
+        .ai-score-fill { height: 100%; border-radius: 6px; transition: width 0.5s ease; }
+        .ai-tips { margin-top: 15px; }
+        .ai-tip { padding: 8px 0; font-size: 0.85rem; color: var(--text-secondary); border-bottom: 1px solid rgba(255,255,255,0.03); }
+        .ai-tip:last-child { border-bottom: none; }
+        .ai-tip::before { content: '💡 '; }
+        .ai-total-score { text-align: center; padding: 15px; background: rgba(255, 107, 44, 0.08); border-radius: 12px; margin-bottom: 15px; }
+        .ai-total-score .score-number { font-size: 2.5rem; font-weight: 900; }
+        .ai-total-score .score-label { font-size: 0.85rem; color: var(--text-muted); }
+
+        /* SUGGESTION BOX */
+        .suggestion-box { background: rgba(33, 150, 243, 0.08); border: 1px solid rgba(33, 150, 243, 0.25); border-radius: 12px; padding: 15px; margin-top: 12px; }
+        .suggestion-box h5 { color: var(--accent-blue); font-size: 0.85rem; font-weight: 700; margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
+        .suggestion-box p { color: var(--text-secondary); font-size: 0.85rem; line-height: 1.6; margin: 0; }
+        .suggestion-box .copy-suggestion { display: inline-flex; align-items: center; gap: 5px; background: rgba(33, 150, 243, 0.15); color: var(--accent-blue); border: none; padding: 6px 12px; border-radius: 6px; font-size: 0.75rem; font-weight: 600; cursor: pointer; margin-top: 8px; font-family: inherit; transition: background 0.3s; }
+        .suggestion-box .copy-suggestion:hover { background: rgba(33, 150, 243, 0.25); }
+
+        /* SOS PROF. SIMONE */
+        .sos-container { max-width: 850px; margin: 0 auto; }
+        .sos-chat-box { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 20px; overflow: hidden; }
+        .sos-header { display: flex; align-items: center; gap: 16px; padding: 20px 24px; background: linear-gradient(135deg, rgba(255,107,44,0.12), rgba(245,166,35,0.08)); border-bottom: 1px solid var(--border-color); position: relative; }
+        .sos-avatar { width: 80px; height: 80px; border-radius: 50%; object-fit: cover; object-position: center 30%; flex-shrink: 0; border: 3px solid var(--primary); filter: drop-shadow(0 2px 8px rgba(255,107,44,0.3)); transition: transform 0.3s; }
+        .sos-avatar:hover { transform: scale(1.08) rotate(-3deg); }
+        .sos-header-info h3 { font-size: 1.1rem; font-weight: 700; color: var(--text-primary); margin: 0; }
+        .sos-header-info p { font-size: 0.8rem; color: var(--text-secondary); margin: 4px 0 0; }
+        .sos-header-info .sos-status { display: inline-flex; align-items: center; gap: 5px; font-size: 0.75rem; color: var(--wpp-green); font-weight: 600; margin-top: 4px; }
+        .sos-header-info .sos-status::before { content: ''; width: 7px; height: 7px; border-radius: 50%; background: var(--wpp-green); animation: sosPulse 1.5s infinite; }
+        @keyframes sosPulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+        .sos-chat-area { padding: 20px; min-height: 200px; max-height: 400px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; background: rgba(0,0,0,0.15); }
+        .sos-msg { max-width: 80%; padding: 12px 16px; border-radius: 16px; font-size: 0.88rem; line-height: 1.6; animation: sosFadeIn 0.3s ease; }
+        @keyframes sosFadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+        .sos-msg.simone { background: var(--bg-card-hover); border: 1px solid var(--border-color); color: var(--text-primary); align-self: flex-start; border-bottom-left-radius: 4px; }
+        .sos-msg.simone .sos-msg-name { font-size: 0.7rem; font-weight: 700; color: var(--primary); margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .sos-msg.user { background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: #fff; align-self: flex-end; border-bottom-right-radius: 4px; }
+        .sos-input-area { display: flex; gap: 10px; padding: 16px 20px; border-top: 1px solid var(--border-color); background: var(--bg-card); }
+        .sos-input { flex: 1; background: rgba(255,255,255,0.04); border: 1px solid var(--border-color); border-radius: 12px; padding: 12px 16px; color: var(--text-primary); font-size: 0.88rem; font-family: inherit; outline: none; resize: none; min-height: 44px; max-height: 100px; transition: border-color 0.3s; }
+        .sos-input:focus { border-color: var(--primary); }
+        .sos-input::placeholder { color: var(--text-muted); }
+        .sos-send-btn { width: 44px; height: 44px; border-radius: 12px; background: var(--gradient-primary); border: none; color: #fff; font-size: 1.1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: transform 0.2s, box-shadow 0.2s; flex-shrink: 0; }
+        .sos-send-btn:hover { transform: scale(1.05); box-shadow: 0 4px 15px rgba(255,107,44,0.3); }
+        .sos-typing { display: none; align-self: flex-start; padding: 12px 16px; background: var(--bg-card-hover); border: 1px solid var(--border-color); border-radius: 16px; border-bottom-left-radius: 4px; }
+        .sos-typing.active { display: flex; gap: 4px; align-items: center; }
+        .sos-typing span { width: 6px; height: 6px; border-radius: 50%; background: var(--text-muted); animation: sosTyping 1s infinite; }
+        .sos-typing span:nth-child(2) { animation-delay: 0.2s; }
+        .sos-typing span:nth-child(3) { animation-delay: 0.4s; }
+        @keyframes sosTyping { 0%, 100% { opacity: 0.3; transform: translateY(0); } 50% { opacity: 1; transform: translateY(-3px); } }
+        .sos-quick-actions { display: flex; gap: 8px; padding: 0 20px 12px; flex-wrap: wrap; }
+        .sos-quick-btn { background: rgba(255,107,44,0.08); border: 1px solid rgba(255,107,44,0.2); color: var(--primary-light); border-radius: 20px; padding: 6px 14px; font-size: 0.78rem; font-weight: 600; cursor: pointer; transition: all 0.2s; font-family: inherit; }
+        .sos-quick-btn:hover { background: rgba(255,107,44,0.15); border-color: var(--primary); }
+
+        /* FLOATING SOS CHARACTER */
+        .sos-char-wrapper { position: fixed; bottom: 0; right: 20px; z-index: 999; display: flex; flex-direction: column; align-items: center; cursor: pointer; transition: transform 0.3s; animation: sosCharSlideIn 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) 1s both; padding-top: 16px; }
+        @keyframes sosCharSlideIn { from { transform: translateY(-120vh); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        .sos-char-wrapper:hover { transform: translateY(-5px); }
+        .sos-char-speech { position: absolute; bottom: 205px; right: 0; background: #fff; color: #1a1a2e; padding: 12px 16px; border-radius: 16px 16px 4px 16px; font-size: 0.82rem; font-weight: 600; white-space: nowrap; box-shadow: 0 4px 20px rgba(0,0,0,0.15); opacity: 0; transform: translateY(10px) scale(0.9); transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); pointer-events: none; }
+        .sos-char-speech.show { opacity: 1; transform: translateY(0) scale(1); }
+        .sos-char-speech::after { content: ''; position: absolute; bottom: -8px; right: 20px; width: 0; height: 0; border-left: 8px solid transparent; border-right: 8px solid transparent; border-top: 10px solid #fff; }
+        .sos-char-img { width: 130px; height: 130px; border-radius: 50%; object-fit: cover; object-position: center 25%; border: 3px solid var(--primary); filter: drop-shadow(0 4px 12px rgba(255,107,44,0.3)); animation: sosCharBounce 3s ease-in-out infinite; transition: filter 0.3s, transform 0.3s; }
+        .sos-char-wrapper:hover .sos-char-img { filter: drop-shadow(0 6px 20px rgba(255,107,44,0.5)); animation: sosCharWave 0.6s ease-in-out; }
+        @keyframes sosCharBounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+        @keyframes sosCharWave { 0% { transform: translateY(0) rotate(0deg); } 25% { transform: translateY(-5px) rotate(-3deg); } 50% { transform: translateY(-8px) rotate(3deg); } 75% { transform: translateY(-5px) rotate(-2deg); } 100% { transform: translateY(0) rotate(0deg); } }
+        .sos-char-name { font-size: 0.7rem; font-weight: 700; color: var(--primary); margin-top: -8px; background: var(--bg-card); border: 1px solid var(--border-color); padding: 3px 12px; border-radius: 10px; white-space: nowrap; }
+        .sos-float-panel { position: fixed; bottom: 210px; right: 20px; width: 380px; max-height: 520px; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 20px; z-index: 998; display: none; flex-direction: column; overflow: hidden; box-shadow: 0 10px 40px rgba(0,0,0,0.5); animation: sosPanelIn 0.3s ease; }
+        .sos-float-panel.active { display: flex; }
+        @keyframes sosPanelIn { from { opacity: 0; transform: translateY(20px) scale(0.95); } to { opacity: 1; transform: translateY(0) scale(1); } }
+        .sos-float-panel .sos-chat-area { min-height: 250px; max-height: 320px; }
+        .sos-float-panel .sos-input-area { padding: 12px 16px; }
+        .sos-float-panel .sos-input { padding: 10px 14px; font-size: 0.85rem; }
+        .sos-float-panel .sos-header { padding: 14px 16px; }
+        .sos-float-panel .sos-avatar { width: 48px; height: 48px; }
+        .sos-float-panel .sos-header-info h3 { font-size: 0.95rem; }
+        .sos-float-panel .sos-quick-actions { padding: 0 16px 8px; }
+        @media (max-width: 480px) {
+            .sos-char-wrapper { right: 10px; }
+            .sos-char-img { width: 90px; height: 90px; }
+            .sos-float-panel { right: 10px; width: calc(100vw - 20px); max-height: 60vh; }
+            .sos-char-speech { right: -10px; font-size: 0.75rem; }
+        }
+
+        /* QUIZ */
+        .quiz-container { max-width: 700px; margin: 0 auto; }
+        .quiz-progress { display: flex; align-items: center; gap: 15px; margin-bottom: 30px; }
+        .quiz-progress-bar { flex: 1; height: 6px; background: rgba(255,255,255,0.05); border-radius: 6px; overflow: hidden; }
+        .quiz-progress-fill { height: 100%; background: var(--gradient-primary); border-radius: 6px; transition: width 0.5s ease; }
+        .quiz-progress-text { font-size: 0.85rem; color: var(--text-muted); white-space: nowrap; }
+        .quiz-main-question { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 20px; padding: 35px; }
+        .quiz-main-question h3 { font-size: 1.15rem; font-weight: 600; margin-bottom: 20px; line-height: 1.5; }
+        .quiz-options { display: flex; flex-direction: column; gap: 10px; }
+        .quiz-option { background: rgba(255,255,255,0.03); border: 1px solid var(--border-color); border-radius: 12px; padding: 14px 18px; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; gap: 12px; font-size: 0.9rem; color: var(--text-secondary); font-family: inherit; text-align: left; width: 100%; }
+        .quiz-option:hover { border-color: var(--primary); background: rgba(255, 107, 44, 0.05); }
+        .quiz-option.correct { border-color: var(--wpp-green); background: rgba(37, 211, 102, 0.15); color: var(--wpp-green); }
+        .quiz-option.wrong { border-color: #ff3b30; background: rgba(255, 59, 48, 0.1); color: #ff3b30; }
+        .quiz-option-letter { width: 28px; height: 28px; border-radius: 8px; background: rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.8rem; flex-shrink: 0; }
+        .quiz-feedback { margin-top: 12px; padding: 12px 16px; border-radius: 10px; font-size: 0.85rem; display: none; }
+        .quiz-feedback.correct { display: block; background: rgba(37, 211, 102, 0.1); border: 1px solid rgba(37, 211, 102, 0.2); color: var(--wpp-green); }
+        .quiz-feedback.wrong { display: block; background: rgba(255, 59, 48, 0.1); border: 1px solid rgba(255, 59, 48, 0.2); color: #ff3b30; }
+        .quiz-score { text-align: center; padding: 40px; }
+        .quiz-score h2 { font-size: 3rem; font-weight: 900; color: var(--primary); margin: 15px 0; }
+        .quiz-score p { color: var(--text-secondary); font-size: 1.1rem; }
+
+        .lesson-footer { padding: 20px 30px; border-top: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; }
+        .lesson-nav-btn { padding: 12px 28px; border-radius: 12px; font-weight: 600; cursor: pointer; transition: all 0.3s; font-family: inherit; font-size: 0.9rem; border: none; }
+        .lesson-prev { background: rgba(255,255,255,0.05); color: var(--text-primary); }
+        .lesson-prev:hover { background: rgba(255,255,255,0.1); }
+        .lesson-next { background: var(--gradient-primary); color: white; }
+        .lesson-next:hover { box-shadow: 0 8px 25px rgba(255, 107, 44, 0.3); transform: translateY(-2px); }
+        .lesson-dots { display: flex; gap: 6px; }
+        .lesson-dot { width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,0.1); transition: all 0.3s; }
+        .lesson-dot.active { background: var(--primary); width: 24px; border-radius: 4px; }
+
+        /* CERTIFICATE */
+        .certificate-section { text-align: center; padding: 60px 30px; }
+        .certificate-card { max-width: 600px; margin: 0 auto; background: var(--bg-card); border: 2px solid rgba(245, 166, 35, 0.3); border-radius: 24px; padding: 50px 40px; position: relative; overflow: hidden; }
+        .certificate-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px; background: var(--gradient-primary); }
+        .certificate-card .cert-icon { font-size: 4rem; margin-bottom: 15px; }
+        .cert-logo { height: 100px; margin-bottom: 15px; }
+        .certificate-card h2 { font-size: 1.5rem; font-weight: 800; margin-bottom: 10px; color: var(--accent-gold); }
+        .certificate-card p { color: var(--text-secondary); margin-bottom: 30px; }
+        .locked-overlay { opacity: 0.4; pointer-events: none; filter: blur(2px); }
+
+        /* MODULE CARD BACKGROUNDS */
+        .module-card .card-bg { position: absolute; inset: 0; background-size: cover; background-position: center; opacity: 0.18; transition: opacity 0.4s; z-index: 0; }
+        .module-card:hover .card-bg { opacity: 0.28; }
+        .module-card > *:not(.card-bg) { position: relative; z-index: 1; }
+
+        /* SIMULATOR BACKGROUNDS */
+        .sim-chat { position: relative; overflow: hidden; }
+        .sim-chat .chat-bg { position: absolute; inset: 0; background-size: cover; background-position: center; opacity: 0.2; z-index: 0; }
+        .sim-chat::before { content: ''; position: absolute; inset: 0; background: rgba(11, 20, 26, 0.82); z-index: 1; }
+        .sim-chat > * { position: relative; z-index: 2; }
+
+        /* FOOTER LOGO */
+        .footer-logo { height: 25px; vertical-align: middle; margin-right: 8px; border-radius: 6px; }
+
+        /* FOOTER */
+        .footer { border-top: 1px solid var(--border-color); padding: 40px 30px; text-align: center; }
+        .footer p { color: var(--text-muted); font-size: 0.85rem; }
+        .footer-links { display: flex; justify-content: center; gap: 25px; margin-top: 15px; flex-wrap: wrap; }
+        .footer-links a { color: var(--text-secondary); text-decoration: none; font-size: 0.85rem; transition: color 0.3s; }
+        .footer-links a:hover { color: var(--primary); }
+
+        /* TOAST */
+        .toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(100px); background: var(--primary); color: white; padding: 14px 28px; border-radius: 12px; font-size: 0.9rem; font-weight: 500; z-index: 5000; transition: transform 0.4s ease; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+        .toast.show { transform: translateX(-50%) translateY(0); }
+
+        /* MOBILE NAV */
+        .mobile-nav { position: fixed; inset: 0; background: rgba(10,10,15,0.98); z-index: 3000; display: none; flex-direction: column; align-items: center; justify-content: center; gap: 30px; }
+        .mobile-nav.active { display: flex; }
+        .mobile-nav a { color: var(--text-primary); text-decoration: none; font-size: 1.3rem; font-weight: 600; }
+        .mobile-nav-close { position: absolute; top: 20px; right: 30px; background: none; border: none; color: var(--text-primary); font-size: 2rem; cursor: pointer; }
+
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* TABLE */
+        .plan-table { width: 100%; border-collapse: collapse; margin: 20px 0; font-size: 0.85rem; }
+        .plan-table th { background: rgba(255, 107, 44, 0.1); color: var(--primary); padding: 12px; text-align: left; font-weight: 600; border-bottom: 1px solid var(--border-color); }
+        .plan-table td { padding: 10px 12px; border-bottom: 1px solid rgba(255,255,255,0.03); color: var(--text-secondary); }
+        .plan-table tr:hover td { background: rgba(255,255,255,0.02); }
+
+        @media (max-width: 768px) {
+            .nav-links { display: none; }
+            .hamburger { display: flex; }
+            .hero-content { grid-template-columns: 1fr; text-align: center; gap: 40px; }
+            .hero h1 { font-size: 2rem; }
+            .hero-stats { justify-content: center; }
+            .hero-buttons { justify-content: center; }
+            .hero-visual { order: -1; }
+            .phone-mockup { width: 260px; height: 500px; }
+            .section-header h2 { font-size: 1.8rem; }
+            .modules-grid { grid-template-columns: 1fr; }
+            .templates-grid { grid-template-columns: 1fr; }
+            .lesson-panel { width: 95%; border-radius: 16px; }
+            .lesson-body { padding: 20px; }
+            .lesson-header { padding: 15px 20px; }
+            .lesson-footer { padding: 15px 20px; }
+            .progress-bar-container { flex-direction: column; text-align: center; }
+            .progress-info { min-width: auto; }
+            .ai-scores { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<nav class="navbar" id="navbar">
+    <div class="nav-container">
+        <a href="#" class="nav-logo">
+            <div class="nav-logo-icon"><img src="logo-fityou.png" alt="Fit You"></div>
+            FITYOU Vendas
+        </a>
+        <ul class="nav-links">
+            <li><a href="#modulos">Módulos</a></li>
+            <li><a href="#templates">Templates</a></li>
+            <li><a href="#objecoes">Objeções</a></li>
+            <li><a href="#simulador">Simulador IA</a></li>
+            <li><a href="#solucoes">Soluções Rápidas</a></li>
+            <li><a href="#quiz">Quiz</a></li>
+            <li><a href="consultor.html" style="color:var(--accent-gold);">Área do Consultor</a></li>
+            <li><a href="#modulos" class="nav-cta">Começar</a></li>
+        </ul>
+        <div class="hamburger" onclick="toggleMobileNav()">
+            <span></span><span></span><span></span>
+        </div>
+    </div>
+</nav>
+
+<div class="mobile-nav" id="mobileNav">
+    <button class="mobile-nav-close" onclick="toggleMobileNav()">×</button>
+    <a href="#modulos" onclick="toggleMobileNav()">Módulos</a>
+    <a href="#templates" onclick="toggleMobileNav()">Templates</a>
+    <a href="#objecoes" onclick="toggleMobileNav()">Objeções</a>
+    <a href="#simulador" onclick="toggleMobileNav()">Simulador IA</a>
+    <a href="#solucoes" onclick="toggleMobileNav()">Soluções Rápidas</a>
+    <a href="#quiz" onclick="toggleMobileNav()">Quiz</a>
+    <a href="consultor.html" style="color:var(--accent-gold);">Área do Consultor</a>
+</div>
+
+<!-- HERO -->
+<section class="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-fachada"></div>
+    <div class="floating-icon">🏊</div>
+    <div class="floating-icon">💪</div>
+    <div class="floating-icon">🥋</div>
+    <div class="floating-icon">📱</div>
+
+    <div class="hero-content">
+        <div class="hero-text">
+            <div class="hero-badge">
+                <div class="pulse"></div>
+                Capacitação Interna FITYOU
+            </div>
+            <h1>
+                Venda Planos de
+                <span class="gradient-text">Academia e Natação</span>
+                pelo <span class="blue-text">WhatsApp</span>
+            </h1>
+            <p class="hero-description">
+                Curso completo para a equipe de vendas da Fit You. Aprenda a converter leads em alunos usando as técnicas certas pelo WhatsApp — natação adulto, infantil, baby, musculação, hidro e lutas.
+            </p>
+            <div class="hero-stats">
+                <div class="hero-stat">
+                    <div class="hero-stat-number">6</div>
+                    <div class="hero-stat-label">Módulos Práticos</div>
+                </div>
+                <div class="hero-stat">
+                    <div class="hero-stat-number">25+</div>
+                    <div class="hero-stat-label">Templates Prontos</div>
+                </div>
+                <div class="hero-stat">
+                    <div class="hero-stat-number">IA</div>
+                    <div class="hero-stat-label">Simulador Inteligente</div>
+                </div>
+            </div>
+            <div class="hero-buttons">
+                <a href="#modulos" class="btn-primary">🚀 Começar Agora</a>
+                <a href="#simulador" class="btn-secondary">🤖 Testar Simulador IA</a>
+            </div>
+        </div>
+
+        <div class="hero-visual">
+            <div class="phone-mockup">
+                <div class="phone-notch"></div>
+                <div class="phone-screen">
+                    <div class="wpp-header">
+                        <div class="wpp-avatar">👤</div>
+                        <div class="wpp-header-info">
+                            <h4>Potencial Aluno</h4>
+                            <span>online</span>
+                        </div>
+                    </div>
+                    <div class="wpp-chat">
+                        <div class="chat-bubble received">Oi! Vi que vocês têm aulas de natação, quero saber mais</div>
+                        <div class="chat-bubble sent">Olá! Que bom que interesse! 😊 A Fit You é referência em natação no Piqueri. Me conta: você já pratica ou seria a primeira vez?</div>
+                        <div class="chat-bubble received">Seria pra minha filha de 5 anos</div>
+                        <div class="chat-bubble sent">Que idade linda! 🏊‍♀️ Nossa escola de natação infantil é incrível — turmas pequenas, toucas coloridas por nível e medalhas a cada ciclo. Vou te explicar como funciona?</div>
+                        <div class="chat-bubble received">Sim por favor!</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- PROGRESS -->
+<div class="progress-section" id="progress-section" style="display:none;">
+    <div class="progress-bar-container">
+        <div class="progress-info">
+            <h3>📊 Seu Progresso</h3>
+            <span id="progress-text">0 de 6 módulos concluídos</span>
+        </div>
+        <div class="progress-track">
+            <div class="progress-fill" id="progress-fill"></div>
+        </div>
+        <div class="progress-percent" id="progress-percent">0%</div>
+    </div>
+</div>
+
+<!-- MODULES -->
+<section class="section" id="modulos">
+    <div class="section-header">
+        <div class="section-tag">Módulos do Curso</div>
+        <h2>Domine as Vendas da FITYOU</h2>
+        <p>6 módulos para transformar cada conversa no WhatsApp em um novo aluno</p>
+    </div>
+    <div class="modules-grid" id="modulesGrid"></div>
+</section>
+
+<!-- TEMPLATES -->
+<section class="section" id="templates">
+    <div class="section-header">
+        <div class="section-tag">Templates Prontos</div>
+        <h2>Mensagens que Convertem</h2>
+        <p>Scripts prontos baseados nos textos oficiais da Fit You. Copie, personalize e envie.</p>
+    </div>
+    <div class="templates-grid" id="templatesGrid"></div>
+</section>
+
+<!-- OBJECTIONS -->
+<section class="section" id="objecoes">
+    <div class="section-header">
+        <div class="section-tag">Tratamento de Objeções</div>
+        <h2>Transforme "Não" em "Sim"</h2>
+        <p>As objeções mais comuns em vendas de planos de academia e como responder</p>
+    </div>
+    <div id="objectionsList"></div>
+</section>
+
+<!-- SIMULATOR -->
+<section class="section" id="simulador">
+    <div class="section-header">
+        <div class="section-tag">Simulador com IA</div>
+        <h2>Pratique com Inteligência Artificial</h2>
+        <p>Um lead virtual simula situações reais. A IA analisa suas respostas e dá feedback em tempo real.</p>
+    </div>
+    <div class="simulator" id="simulatorArea"></div>
+</section>
+
+<!-- SOS PROF. SIMONE -->
+<section class="section" id="solucoes">
+    <div class="section-header">
+        <div class="section-tag">SOS Prof. Simone</div>
+        <h2>Precisa de Ajuda? 🆘</h2>
+        <p>Cole a conversa do WhatsApp e a Prof. Simone gera a melhor resposta na hora. Pergunte qualquer coisa sobre a academia ou o curso!</p>
+    </div>
+    <div class="sos-container">
+        <div class="sos-chat-box">
+            <div class="sos-header">
+                <img src="simone.png" class="sos-avatar" alt="Prof. Simone">
+                <div class="sos-header-info">
+                    <h3>Prof. Simone</h3>
+                    <p>Coordenadora de Vendas — Fit You</p>
+                    <div class="sos-status">Online agora</div>
+                </div>
+            </div>
+            <div class="sos-chat-area" id="sosChatArea">
+                <div class="sos-msg simone">
+                    <div class="sos-msg-name">Prof. Simone</div>
+                    Olá! 😊 Sou a Simone, coordenadora de vendas da Fit You. Cole a conversa do WhatsApp abaixo ou me pergunte qualquer coisa sobre a academia. Vou te ajudar a encontrar a melhor resposta!
+                </div>
+            </div>
+            <div class="sos-quick-actions">
+                <button class="sos-quick-btn" onclick="sosQuickAsk('Como responder quando o cliente fala que é caro?')">💰 Preço caro</button>
+                <button class="sos-quick-btn" onclick="sosQuickAsk('O cliente usa Gympass, como converter?')">🔄 Convênio</button>
+                <button class="sos-quick-btn" onclick="sosQuickAsk('Como agendar aula experimental?')">🏊 Aula experimental</button>
+                <button class="sos-quick-btn" onclick="sosQuickAsk('Dicas para fechar a venda rapidamente')">⚡ Fechar venda</button>
+            </div>
+            <div class="sos-typing" id="sosTyping"><span></span><span></span><span></span></div>
+            <div class="sos-input-area">
+                <textarea class="sos-input" id="sosInput" placeholder="Cole a conversa ou faça uma pergunta..." rows="1" onkeypress="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendSosMsg();}"></textarea>
+                <button class="sos-send-btn" onclick="sendSosMsg()">➤</button>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- QUIZ -->
+<section class="section" id="quiz">
+    <div class="section-header">
+        <div class="section-tag">Avaliação Final</div>
+        <h2>Teste seus Conhecimentos</h2>
+        <p>Complete o quiz para ganhar seu certificado de conclusão</p>
+    </div>
+    <div class="quiz-container" id="quizContainer"></div>
+</section>
+
+<!-- CERTIFICATE -->
+<section class="certificate-section" id="certificate">
+    <div class="certificate-card" id="certificateCard">
+        <img src="logo-fityou.png" class="cert-logo" alt="Fit You">
+        <h2>Certificado FITYOU</h2>
+        <p>Complete todos os módulos e acerte o quiz para desbloquear</p>
+        <div class="locked-overlay" id="certLocked">
+            <p style="font-size:3rem;margin:20px 0;">🔒</p>
+            <p>Complete o curso para desbloquear</p>
+        </div>
+        <div id="certUnlocked" style="display:none;">
+            <p style="font-size:0.9rem;color:var(--text-secondary);margin-bottom:20px;">
+                Você completou o <strong style="color:var(--primary)">Curso de Vendas da Fit You</strong>!
+            </p>
+            <div style="background:rgba(245,166,35,0.1);border:1px solid rgba(245,166,35,0.2);border-radius:12px;padding:20px;margin:20px 0;">
+                <p style="font-size:1.2rem;font-weight:700;color:var(--accent-gold);">Fit You Academia</p>
+                <p style="font-size:0.9rem;font-weight:600;color:var(--primary);">Certificado de Especialização em Vendas pelo WhatsApp</p>
+                <p style="font-size:0.8rem;color:var(--text-muted);" id="certDate"></p>
+            </div>
+            <button class="btn-primary" onclick="showToast('Certificado baixado! (simulação)')" style="margin-top:15px;">📥 Baixar Certificado</button>
+        </div>
+    </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+    <p><img src="logo-fityou.png" class="footer-logo" alt="Fit You">© 2026 Fit You Academia — Capacitação de Vendas Interna</p>
+    <p style="margin-top:5px;">📍 R. Pedro Colaço, 212 - Piqueri, São Paulo | 📱 (11) 94282-6103</p>
+    <div class="footer-links">
+        <a href="#modulos">Módulos</a>
+        <a href="#templates">Templates</a>
+        <a href="#objecoes">Objeções</a>
+        <a href="#simulador">Simulador IA</a>
+        <a href="#solucoes">Soluções Rápidas</a>
+        <a href="#quiz">Quiz</a>
+    </div>
+</footer>
+
+<!-- LESSON OVERLAY -->
+<div class="lesson-overlay" id="lessonOverlay">
+    <div class="lesson-panel">
+        <div class="lesson-header">
+            <h2 id="lessonTitle">Aula</h2>
+            <button class="lesson-close" onclick="closeLesson()">×</button>
+        </div>
+        <div class="lesson-body" id="lessonBody"></div>
+        <div class="lesson-footer">
+            <button class="lesson-nav-btn lesson-prev" id="lessonPrev" onclick="prevLesson()">← Anterior</button>
+            <div class="lesson-dots" id="lessonDots"></div>
+            <button class="lesson-nav-btn lesson-next" id="lessonNext" onclick="nextLesson()">Próximo →</button>
+        </div>
+    </div>
+</div>
+
+<!-- FLOATING SOS CHARACTER -->
+<div class="sos-char-wrapper" id="sosCharWrapper" onclick="toggleSosFloat()">
+    <div class="sos-char-speech" id="sosCharSpeech">Precisa de ajuda? 😊</div>
+    <img src="simone.png" class="sos-char-img" alt="Prof. Simone">
+    <div class="sos-char-name">Prof. Simone</div>
+</div>
+<div class="sos-float-panel" id="sosFloatPanel">
+    <div class="sos-header">
+        <img src="simone.png" class="sos-avatar" alt="Prof. Simone">
+        <div class="sos-header-info">
+            <h3>Prof. Simone</h3>
+            <p>SOS — Tira-Dúvidas</p>
+            <div class="sos-status">Online agora</div>
+        </div>
+    </div>
+    <div class="sos-chat-area" id="sosFloatChatArea">
+        <div class="sos-msg simone">
+            <div class="sos-msg-name">Prof. Simone</div>
+            Oi! 😊 Tô aqui pra te ajudar! Pode mandar sua dúvida sobre a academia ou o curso de vendas.
+        </div>
+    </div>
+    <div class="sos-quick-actions">
+        <button class="sos-quick-btn" onclick="sosFloatQuickAsk('Quais são as modalidades da Fit You?')">Modalidades</button>
+        <button class="sos-quick-btn" onclick="sosFloatQuickAsk('Quais objeções eu posso ter e como responder?')">Objeções</button>
+        <button class="sos-quick-btn" onclick="sosFloatQuickAsk('Como funciona a piscina?')">Piscina</button>
+    </div>
+    <div class="sos-typing" id="sosFloatTyping"><span></span><span></span><span></span></div>
+    <div class="sos-input-area">
+        <textarea class="sos-input" id="sosFloatInput" placeholder="Digite sua dúvida..." rows="1" onkeypress="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendSosFloatMsg();}"></textarea>
+        <button class="sos-send-btn" onclick="sendSosFloatMsg()">➤</button>
+    </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+if ('scrollRestoration' in history) { history.scrollRestoration = 'manual'; }
+window.scrollTo(0, 0);
+// ===== MODULES DATA =====
+const modulesData = [
+{
+    id: 1,
+    title: "Conhecendo a Fit You",
+    description: "Estrutura, modalidades, diferenciais e o público que você vai atender todos os dias.",
+    topics: ["Estrutura", "Modalidades", "Piscina", "Diferenciais"],
+    bgImage: "recepcao.jpg",
+    lessons: [
+    {
+        title: "A Fit You por Dentro",
+        content: `
+        <h3>Conhecendo a Fit You por Dentro</h3>
+        <p>Para vender bem, você precisa <strong>conhecer profundamente</strong> o que oferece. Aqui na Fit You, temos algo que poucas academias de bairro entregam: excelência no atendimento e uma área aquática referência no Piqueri.</p>
+
+        <div class="plan-box">
+        <h4>📍 Informações da Academia</h4>
+        <p><strong>Endereço:</strong> R. Pedro Colaço, 212 - Piqueri, São Paulo - SP, 02912-010</p>
+        <p><strong>WhatsApp:</strong> (11) 2640-9455 / (11) 94282-6103</p>
+        <p><strong>Horários:</strong> Seg-Sex das 06h às 22h | Sáb das 07h30 às 12h</p>
+        <p><strong>Localização:</strong> Próximo da ponte do Piqueri, na mesma rua da Quadra GDR e Escola Municipal Pio XII</p>
+        </div>
+
+        <h4>Nossas Modalidades</h4>
+        <ul>
+        <li><strong>Natação Adulto</strong> — Iniciante ao avançado, 3 aulas/semana + sábado</li>
+        <li><strong>Natação Infantil</strong> — A partir de 1 ano, turmas manhã/tarde/sábado</li>
+        <li><strong>Natação Baby</strong> — Bebês de 1 aninho, adulto entra na água junto</li>
+        <li><strong>Musculação</strong> — Equipamentos completos, orientação personalizada</li>
+        <li><strong>Hidroginástica</strong> — Seg-Sex, sem agendamento</li>
+        <li><strong>Muay Thai</strong> — Seg e Qua às 19h (a partir de 8 anos)</li>
+        <li><strong>Morganti (Jiu Jitsu)</strong> — Seg e Qua às 20h30 (a partir de 8 anos)</li>
+        </ul>
+
+        <div class="tip-box">
+        <h4>💡 Venda cruzada</h4>
+        <p>Lembre: fechando <strong>qualquer</strong> plano, o aluno ganha acesso livre à sala de musculação. Isso é um diferencial enorme — sempre mencione!</p>
+        </div>`
+    },
+    {
+        title: "A Piscina e seus Diferenciais",
+        content: `
+        <h3>Nossa Piscina: O Grande Diferencial</h3>
+        <p>A área aquática é nosso maior orgulho e o que mais converte vendas. Quando o lead conhece a piscina, a venda fica muito mais fácil.</p>
+
+        <div class="plan-box">
+        <h4>🏊 Dados da Piscina</h4>
+        <p><strong>Tratamento:</strong> Sistema de ionização (sem cloro agressivo) — tratamento 24h</p>
+        <p><strong>Temperatura:</strong> 29°C a 32°C o ano inteiro (média 30°C)</p>
+        <p><strong>Piscina Grande:</strong> 20 metros, profundidade de 0,80m a 1,65m, 1,80m por raia</p>
+        <p><strong>Piscina de Bebês:</strong> 80cm de profundidade</p>
+        <p><strong>Limite:</strong> Máximo 3 alunos por raia (nunca mais!)</p>
+        </div>
+
+        <h4>Por que isso importa na venda?</h4>
+        <ul>
+        <li><strong>Ionização:</strong> "Nossa piscina não cheira a cloro e não resseca a pele. É tecnologia que cuida da saúde dos alunos."</li>
+        <li><strong>3 por raia:</strong> "Diferente de academias que lotam a piscina, aqui cada aluno tem atenção individual do professor."</li>
+        <li><strong>Temperatura:</strong> "Água sempre a 30°C — confortável o ano inteiro, inclusive para idosos e crianças."</li>
+        <li><strong>Agendamento:</strong> "As aulas são por agendamento, então garantimos vaga e qualidade em cada aula."</li>
+        </ul>
+
+        <div class="example-box">
+        <h4>📝 Frase de venda</h4>
+        <div class="example-chat">
+        <div class="chat-bubble sent">Nossa piscina é automatizada com ionização — sem cloro agressivo. A água fica a 30°C o ano inteiro e nunca lotamos: máximo 3 alunos por raia. Isso garante atenção individual do professor em cada aluno.</div>
+        </div>
+        </div>
+
+        <div class="wrong-box">
+        <h4>❌ Nunca diga</h4>
+        <p>"Nossa piscina é boa" — isso é genérico. Sempre use dados específicos: ionização, temperatura, limite de alunos por raia.</p>
+        </div>`
+    },
+    {
+        title: "Os Planos e Tipos de Contrato",
+        content: `
+        <h3>Planos e Tipos de Contrato</h3>
+        <p>Entender os 3 tipos de contrato é essencial para explicar ao cliente e escolher o que melhor se encaixa na necessidade dele.</p>
+
+        <div class="tip-box">
+        <h4>📋 Planos Vigentes 2026</h4>
+        </div>
+
+        <table class="plan-table">
+        <tr><th>Plano</th><th>Anual (12x)</th><th>Recorrente</th><th>Mensal</th></tr>
+        <tr><td>Natação Adulto</td><td>R$ 179,99</td><td>R$ 189,99</td><td>R$ 199,99</td></tr>
+        <tr><td>Natação Infantil (2x/sem)</td><td>R$ 189,99</td><td>R$ 199,99</td><td>R$ 209,99</td></tr>
+        <tr><td>Natação Infantil (Sábado)</td><td>R$ 169,99</td><td>R$ 179,99</td><td>R$ 189,99</td></tr>
+        <tr><td>Hidroginástica</td><td>R$ 169,99</td><td>R$ 179,99</td><td>R$ 189,99</td></tr>
+        <tr><td>Muay Thai</td><td>R$ 139,99</td><td>R$ 149,99</td><td>R$ 159,99</td></tr>
+        <tr><td>Morganti (JJ)</td><td>R$ 139,99</td><td>R$ 149,99</td><td>R$ 159,99</td></tr>
+        <tr><td><strong>Gold Completo</strong></td><td><strong>R$ 239,99</strong></td><td><strong>R$ 249,99</strong></td><td><strong>R$ 259,99</strong></td></tr>
+        </table>
+
+        <p style="margin-top:15px;font-size:0.85rem;color:var(--text-muted);">Todos os planos incluem acesso livre à musculação.</p>
+
+        <h4>Tipos de Contrato</h4>
+        <ul>
+        <li><strong>Plano Anual:</strong> Cartão de crédito. Parcelamos em 12x na maquininha. Cancelamento antes do prazo gera multa de 10% + R$200 de taxa. Direito a 30 dias de congelamento.</li>
+        <li><strong>Venda Recorrente:</strong> Cartão de crédito sem comprometer limite. Débito automático mês a mês. Após 2 meses, pode cancelar com 30 dias de antecedência sem multa.</li>
+        <li><strong>Plano Mensal:</strong> Crédito, débito ou PIX. Sem fidelidade. Sem renovação automática.</li>
+        </ul>
+
+        <div class="tip-box">
+        <h4>💡 Dica de ouro</h4>
+        <p>Sempre comece apresentando o <strong>Plano Anual</strong> (melhor preço). Depois ofereça o Recorrente como alternativa. O Mensal é a última opção — pois é o mais caro.</p>
+        </div>`
+    }
+    ]
+},
+{
+    id: 2,
+    title: "Psicologia da Venda de Academia",
+    description: "Gatilhos mentais que fazem o lead decidir fechar o plano agora.",
+    topics: ["Escassez", "Prova Social", "Urgência", "Autoridade"],
+    bgImage: "atendimento.png",
+    lessons: [
+    {
+        title: "Gatilhos que Funcionam para Planos",
+        content: `
+        <h3>Gatilhos Mentais para Vender Planos</h3>
+        <p>Vender plano de academia é diferente de vender um produto digital. O lead está investindo em <strong>si mesmo</strong> — e isso gera muita resistência. Use os gatilhos certos para facilitar a decisão.</p>
+
+        <h4>🏊 Escassez (Vagas Limitadas)</h4>
+        <p>Nossa natação tem <strong>limite de vagas por turma</strong> (máximo 3 por raia). Isso é escassez REAL — use isso a seu favor!</p>
+        <ul>
+        <li>"Essa turma de natação infantil já tem 2 vagas preenchidas. Consigo segurar uma pra você até amanhã?"</li>
+        <li>"A turma de sábado está LOTADA — só temos lista de espera. Mas na semana ainda tem vaga."</li>
+        <li>"As turmas de bebê são muito limitadas. Estamos estudando abrir mais uma, mas a prioridade será para quem já está na fila."</li>
+        </ul>
+
+        <h4>🏆 Prova Social</h4>
+        <ul>
+        <li>"Nossa escola de natação segue metodologia própria — as crianças passam por 3 a 4 avaliações por ano e recebem medalhas e certificados a cada ciclo."</li>
+        <li>"As turmas são divididas por nível de graduação, não apenas por idade. Cada nível tem uma cor de touca diferente."</li>
+        <li>"Muitas famílias que começaram com um plano já indicaram parentes e amigos. A maioria dos nossos alunos vem de indicação."</li>
+        </ul>
+
+        <h4>⏰ Urgência</h4>
+        <ul>
+        <li>"Essa condição especial é válida até [data]. Depois volta ao valor normal."</li>
+        <li>"Se fechar hoje, a aula experimental de R$50 é descontada do plano."</li>
+        </ul>
+
+        <h4>🎓 Autoridade</h4>
+        <ul>
+        <li>"Nossa piscina é automatizada com ionização — tecnologia usada em parques aquáticos. Não é qualquer academia que tem isso."</li>
+        <li>"Trabalhamos com agendamento e limite de alunos por aula. Isso garante resultado real."</li>
+        </ul>
+
+        <div class="example-box">
+        <h4>📝 Combinando gatilhos</h4>
+        <div class="example-chat">
+        <div class="chat-bubble sent">[Nome], a turma de natação da sua filha tem apenas 2 vagas restantes. E esse mês estamos com condição especial — se fechar até sexta, ganha a aula experimental de R$50 de desconto. Quer que eu segure uma vaga?</div>
+        </div>
+        <p style="margin-top:10px;font-size:0.85rem;color:var(--text-muted);">Escassez (2 vagas) + Urgência (até sexta) + Incentivo (desconto da aula experimental)</p>
+        </div>`
+    },
+    {
+        title: "A Importância da Aula Experimental",
+        content: `
+        <h3>A Aula Experimental: Sua Arma Secreta</h3>
+        <p>A aula experimental é a ferramenta mais poderosa para fechar vendas na natação. Quando o lead/vai sentir a qualidade da água, ver a estrutura e sentir o atendimento, a venda fica muito mais fácil.</p>
+
+        <div class="plan-box">
+        <h4>🧪 Regras da Aula Experimental</h4>
+        <p><strong>Valor:</strong> R$ 50,00</p>
+        <p><strong>Condição:</strong> Se fechar qualquer plano no mesmo dia, o valor é descontado</p>
+        <p><strong>Itens obrigatórios:</strong> sunga/maiô, touca de natação e óculos de natação</p>
+        </div>
+
+        <h4>Como oferecer a aula experimental</h4>
+        <ul>
+        <li><strong>Nunca comece pela aula experimental.</strong> Primeiro entenda a necessidade, depois ofereça.</li>
+        <li><strong>Enquadre como "oportunidade":</strong> "Se quiser conhecer antes de decidir, podemos agendar uma aula teste por R$50 — e se fechar o plano, esse valor é descontado."</li>
+        <li><strong>Use para eliminar objeções:</strong> "Seja honesta: faça aulas testes em outras piscinas também. Conhecer é sempre bom. Mas sobre a qualidade da água e o tratamento, nossa ionização é referência."</li>
+        </ul>
+
+        <div class="example-box">
+        <h4>📝 Script completo</h4>
+        <div class="example-chat">
+        <div class="chat-bubble sent">Que tal agendar uma aula experimental? Custa R$50, mas se você fechar qualquer plano no mesmo dia, esse valor é descontado. Assim você conhece nossa piscina, nossa metodologia e vê a qualidade da água por conta própria. Topa?</div>
+        </div>
+        </div>
+
+        <div class="tip-box">
+        <h4>💡 Para natação infantil</h4>
+        <p>Pergunte sempre: a criança já fez natação antes? É a primeira vez? Possui alguma restrição médica? Essas perguntas mostram profissionalismo e geram confiança.</p>
+        </div>`
+    }
+    ]
+},
+{
+    id: 3,
+    title: "Fluxo de Venda Completo",
+    description: "Do primeiro contato ao fechamento — passo a passo para cada modalidade.",
+    topics: ["Primeiro Contato", "Qualificação", "Follow-up", "Fechamento"],
+    bgImage: "atendimento.png",
+    lessons: [
+    {
+        title: "Primeiro Contato e Qualificação",
+        content: `
+        <h3>Primeiro Contato: A Regra de Ouro</h3>
+        <p>Quando um lead entra em contato, <strong>responda em até 5 minutos</strong>. Leads de academia esfriam rápido — se você demorar, ele já procurou outra academia.</p>
+
+        <h4>Abertura padrão</h4>
+        <div class="example-box">
+        <h4>📝 Mensagem de boas-vindas</h4>
+        <div class="example-chat">
+        <div class="chat-bubble sent">Bom dia! Esse é o contato oficial da academia Fit You. Todas as dúvidas serão sanadas a partir deste contato! 😊 Em que posso te ajudar?</div>
+        </div>
+        </div>
+
+        <h4>Perguntas de qualificação por modalidade</h4>
+
+        <p><strong>Para Natação Adulto:</strong></p>
+        <ul>
+        <li>"Já fez aulas de natação antes ou é iniciante?"</li>
+        <li>"Qual seu objetivo: saúde, lazer ou aprendizado técnico?"</li>
+        </ul>
+
+        <p><strong>Para Natação Infantil:</strong></p>
+        <ul>
+        <li>"Qual a idade da criança?"</li>
+        <li>"A criança já fez natação ou seria a primeira vez?"</li>
+        <li>"Possui alguma restrição médica ou está passando por algum tratamento?"</li>
+        </ul>
+
+        <p><strong>Para Musculação / Hidro / Lutas:</strong></p>
+        <ul>
+        <li>"Você já treina ou seria a primeira vez?"</li>
+        <li>"Qual modalidade te interessa mais?"</li>
+        </ul>
+
+        <p><strong>Para todos:</strong></p>
+        <ul>
+        <li>"Você possui algum convênio como Wellhub (Gympass) ou Totalpass?"</li>
+        </ul>
+
+        <div class="tip-box">
+        <h4>💡 Por que perguntar sobre convênio?</h4>
+        <p>Se o lead tem Wellhub Silver+ ou Totalpass TP3, ele já tem acesso. Mas podemos oferecer o plano direto como opção mais vantajosa. Nunca ignore essa pergunta!</p>
+        </div>`
+    },
+    {
+        title: "Apresentação e Follow-up",
+        content: `
+        <h3>Apresentando o Plano Certo</h3>
+        <p>Depois de qualificar, apresente o plano que mais faz sentido para o lead. <strong>Nunca mande a tabela inteira</strong> — escolha o plano ideal e destaque os benefícios.</p>
+
+        <h4>Apresentação por perfil</h4>
+        <ul>
+        <li><strong>Adulto que nunca nadou:</strong> Foque na aula experimental e na turma de iniciantes. "Temos turmas separadas para iniciantes, com professor dedicado."</li>
+        <li><strong>Pai/mãe de criança:</strong> Foque na metodologia, toucas coloridas, avaliações e medalhas. "Sua filha vai adorar — cada nível tem uma cor de touca e ao completar ganha medalha e certificado."</li>
+        <li><strong>Pessoa que treina musculação:</strong> Foque na venda cruzada. "Fechando natação, ganha musculação gratuita. São dois treinos pelo preço de um."</li>
+        </ul>
+
+        <h4>Follow-up que funciona</h4>
+        <p>Cronograma para leads que não fecharam:</p>
+        <ul>
+        <li><strong>Dia 1:</strong> "Oi [nome], tudo bem? Vim só confirmar se teve alguma dúvida sobre o plano que conversamos."</li>
+        <li><strong>Dia 3:</strong> "Preparei um vídeo mostrando nossa piscina e como funciona a aula. Quer que eu te envie?"</li>
+        <li><strong>Dia 5:</strong> "A condição especial que te passei ainda está valendo até [data]. Quer que eu segure pra você?"</li>
+        <li><strong>Dia 7:</strong> "Sem pressa! Mas queria te avisar que as turmas estão lotando. Se quiser garantir vaga, me avisa."</li>
+        </ul>
+
+        <div class="example-box">
+        <h4>📝 Template de envio de valores</h4>
+        <div class="example-chat">
+        <div class="chat-bubble sent">Esses são os planos vigentes para natação adulto, [nome]:</div>
+        <div class="chat-bubble sent">*Plano Anual* — 12x R$179,99 + musculação gratuita
+*Venda Recorrente* — 12x R$189,99 (sem multa após 2 meses)
+*Plano Mensal* — R$199,99 (sem fidelidade)
+
+Lembrando que fechando qualquer plano, você ganha acesso livre à sala de musculação! 💪
+
+Qual plano faz mais sentido pra você?</div>
+        </div>
+        </div>`
+    }
+    ]
+},
+{
+    id: 4,
+    title: "Venda por Modalidade",
+    description: "Scripts específicos para cada modalidade: natação adulto, infantil, baby, musculação, hidro e lutas.",
+    topics: ["Natação Adulto", "Infantil", "Baby", "Musculação", "Lutas"],
+    bgImage: "piscina.png",
+    lessons: [
+    {
+        title: "Natação Adulto",
+        content: `
+        <h3>Venda de Natação Adulto</h3>
+        <p>A natação adulto é a modalidade mais vendida. O lead geralmente vem com uma dessas motivações: saúde, emagrecimento, lazer ou aprendizado técnico.</p>
+
+        <h4>Script de atendimento</h4>
+        <div class="example-box">
+        <h4>📝 Conversa completa</h4>
+        <div class="example-chat">
+        <div class="chat-bubble received">Oi, quero saber sobre aulas de natação</div>
+        <div class="chat-bubble sent">Claro! Me conta: você já pratica natação ou seria a primeira vez?</div>
+        <div class="chat-bubble received">Nunca nadei, quero começar por saúde</div>
+        <div class="chat-bubble sent">Que ótimo! A natação é o melhor exercício para quem busca saúde — trabalha todo o corpo sem impacto. Temos turmas separadas para iniciantes, com professor dedicado. Você prefere manhã, tarde ou noite?</div>
+        <div class="chat-bubble received">Tarde funciona melhor</div>
+        <div class="chat-bubble sent">Perfeito! Na tarde temos turmas de segunda, quarta e sexta. São 3 aulas por semana + uma extra aos sábados. E fechando qualquer plano, você ganha acesso livre à musculação também! 💪 Quer que eu agende uma aula experimental pra você conhecer?</div>
+        </div>
+        </div>
+
+        <h4>Destaques para mencionar</h4>
+        <ul>
+        <li>Turmas separadas por nível (iniciante, intermediário, avançado)</li>
+        <li>Máximo 3 alunos por raia — atenção individual</li>
+        <li>3 aulas/semana + sábado + musculação gratuita</li>
+        <li>Piscina com ionização (sem cloro agressivo)</li>
+        <li>Agendamento pelo app Next Fit</li>
+        </ul>`
+    },
+    {
+        title: "Natação Infantil e Baby",
+        content: `
+        <h3>Venda de Natação Infantil</h3>
+        <p>Aqui o décisor é o <strong>pai ou mãe</strong>. Eles se preocupam com: segurança, metodologia, evolução da criança e se o professor é qualificado.</p>
+
+        <h4>Script para mãe/pai de criança</h4>
+        <div class="example-box">
+        <h4>📝 Conversa completa</h4>
+        <div class="example-chat">
+        <div class="chat-bubble received">Oi, quero matricular minha filha de 5 anos na natação</div>
+        <div class="chat-bubble sent">Que idade linda! 🏊‍♀️ Ela já fez aulas antes ou seria a primeira vez?</div>
+        <div class="chat-bubble received">Primeira vez</div>
+        <div class="chat-bubble sent">Perfeito! Vou te explicar como funciona nossa escola:</div>
+        <div class="chat-bubble sent">A Fit You segue uma metodologia própria de ensino. As turmas são divididas por NÍVEL de graduação (não só por idade). Cada nível tem uma cor de touca diferente — e elas adoram isso!</div>
+        <div class="chat-bubble sent">As crianças passam por 3 a 4 avaliações por ano. Vocês recebem cada atualização pra acompanhar a evolução. E ao completar cada ciclo, a criança ganha medalha e certificado! 🏅</div>
+        <div class="chat-bubble received">Isso é muito legal! E os horários?</div>
+        <div class="chat-bubble sent">Temos turmas de manhã, tarde e final da tarde durante a semana (2 aulas por semana). E aos sábados (1 aula). Qual período fica melhor pra vocês?</div>
+        </div>
+        </div>
+
+        <h4>Para Natação Baby (1 aninho)</h4>
+        <ul>
+        <li>Um dos responsáveis <strong>entra na piscina</strong> junto com o bebê</li>
+        <li>Se usar fralda: precisa ser fralda própria para piscina</li>
+        <li>Aulas de 30 minutos (bebês) ou 45 minutos (maiores de 4 anos)</li>
+        <li>Turmas: Seg/Qua 18h50 ou 19h25 | Sáb 10h30 ou 11h</li>
+        </ul>
+
+        <div class="tip-box">
+        <h4>💡 Objeção comum de mães</h4>
+        <p>"Minha filha é muito pequena" → "Nossas aulas de baby começam a partir de 1 ano justamente porque o ciclo de vacinas está mais fortalecido e a criança já responde aos comandos. E o melhor: você entra na água junto, então está sempre perto."</p>
+        </div>`
+    },
+    {
+        title: "Musculação, Hidro e Lutas",
+        content: `
+        <h3>Musculação</h3>
+        <p>Somos academia de bairro com atendimento <strong>próximo e diferenciado</strong>. O professor sempre está disponível para montar treinos e acompanhar cada aluno.</p>
+
+        <div class="example-box">
+        <h4>📝 Para quem perguta sobre musculação</h4>
+        <div class="example-chat">
+        <div class="chat-bubble sent">Somos uma academia de bairro — diferente das grandes redes, aqui o professor está sempre disponível pra montar seu treino conforme seu objetivo e te acompanhar de perto. E o melhor: se você fechar qualquer plano de natação ou hidro, a musculação já está inclusa!</div>
+        </div>
+        </div>
+
+        <h4>Hidroginástica</h4>
+        <ul>
+        <li>Segunda a sexta, sem necessidade de agendamento</li>
+        <li>Só fazer check-in na recepção</li>
+        <li>Ideal para idosos e pessoas com limitação de movimento</li>
+        <li>Gympass/Totalpass: sem necessidade de agendamento</li>
+        </ul>
+
+        <h4>Lutas</h4>
+        <ul>
+        <li><strong>Muay Thai:</strong> Segunda e quarta às 19h — a partir de 8 anos</li>
+        <li><strong>Morganti (Jiu Jitsu):</strong> Segunda e quarta às 20h30 — a partir de 8 anos</li>
+        <li>Plano Silver no Wellhub cobre lutas</li>
+        </ul>
+
+        <div class="tip-box">
+        <h4>💡 Venda cruzada sempre</h4>
+        <p>"Você sabia que fechando um plano de natação, já ganha musculação grátis? São dois treinos pelo preço de um!"</p>
+        </div>`
+    }
+    ]
+},
+{
+    id: 5,
+    title: "Tratamento de Objeções",
+    description: "As respostas certas para cada desculpa que o lead vai te dar.",
+    topics: ["Preço", "Convênio", "Distância", "Criança pequena", "Experiência ruim"],
+    bgImage: "musculacao.jpg",
+    lessons: [
+    {
+        title: "As 7 Objeções Mais Comuns",
+        content: `
+        <h3>Como Responder Cada Objeção</h3>
+
+        <h4>1. "Natação é muito cara"</h4>
+        <p>Não abaixe o preço. Aumente o valor percebido:</p>
+        <ul>
+        <li>"Entendo! Mas pensa comigo: são 3 aulas de natação por semana + sábado + musculação gratuita. Se fosse separado, sairia muito mais caro."</li>
+        <li>"E se fechar o plano anual, sai por R$179,99/mês. São menos de R$6 por aula de natação + musculação."</li>
+        </ul>
+
+        <h4>2. "Tenho Gympass/Totalpass"</h4>
+        <p>Nunca diga que é ruim. Mostre a vantagem do plano direto:</p>
+        <ul>
+        <li>"Ótimo! Mas saiba que pelo Gympass/Totalpass não seguramos vaga — você tem que agendar um dia antes e pode perder a aula se não tiver vaga."</li>
+        <li>"Com o plano direto, sua vaga é FIXA. Você garante seu horário sem preocupação."</li>
+        <li>"Pelo Silver+ (Wellhub) ou TP3, você consegue natação. Mas sem a garantia de vaga que o plano direto oferece."</li>
+        </ul>
+
+        <h4>3. "Minha filha é muito pequena"</h4>
+        <ul>
+        <li>"Nossas aulas de baby começam a partir de 1 aninho — é a idade ideal porque o ciclo de vacinas já está fortalecido."</li>
+        <li>"E o melhor: você entra na água junto! Então está sempre perto e segura."</li>
+        </ul>
+
+        <h4>4. "É longe da minha casa"</h4>
+        <ul>
+        <li>"Entendo a preocupação. Mas a qualidade da nossa piscina e o atendimento personalizado compensam o deslocamento. Vem conhecer primeiro e me diz se vale a pena."</li>
+        </ul>
+
+        <h4>5. "Já tive experiência ruim em outra academia"</h4>
+        <ul>
+        <li>"Sinto muito! Pode me contar o que aconteceu? Quero entender justamente para não cometer o mesmo erro."</li>
+        <li>"Aqui é diferente: piscina automatizada, turmas com limite de alunos, professor sempre disponível."</li>
+        </ul>
+
+        <h4>6. "Preciso pensar"</h4>
+        <ul>
+        <li>"Claro, pense com calma! Mas me ajuda: o que especificamente te faz pensar? Isso posso esclarecer agora."</li>
+        <li>"A condição especial é válida até [data]. Quando decidir, me avisa antes que expire!"</li>
+        </ul>
+
+        <h4>7. "Preciso consultar meu cônjuge"</h4>
+        <ul>
+        <li>"Com certeza! Se quiser, posso mandar um resumo por aqui pra pessoa ler. Ou podemos fazer uma call rápida com os dois."</li>
+        </ul>`
+    }
+    ]
+},
+{
+    id: 6,
+    title: "Prática e Certificação",
+    description: "Pratique com o simulador IA, teste seus conhecimentos e conquiste seu certificado.",
+    topics: ["Simulador", "Quiz", "Certificado", "Próximos passos"],
+    bgImage: "piscina.png",
+    lessons: [
+    {
+        title: "Próximos Passos",
+        content: `
+        <h3>Você Está Pronto para Vender! 🎉</h3>
+        <p>Agora você tem todo o conhecimento para converter leads em alunos da Fit You pelo WhatsApp.</p>
+
+        <h4>O que você dominou:</h4>
+        <ul>
+        <li>Estrutura, modalidades e diferenciais da Fit You</li>
+        <li>Gatilhos mentais aplicados a planos de academia</li>
+        <li>Fluxo completo de vendas pelo WhatsApp</li>
+        <li>Scripts específicos para cada modalidade</li>
+        <li>Tratamento das objeções mais comuns</li>
+        </ul>
+
+        <div class="tip-box">
+        <h4>🚀 Seu plano de ação</h4>
+        <p>1. Pratique no <strong>Simulador IA</strong> — teste seus conhecimentos com cenários reais</p>
+        <p>2. Complete o <strong>Quiz Final</strong> — acerte 7+ para o certificado</p>
+        <p>3. Salve os <strong>Templates</strong> no WhatsApp — tenha tudo na ponta dos dedos</p>
+        <p>4. Comece a aplicar com leads reais <strong>HOJE</strong></p>
+        </div>
+
+        <div class="example-box">
+        <h4>📝 Dica final</h4>
+        <p>Nosso Wi-Fi: <strong>2RtW8tmVxZ</strong> — use isso com clientes que visitam a academia! E o PIX da academia é pelo CNPJ: 10.575.732/0001-63 (PIQUERI NATAÇÃO / FIT YOU ACADEMIA).</p>
+        </div>`
+    }
+    ]
+}
+];
+
+// ===== TEMPLATES =====
+const templatesData = [
+    { icon: "👋", color: "rgba(255,107,44,0.15)", title: "Boas-Vindas (Primeiro Contato)", description: "Mensagem automática para quem entra em contato", text: "Bom dia!\nEsse é o nosso contato oficial da academia Fit You.\nTodas as dúvidas serão sanadas a partir deste contato!\nNossas atividades disponíveis são: Musculação, Natação Adulto/Infantil, Hidroginástica e Lutas.\nEm que posso te ajudar? 😊" },
+    { icon: "🏊", color: "rgba(33,150,243,0.15)", title: "Natação Adulto — Apresentação", description: "Para leads interessados em natação", text: "Que ótimo! A natação é excelente para saúde — trabalha todo o corpo sem impacto.\nAqui na Fit You temos:\n\n✅ Turmas separadas por nível (iniciante ao avançado)\n✅ Máximo 3 alunos por raia\n✅ 3 aulas/semana + sábado\n✅ Piscina com ionização (sem cloro agressivo)\n✅ Acesso livre à musculação incluso\n\nQuer agendar uma aula experimental? Custa R$50 e se fechar o plano, é descontado!" },
+    { icon: "👶", color: "rgba(245,166,35,0.15)", title: "Natação Infantil — Metodologia", description: "Para pais que querem matricular filhos", text: "Vou te explicar como funciona nossa Escola de Natação!\n\nA Fit You segue uma metodologia própria de ensino:\n\n🎯 Turmas divididas por NÍVEL de graduação\n🎽 Cada nível tem uma cor de touca diferente\n📊 3 a 4 avaliações por ano\n🏅 Medalha e certificado a cada ciclo completado\n📅 Horários fixos (manhã, tarde ou final da tarde)\n\nDurante a semana: 2 aulas por semana\nSábados: 1 aula por semana\n\nQual período fica melhor pra vocês?" },
+    { icon: "👶", color: "rgba(255,107,44,0.15)", title: "Natação Baby", description: "Para bebês a partir de 1 ano", text: "Nossas aulas de baby são incríveis! 🥰\n\n👶 A partir de 1 aninho de idade\n🏊 Um dos responsáveis entra na água junto\n⏱️ 30 min (até 4 anos) ou 45 min (4+ anos)\n\nHorários:\nSeg/Qua: 18h50 ou 19h25\nSáb: 10h30 ou 11h\n\nObs: Se a criança ainda usa fralda, precisa ser fralda própria para piscina.\n\nQual turma fica melhor pra vocês?" },
+    { icon: "📋", color: "rgba(33,150,243,0.15)", title: "Envio de Planos e Valores", description: "Quando o lead pergunta preços", text: "Esses são os planos que temos vigentes:\n\n🏊 *Natação Adulto*\nAnual: 12x R$179,99\nRecorrente: 12x R$189,99\nMensal: R$199,99\n\n👶 *Natação Infantil (2x/sem)*\nAnual: 12x R$189,99\n\n👶 *Natação Infantil (Sáb)*\nAnual: 12x R$169,99\n\n💪 *Gold Completo*\nAnual: 12x R$239,99\n(Todas as atividades + musculação)\n\nLembrando: fechando qualquer plano, você ganha acesso livre à musculação! 💪\n\nQual plano faz mais sentido pra você?" },
+    { icon: "🧪", color: "rgba(245,166,35,0.15)", title: "Aula Experimental", description: "Convite para aula teste", text: "Que tal conhecer antes de decidir?\n\nAgendamos uma aula experimental por R$50,00.\nSe você fechar qualquer plano no mesmo dia, esse valor é descontado!\n\nAssim você:\n✅ Conhece nossa piscina e a qualidade da água\n✅ Sente a metodologia do professor\n✅ Vê a estrutura completa\n\nItens necessários para a aula:\n👙 Sunga/maiô\n🧢 Touca de natação\n🥽 Óculos de natação\n\nTopa? Vamos agendar?" },
+    { icon: "⏰", color: "rgba(255,107,44,0.15)", title: "Follow-up com Urgência", description: "Para leads que não fecharam", text: "Oi [nome]! Tudo bem? 😊\n\nSem querer incomodar, mas queria te atualizar: a condição especial que te passei ainda está valendo até [DATA].\n\nSei que você está avalindo, mas não queria que você perdesse essa oportunidade.\n\nPosso te ajudar com alguma dúvida que esteja te impedindo de avançar?" },
+    { icon: "🔄", color: "rgba(37,211,102,0.15)", title: "Reativação de Ex-Aluno", description: "Para alunos que cancelaram ou saíram", text: "Ei! Já pensou em voltar pra Fit You? 👀\n\nEstamos com condição especial exclusiva pra ex-alunos.\n\nNossa natação é referência no Piqueri: baby, infantil e adulto, pra saúde, bem-estar e qualidade de vida 💦\n\nBora retomar os treinos? 🔥" },
+    { icon: "📅", color: "rgba(33,150,243,0.15)", title: "Confirmação de Aula Experimental", description: "Lembrete véspera da aula", text: "Bom dia [nome], tudo bem?\n\nPassando pra confirmar se está tudo certo para sua aula experimental de natação amanhã as [HORA].\n\nPosso confirmar aqui na agenda?\n\n📍 Lembrete: traga sunga/maiô, touca e óculos de natação!" },
+    { icon: "📱", color: "rgba(245,166,35,0.15)", title: "Explicação do App Next Fit", description: "Após matrícula do aluno", text: "Vou te explicar como funciona o agendamento das aulas de natação após sua matrícula:\n\n1️⃣ Baixe o app *Next Fit*\n2️⃣ Vá na aba *Agendamentos*\n3️⃣ As reservas abrem 24h antes de cada aula\n4️⃣ Você pode fazer 3 agendamentos por semana\n\nSe quiser vir aos sábados (4ª aula), nos mande mensagem na sexta — o agendamento do sábado fazemos por aqui!\n\nDúvidas? É só chamar! 😊" }
+];
+
+// ===== OBJECTIONS =====
+const objectionsData = [
+    { question: "Natação é muito cara", icon: "💰", answer: `<p>O lead não está dizendo que não tem dinheiro — ele ainda não viu <strong>valor suficiente</strong>.</p><ul><li>"Entendeo valor percebido antes de falar de desconto.</p><ul><li>"Entendo. Mas pensa: 3 aulas/semana + sábado + musculação gratuita. São menos de R$6 por aula completa. E o plano anual sai por R$179,99."</li><li>"Comparado com outras academias com piscina, nosso custo-benefício é muito superior. E a qualidade da água com ionização, você não encontra em qualquer lugar."</li></ul>` },
+    { question: "Tenho Gympass / Totalpass", icon: "📱", answer: `<p>O plano direto oferece <strong>mais vantagens</strong> que o convênio.</p><ul><li>"Pelo convênio, você não garante vaga fixa — tem que agendar um dia antes e pode perder a aula."</li><li>"Com o plano direto, sua vaga é FIXA e garantida. Sem stress."</li><li>"Além disso, o convênio cobra Silver+ ou TP3 para natal — e mesmo assim você fica sujeito à disponibilidade."</li></ul>` },
+    { question: "Minha filha é muito pequena", icon: "👶", answer: `<p>Mostre que é seguro e natural.</p><ul><li>"Nossas aulas de baby começam a partir de 1 aninho — é a idade certa porque o ciclo de vacinas já está fortalecido."</li><li>"E o melhor: você entra na água junto! Então está sempre perto e segura."</li><li>"As crianças adoram — cada nível tem uma cor de touca, ganham medalhas e certificados. É super legal!"</li></ul>` },
+    { question: "É longe da minha casa", icon: "🚗", answer: `<p>Mostre que a qualidade compensa.</p><ul><li>"Entendo. Mas vem conhecer primeiro — quando você ver a piscina e sentir a qualidade da água, vai entender por que nossos alunos não trocam."</li><li>"Aqui é referência em natação no Piqueri. Piscina com ionização, turmas com limite de alunos, professor dedicado... Isso você não encontra em qualquer lugar."</li></ul>` },
+    { question: "Já tive experiência ruim em outra academia", icon: "😔", answer: `<p>Empatia primeiro, depois diferencial.</p><ul><li>"Sinto muito! Pode me contar o que aconteceu? Quero entender justamente para garantir que aqui será diferente."</li><li>"Aqui é diferente: piscina automatizada, máximo 3 por raia, professor sempre disponível. E se quiser testar, aula experimental de R$50 — desconta ao fechar."</li></ul>` },
+    { question: "Preciso pensar / consultar meu cônjuge", icon: "🤔", answer: `<p>Descubra a objeção real.</p><ul><li>"Claro, pense com calma! Mas me ajuda: o que especificamente te faz pensar? Posso esclarecer agora."</li><li>"A condição é válida até [data]. Se precisar, posso mandar um resumo da proposta pra pessoa ler."</li><li>"Se você tivesse certeza de que funciona, compraria hoje?"</li></ul>` },
+    { question: "Não tenho tempo", icon: "⏰", answer: `<p>Reframe: é justamente por não ter tempo.</p><ul><li>"Justamente por não ter tempo que a natação é perfeita — é o exercício mais completo e eficiente que existe."</li><li>"São apenas 3 aulas por semana. E com musculação inclusa, você resolve tudo num só lugar."</li></ul>` }
+];
+
+// ===== QUIZ =====
+const quizData = [
+    { question: "Qual o tratamento de água da piscina da Fit You?", options: ["Cloro comum", "Bromação", "Ionização (tecnologia moderna)", "Salinização"], correct: 2, explanation: "A Fit You utiliza sistema de ionização — uma tecnologia moderna que reduz o uso de produtos químicos agressivos." },
+    { question: "Quantos alunos podem ter por raia na natação?", options: ["5", "4", "3", "Ilimitado"], correct: 2, explanation: "Máximo 3 alunos por raia. Isso garante atenção individual do professor." },
+    { question: "Qual é o valor da aula experimental de natação?", options: ["Grátis", "R$ 30,00", "R$ 50,00", "R$ 80,00"], correct: 2, explanation: "A aula experimental custa R$50,00 — e esse valor é descontado se o aluno fechar qualquer plano no mesmo dia." },
+    { question: "A partir de que idade começam as aulas de natação infantil?", options: ["6 meses", "1 ano", "2 anos", "3 anos"], correct: 1, explanation: "As aulas começam a partir de 1 aninho — é a idade ideal pois o ciclo de vacinas já está mais fortalecido." },
+    { question: "Qual plano inclui TODAS as atividades da Fit You?", options: ["Plano Anual", "Plano Silver", "Plano Gold Completo", "Plano Mensal"], correct: 2, explanation: "O Plano Gold Completo dá acesso a todas as atividades: natação, hidro, musculação e lutas." },
+    { question: "Quantas aulas por semana o aluno de natação adulto tem?", options: ["1", "2", "3 + sábado", "5"], correct: 2, explanation: "São 3 aulas de segunda a sexta + 1 aula extra aos sábados + acesso à musculação." },
+    { question: "O que acontece se fechar o plano anual antes do prazo?", options: ["Nada acontece", "Perde apenas o mês atual", "Multa de 10% + R$200 de taxa", "Multa de 50%"], correct: 2, explanation: "Multade 10% das parcelas restantes + R$200 de taxa de matrícula e manutenção." },
+    { question: "Como funciona o agendamento das aulas de natação?", options: ["Na recepção, presencialmente", "Pelo app Next Fit, 24h antes", "Por e-mail", "Não precisa agendar"], correct: 1, explanation: "O agendamento é pelo app Next Fit — as reservas abrem 24h antes do início de cada aula." },
+    { question: "Para natação infantil, a Fit You divide as turmas por:", options: ["Apenas idade", "Nível de graduação (cor de touca)", "Peso da criança", "Horário disponível"], correct: 1, explanation: "As turmas são divididas por NÍVEL de graduação, não apenas por idade. Cada nível tem uma cor de touca diferente." },
+    { question: "Qual a temperatura da água da piscina da Fit You?", options: ["24°C", "26°C", "30°C (média)", "35°C"], correct: 2, explanation: "A temperatura fica entre 29°C e 32°C, com média de 30°C o ano inteiro." }
+];
+
+// ===== AI SIMULATOR SCENARIOS =====
+const scenariosData = [
+    {
+        title: "Lead pergunta sobre natação (iniciante)",
+        clientName: "Mariana",
+        context: "Mulher de 32 anos, nunca nadou, quer começar por saúde.",
+        openingMessage: "Oi! Vi que vocês têm aulas de natação. Quero começar pra melhorar minha saúde. Como funciona?",
+        bgImage: "piscina.png",
+        aiRules: {
+            mustInclude: ["turma", "iniciante", "aula", "professor", "saúde", "água"],
+            goodPhrases: ["3 aulas", "sábado", "raia", "individual", "ionização", "experimental", "musculação"],
+            badPhrases: ["preço é", "custa R$", "caro", "desconto"],
+            sentimentWords: { positive: ["ótimo", "perfeito", "excelente", "qualidade", "referência"], negative: ["depende", "não sei", "acho que"] },
+            idealLength: { min: 30, max: 400 }
+        },
+        conversationFlow: [
+            { step: 1, triggers: ["turma", "horário", "aula", "iniciante", "funciona", "como"], response: "Perfeito! Temos turmas separadas pra iniciantes, com professor dedicado. Qual horário funciona melhor: manhã, tarde ou noite?" },
+            { step: 2, triggers: ["manhã", "tarde", "noite", "horário", "segunda", "quarta", "sexta", "qualquer"], response: "Na tarde temos turmas de segunda, quarta e sexta — 3 aulas por semana + uma extra aos sábados. E fechando qualquer plano, você ganha acesso livre à musculação! 💪" },
+            { step: 3, triggers: ["legal", "bom", "gostei", "quero", "interesse", "top", "beleza", "ok", "sim", "isso", "perfeito"], response: "Que ótimo! Você pode agendar uma aula experimental pra conhecer nossa piscina. Custa R$50 mas se fechar o plano no mesmo dia, é descontado! Topa?" },
+            { step: 4, triggers: ["top", "sim", "quero", "agendar", "marcar", "pode", "bora", "beleza", "vamos"], response: "Perfeito! Vou te mandar os dias e horários disponíveis. Qual dia da semana fica melhor pra você? 🏊‍♀️" }
+        ]
+    },
+    {
+        title: "Mãe quer matricular filho (medo da segurança)",
+        clientName: "Patrícia",
+        context: "Mãe de criança de 4 anos, primeira vez na natação, superprotetora.",
+        openingMessage: "Oi! Quero matricular meu filho de 4 anos na natação. Vocês têm vagas? Ele nunca fez aula antes e estou com um pouco de medo.",
+        bgImage: "infantil.png",
+        aiRules: {
+            mustInclude: ["idade", "segurança", "professor", "metodologia", "touca", "avaliação"],
+            goodPhrases: ["primeira vez", "iniciante", "metodologia", "graduação", "touca", "medalha", "certificado", "segurança"],
+            badPhrases: ["não sei", "depende", "acho"],
+            sentimentWords: { positive: ["incrível", "legal", "seguro", "profissional", "metodologia"], negative: ["perigo", "risco"] },
+            idealLength: { min: 50, max: 500 }
+        },
+        conversationFlow: [
+            { step: 1, triggers: ["idade", "turma", "horário", "funciona", "como", "aula"], response: "Que idade linda! 🏊‍♀️ Nossa escola de natação é incrível — turmas divididas por NÍVEL de graduação (não só por idade). Cada nível tem uma cor de touca diferente!" },
+            { step: 2, triggers: ["legal", "interessante", "gostei", "e como", "avaliação", "metodologia"], response: "As crianças passam por 3 a 4 avaliações por ano. Vocês recebem cada atualização pra acompanhar a evolução. E ao completar cada ciclo, ganham medalha e certificado! 🏅" },
+            { step: 3, triggers: ["horário", "turma", "dia", "manhã", "tarde", "sábado", "quando"], response: "Temos turmas de manhã, tarde e final da tarde (2 aulas/semana) ou só aos sábados (1 aula). Qual período fica melhor pra vocês?" },
+            { step: 4, triggers: ["tarde", "manhã", "sábado", "qualquer", "pode", "serve"], response: "Perfeito! Quer que eu agende uma aula experimental? Você entra na água junto com ele — fica mais tranquila de ver como funciona na prática! 💕" }
+        ]
+    },
+    {
+        title: "Cliente usa Gympass — converter pra plano direto",
+        clientName: "Carlos",
+        context: "Carlos tem Gympass Silver+ e quer natação. O foco é mostrar vantagens do plano direto sobre o convênio.",
+        openingMessage: "Oi, tudo bem? Eu tenho Gympass e vi que vocês têm natação. Como funciona pelo app?",
+        bgImage: "piscina.png",
+        aiRules: {
+            mustInclude: ["gympass", "silver", "convênio", "plano", "vaga", "fixa", "direto"],
+            goodPhrases: ["vaga fixa", "garantida", "plano direto", "silver+", "melhor", "vantagem", "disponibilidade"],
+            badPhrases: ["não aceita", "ruim", "problema"],
+            sentimentWords: { positive: ["entendo", "ótimo", "vantagem", "melhor", "garantir"], negative: ["problema", "ruim", "não"] },
+            idealLength: { min: 40, max: 400 }
+        },
+        conversationFlow: [
+            { step: 1, triggers: ["gympass", "silver", "app", "convênio", "como"], response: "Boa! Pelo Gympass Silver+ você consegue participar das aulas de natação. Mas tem uma coisa importante: pelas vagas são LIMITADAS e você precisa agendar um dia antes. Às vezes pode não ter vaga." },
+            { step: 2, triggers: ["ah", "entendi", "mas", "problema", "como assim", "vaga"], response: "Com o plano direto da Fit You, sua vaga é FIXA e garantida. Você garante seu horário sem stress. E o melhor: fechando qualquer plano, ganha musculação gratuita! 💪" },
+            { step: 3, triggers: ["quanto", "preço", "valor", "custa", "planos", "vale"], response: "O plano anual de natação sai por 12x R$179,99 — e você garante vaga fixa + musculação. Quer que eu te mande os detalhes?" },
+            { step: 4, triggers: ["sim", "quero", "mandar", "enviar", "ok", "beleza", "pode"], response: "Vou te enviar os planos! E se quiser conhecer antes, a aula experimental de R$50 é uma ótima opção — desconta ao fechar! 🏊‍♂️" }
+        ]
+    },
+    {
+        title: "Cliente monossilábico (difícil)",
+        clientName: "Roberto",
+        context: "Roberto é seco nas respostas, fala pouco. Precisa de paciência e perguntas abertas.",
+        openingMessage: "Oi",
+        bgImage: "musculacao.jpg",
+        aiRules: {
+            mustInclude: ["olá", "oi", "ajudar", "interesse", "modalidade", "como"],
+            goodPhrases: ["pode me contar", "qual", "me conta", "quero entender", "objetivo", "interesse"],
+            badPhrases: ["tá", "ok", "beleza"],
+            sentimentWords: { positive: ["olá", "bom dia", "ajudar", "legal", "ótimo", "quero"], negative: ["nada", "não", "sei"] },
+            idealLength: { min: 20, max: 300 }
+        },
+        conversationFlow: [
+            { step: 1, triggers: ["oi", "ola", "bom", "dia", "tarde", "noite", "hello"], response: "Olá! Tudo bem? 😊 Esse é o contato oficial da Fit You. Em que posso te ajudar? Temos natação, musculação, hidro e lutas!" },
+            { step: 2, triggers: ["natação", "musculação", "hidro", "luta", "academia", "nadar", "treino", "exercício", "quero", "interesse"], response: "Legal! Sobre a natação, por exemplo: temos turmas pra iniciantes, com professor dedicado e máximo 3 alunos por raia. Qual modalidade te interessa mais?" },
+            { step: 3, triggers: ["natação", "adulto", "infantil", "nadar", "aprender", "saúde", "qualquer"], response: "Show! A natação aqui é referência no Piqueri — piscina com ionização (sem cloro agressivo), 30°C o ano inteiro. Quer agendar uma aula experimental pra conhecer?" },
+            { step: 4, triggers: ["sim", "quero", "pode", "agendar", "marcar", "como", "quando", "top"], response: "Perfeito! Vou te mandar os horários disponíveis. Qual dia funciona melhor pra você? 🏊‍♂️" }
+        ]
+    },
+    {
+        title: "Lead desconfiado — já foi em várias academias",
+        clientName: "Ana Paula",
+        context: "Ana Paula já foi em 5 academias e nunca gostou. Muito cética.",
+        openingMessage: "Oi. Já fiz natação em várias academias e sempre me decepciono. O que vocês têm de diferente?",
+        bgImage: "atendimento.png",
+        aiRules: {
+            mustInclude: ["diferencial", "qualidade", "água", "ionização", "raia", "professor", "turma"],
+            goodPhrases: ["ionização", "3 por raia", "individual", "água", "qualidade", "referência", "piscina", "automatizada"],
+            badPhrases: ["depende", "não sei", "talvez"],
+            sentimentWords: { positive: ["entendo", "compreendo", "diferente", "qualidade", "referência", "garantir"], negative: ["problema", "ruim", "péssimo"] },
+            idealLength: { min: 50, max: 400 }
+        },
+        conversationFlow: [
+            { step: 1, triggers: ["diferente", "diferencial", "por que", "qualidade", "compar"], response: "Entendo perfeitamente! Pode me contar o que te decepcionou? Quero entender justamente pra mostrar por que aqui é diferente." },
+            { step: 2, triggers: ["lota", "água", "cloro", "professor", "atendimento", "qualidade", "qualquer"], response: "Nossa piscina é automatizada com IONIZAÇÃO — sem cloro agressivo. Temperatura 30°C o ano inteiro. E o mais importante: máximo 3 alunos por raia. Nunca mais de 3! Isso garante atenção individual." },
+            { step: 3, triggers: ["legal", "interessante", "gostei", "bom", "isso", "ok"], response: "E posso te garantir: se não gostar da primeira aula, te devolvemos o valor. A gente tem tanta confiança na qualidade que assumimos esse risco. Quer agendar uma aula experimental?" },
+            { step: 4, triggers: ["sim", "quero", "top", "agendar", "pode", "bora"], response: "Bora! 🏊‍♀️ Vou te mandar os dias e horários. Qual funciona melhor pra você?" }
+        ]
+    },
+    {
+        title: "Pai quer natação baby (1 ano)",
+        clientName: "Lucas",
+        context: "Pai de bebê de 1 ano e 2 meses, primeira vez, com dúvidas sobre fralda e segurança.",
+        openingMessage: "Oi! Meu filho tem 1 ano e 2 meses. Queria saber como funciona a aula de baby. Ele precisa de fralda?",
+        bgImage: "infantil.png",
+        aiRules: {
+            mustInclude: ["baby", "bebê", "fralda", "responsável", "água", "30 minutos", "segurança"],
+            goodPhrases: ["entra na água", "responsável", "fralda própria", "30 minutos", "primeira vez", "segurança"],
+            badPhrases: ["não sei", "depende"],
+            sentimentWords: { positive: ["incrível", "legal", "seguro", "lindo", "perfeito"], negative: ["problema", "perigo"] },
+            idealLength: { min: 40, max: 400 }
+        },
+        conversationFlow: [
+            { step: 1, triggers: ["fralda", "como", "funciona", "bebe", "baby", "idade"], response: "Que idade linda! 🥰 Sim, se ainda estiver usando fralda, precisa ser fralda própria pra piscina. E o melhor: você entra na água junto com ele! A aula tem 30 minutos." },
+            { step: 2, triggers: ["horário", "turma", "dia", "quando", "manhã", "noite"], response: "Temos turmas de Seg/Qua às 18h50 ou 19h25. E aos sábados às 10h30 ou 11h. Qual fica melhor pra vocês?" },
+            { step: 3, triggers: ["segunda", "quarta", "sábado", "qualquer", "serve", "pode", "bom"], response: "Perfeito! As turmas de bebê são muito especiais — é um momento de conexão entre vocês na água. Quer que eu agende uma aula experimental?" },
+            { step: 4, triggers: ["sim", "quero", "agendar", "pode", "top", "bora"], response: "Show! Vou te mandar a disponibilidade. A aula experimental é R$50 — mas se fechar o plano, é descontado! 💕" }
+        ]
+    },
+    {
+        title: "Cliente irritado — academia lotada",
+        clientName: "Marcos",
+        context: "Marcos veio de outra academia que lotava a piscina e está muito incomodado.",
+        openingMessage: "Na academia que eu tô a piscina fica com 15 pessoas por raia! Isso é ridículo. Vocês são assim também?",
+        bgImage: "piscina.png",
+        aiRules: {
+            mustInclude: ["limite", "raia", "3", "individual", "qualidade", "água"],
+            goodPhrases: ["máximo 3", "por raia", "individual", "nunca lota", "garantir", "qualidade", "ionização"],
+            badPhrases: ["não sei", "depende"],
+            sentimentWords: { positive: ["entendo", "compreendo", "diferente", "garantir", "qualidade"], negative: ["ridículo", "problema", "péssimo"] },
+            idealLength: { min: 40, max: 350 }
+        },
+        conversationFlow: [
+            { step: 1, triggers: ["sim", "assim", "lotad", "pessoa", "raia", "como"], response: "Nunca! 😤 Aqui o MÁXIMO são 3 alunos por raia. Sempre. Isso é regra da academia. Nunca mais que 3!" },
+            { step: 2, triggers: ["bom", "legal", "isso", "gostei", "diferente", "ok"], response: "E nossa piscina é automatizada com ionização — sem cheiro de cloro, água limpa 24h. A temperatura fica em 30°C o ano inteiro. Quer agendar uma aula experimental pra sentir a diferença?" },
+            { step: 3, triggers: ["sim", "quero", "top", "pode", "agendar", "experimentar"], response: "Bora! 🏊‍♂️ Vou te mandar os horários. Qual dia da semana funciona melhor pra você?" }
+        ]
+    },
+    {
+        title: "Cliente inativo querendo voltar",
+        clientName: "Fernanda",
+        context: "Fernanda era aluna de natação e cancelou há 6 meses.",
+        openingMessage: "Oi! Faz um tempo que saí da Fit You. Queria saber se ainda tem vaga na natação.",
+        bgImage: "recepcao.jpg",
+        aiRules: {
+            mustInclude: ["voltar", "condição", "especial", "natação", "turma", "vaga"],
+            goodPhrases: ["condição especial", "ex-aluno", "turma", "vaga", "voltar", "natação", "bem-estar"],
+            badPhrases: ["cancelou", "saiu", "problema"],
+            sentimentWords: { positive: ["saudade", "esperamos", "condição", "especial", "bora"], negative: ["cancelamento", "problema"] },
+            idealLength: { min: 30, max: 300 }
+        },
+        conversationFlow: [
+            { step: 1, triggers: ["sim", "quero", "voltar", "interesse", "natação", "vaga"], response: "Que bom te ver de volta! 🎉 Temos sim vagas! E esse mês estamos com condição especial pra ex-alunos. Qual modalidade você fazia?" },
+            { step: 2, triggers: ["adulto", "infantil", "natação", "hidro", "nadar"], response: "Perfeito! Posso te mandar os valores atualizados com a condição de ex-aluno. E sua vaga na turma pode ser garantida rapidinho! Quer que eu te envie?" },
+            { step: 3, triggers: ["sim", "quero", "enviar", "mandar", "pode", "ok"], response: "Vou te enviar agora! E se quiser agendar uma aula experimental antes de decidir, custa R$50 — desconta ao fechar! 🏊‍♀️" }
+        ]
+    }
+];
+
+// ===== AI ENGINE =====
+function analyzeAIResponse(text, rules) {
+    const lower = text.toLowerCase();
+    let scores = { relevance: 0, technique: 0, empathy: 0, completeness: 0 };
+    let tips = [];
+    let total = 0;
+
+    let relevantCount = 0;
+    rules.mustInclude.forEach(k => { if (lower.includes(k.toLowerCase())) relevantCount++; });
+    scores.relevance = Math.min(100, Math.round((relevantCount / rules.mustInclude.length) * 100));
+    if (scores.relevance < 50) tips.push("Inclua palavras-chave relevantes como: turma, professor, aula, musculação, ionização.");
+
+    let goodCount = 0;
+    rules.goodPhrases.forEach(p => { if (lower.includes(p.toLowerCase())) goodCount++; });
+    let badCount = 0;
+    rules.badPhrases.forEach(p => { if (lower.includes(p.toLowerCase())) badCount++; });
+    scores.technique = Math.min(100, Math.max(0, Math.round((goodCount / Math.max(rules.goodPhrases.length, 1)) * 120 - badCount * 20)));
+    if (badCount > 0) tips.push("Evite falar de preço direto. Foque no VALOR e nos benefícios.");
+
+    let posCount = 0;
+    rules.sentimentWords.positive.forEach(w => { if (lower.includes(w.toLowerCase())) posCount++; });
+    let negCount = 0;
+    rules.sentimentWords.negative.forEach(w => { if (lower.includes(w.toLowerCase())) negCount++; });
+    scores.empathy = Math.min(100, Math.max(0, Math.round(50 + posCount * 10 - negCount * 15)));
+
+    let len = text.length;
+    if (len >= rules.idealLength.min && len <= rules.idealLength.max) scores.completeness = 100;
+    else if (len < rules.idealLength.min) scores.completeness = Math.round((len / rules.idealLength.min) * 80);
+    else scores.completeness = Math.max(40, 100 - Math.round((len - rules.idealLength.max) / 10));
+    if (len < 20) tips.push("Resposta muito curta. Descreva mais benefícios.");
+    if (len > 500) tips.push("Resposta muito longa. Seja mais conciso.");
+
+    if (lower.includes("experimental") || lower.includes("R$50")) scores.technique = Math.min(100, scores.technique + 15);
+    if (lower.includes("musculação") && (lower.includes("grátis") || lower.includes("gratuita") || lower.includes("inclusa") || lower.includes("incluso"))) scores.technique = Math.min(100, scores.technique + 10);
+    if (lower.includes("?")) scores.empathy = Math.min(100, scores.empathy + 5);
+    if (lower.includes("você")) scores.empathy = Math.min(100, scores.empathy + 5);
+
+    total = Math.round((scores.relevance * 0.3 + scores.technique * 0.3 + scores.empathy * 0.2 + scores.completeness * 0.2));
+
+    if (tips.length === 0) {
+        if (total >= 80) tips.push("Resposta excelente! Argumentos certos e mensagem personalizada.");
+        else if (total >= 60) tips.push("Boa! Tente incluir mais diferenciais como ionização e limite de alunos.");
+        else tips.push("Use técnicas de venda: escassez, prova social e ofereça a aula experimental.");
+    }
+
+    return { scores, tips, total };
+}
+
+function generateSuggestion(text, scenario) {
+    const lower = text.toLowerCase();
+    const convTerms = ["gympass", "totalpass", "wellhub", "convênio", "convenio"];
+    const hasConv = convTerms.some(t => lower.includes(t));
+    const isShort = text.length < 25;
+    const hasQuestion = lower.includes("?");
+    const hasValue = lower.includes("r$") || lower.includes("preço") || lower.includes("valor") || lower.includes("custa") || lower.includes("quanto");
+    const hasSchedule = lower.includes("agendar") || lower.includes("marcar") || lower.includes("aula") || lower.includes("dia");
+
+    let suggestion = "";
+
+    if (hasConv) {
+        suggestion = `Entendo que você usa ${hasConv ? 'convênio' : 'plano'}! Pelo Silver+ / TP3 você consegue natal aqui. Mas saiba que pelas vagas são limitadas — você precisa agendar um dia antes e pode não ter vaga. Com o plano direto da Fit You, sua vaga é FIXA e garantida. E ganha musculação gratuita! Quer que eu te mande os valores do plano direto?`;
+    } else if (isShort) {
+        suggestion = `Olá! 😊 Que bom seu interesse! Posso te ajudar com alguma dúvida específica? Temos natação adulto, infantil, baby, musculação, hidro e lutas. Qual modalidade te interessa mais?`;
+    } else if (hasValue && !hasSchedule) {
+        suggestion = `Entendo sua preocupação com o valor! Mas pensa comigo: são 3 aulas de natação por semana + sábado + musculação gratuita. São menos de R$6 por aula completa. E a qualidade da nossa piscina com ionização você não encontra em qualquer lugar. Quer agendar uma aula experimental pra sentir na prática?`;
+    } else if (hasSchedule) {
+        suggestion = `Claro! Vou te ajudar a agendar. Qual dia da semana funciona melhor pra você? Temos turmas de segunda, quarta e sexta (manhã, tarde ou noite). Posso te mandar os horários disponíveis!`;
+    } else {
+        suggestion = `Que legal! Vou te explicar como funciona: aqui na Fit You temos turmas separadas por nível, máximo 3 alunos por raia e piscina com ionização (sem cloro agressivo). A temperatura fica em 30°C o ano inteiro. E fechando qualquer plano, você ganha acesso livre à musculação! Quer que eu agende uma aula experimental? Custa R$50 mas desconta ao fechar!`;
+    }
+
+    return suggestion;
+}
+
+// ===== SOS PROF. SIMONE =====
+function generateSimoneResponse(input) {
+    const lower = input.toLowerCase();
+    const convTerms = ["gympass", "totalpass", "wellhub", "convênio", "convenio", "silver", "tp3"];
+    const hasConv = convTerms.some(t => lower.includes(t));
+    const hasPrice = lower.includes("quanto") || lower.includes("preço") || lower.includes("valor") || lower.includes("caro") || lower.includes("custa") || lower.includes("r$");
+    const hasSchedule = lower.includes("agendar") || lower.includes("marcar") || lower.includes("aula") || lower.includes("horário") || lower.includes("dia");
+    const hasSafety = lower.includes("segurança") || lower.includes("medo") || lower.includes("perigo") || lower.includes("filho") || lower.includes("bebê");
+    const hasNegative = lower.includes("não") || lower.includes("ruim") || lower.includes("péssimo") || lower.includes("problema") || lower.includes("insatisfeito");
+    const hasShort = input.trim().length < 20;
+    const hasModalities = lower.includes("modalidade") || lower.includes("natação") || lower.includes("musculação") || lower.includes("hidro") || lower.includes("luta") || lower.includes("muay") || lower.includes("jiu");
+    const hasPool = lower.includes("piscina") || lower.includes("água") || lower.includes("cloro") || lower.includes("ionização") || lower.includes("temperatura");
+    const hasObjections = lower.includes("objeção") || lower.includes("obrigar") || lower.includes("falar") || lower.includes("responder") || lower.includes("difícil");
+    const hasClose = lower.includes("fechar") || lower.includes("venda") || lower.includes("vender") || lower.includes("comprar") || lower.includes("fechamento");
+    const hasExperimental = lower.includes("experimental") || lower.includes("aula teste") || lower.includes("testar");
+
+    // Conversation analysis - detect if it's a pasted WhatsApp chat
+    const lines = input.split('\n').filter(l => l.trim());
+    const isConversation = lines.some(l => l.toLowerCase().startsWith('cliente:') || l.toLowerCase().startsWith('lead:') || l.toLowerCase().startsWith('aluno:')) || (lines.length > 3 && lines.some(l => l.includes(':')));
+
+    if (isConversation) {
+        // Analyze the conversation and generate response
+        const lastClientMsg = [...lines].reverse().find(l => l.toLowerCase().startsWith('cliente:') || l.toLowerCase().startsWith('lead:') || l.toLowerCase().startsWith('aluno:') || (!l.toLowerCase().startsWith('eu:') && !l.toLowerCase().startsWith('vendedor:'))) || lines[lines.length - 1] || '';
+        const clientLower = lastClientMsg.toLowerCase();
+
+        if (clientLower.includes("gympass") || clientLower.includes("totalpass") || clientLower.includes("convênio")) {
+            return { response: `Oi! Tudo bem? 😊\n\nSei que você usa convênio e isso é ótimo! Mas deixa eu te explicar uma coisa importante:\n\nPelo convênio, as vagas são limitadas — você precisa agendar um dia antes e pode não conseguir vaga. Com o plano direto da Fit You, sua vaga é FIXA e garantida.\n\nE o melhor: fechando qualquer plano, você ganha acesso livre à musculação! 💪\n\nQuer que eu te mande os valores do plano direto pra comparar?`, analysis: "Detectado: menção a convênio. Abordagem: mostrar vantagens do plano direto sobre o convênio (vaga fixa, musculação inclusa). Não desmereça o convênio — mostre que o plano direto é MELHOR." };
+        } else if (clientLower.includes("quanto") || clientLower.includes("preço") || clientLower.includes("valor") || clientLower.includes("caro")) {
+            return { response: `Boa pergunta! 😊\n\nO plano anual de natação sai por 12x R$179,99 — e inclui:\n✅ 3 aulas de natação por semana\n✅ 1 aula extra aos sábados\n✅ Acesso livre à musculação\n\nSão menos de R$6 por aula completa! E a qualidade da nossa piscina com ionização é referência no Piqueri.\n\nSe preferir sem fidelidade, temos o plano mensal por R$199,99. Qual faz mais sentido pra você?`, analysis: "Detectado: pergunta sobre preço. Abordagem: apresente o plano anual primeiro (melhor preço) + benefícios inclusos + alternativa mensal." };
+        } else if (clientLower.includes("segurança") || clientLower.includes("medo") || clientLower.includes("filho")) {
+            return { response: `Oi! Entendo sua preocupação — é normal! 😊\n\nDeixa eu te explicar como funciona aqui na Fit You:\n\n🏊 Nossa piscina é automatizada com ionização (sem cloro agressivo)\n🌡️ Temperatura 30°C o ano inteiro\n👨‍🏫 Professor dedicado e qualificado\n🎽 Turmas divididas por NÍVEL de graduação\n📊 3 a 4 avaliações por ano\n🏅 Medalha e certificado a cada ciclo\n\nE o melhor: você pode entrar na água junto! Assim fica mais tranquila.\n\nQuer agendar uma aula experimental pra conhecer?`, analysis: "Detectado: preocupação com segurança/criança. Abordagem: empatia + diferenciais de segurança (ionização, temperatura, professor) + convite para aula experimental." };
+        } else if (clientLower.includes("não") || clientLower.includes("ruim") || clientLower.includes("problema")) {
+            return { response: `Oi! Sinto muito que esteja com essa experiência. 😔\n\nPode me contar o que aconteceu? Quero entender justamente pra mostrar por que aqui na Fit You é diferente.\n\nNossa piscina é automatizada com ionização, máximo 3 alunos por raia, professor sempre disponível. E se não gostar da primeira aula, devolvemos o valor. Zero risco!\n\nQuer agendar uma aula experimental pra sentir a diferença?`, analysis: "Detectado: sentimento negativo/insatisfação. Abordagem: empatia primeiro, depois diferencial (ionização, limite de alunos, garantia de satisfação)." };
+        } else if (clientLower.includes("agendar") || clientLower.includes("marcar") || clientLower.includes("aula")) {
+            return { response: `Claro! Vou te ajudar a agendar! 🏊‍♀️\n\nTemos turmas de natação:\n📅 Segunda, quarta e sexta (manhã, tarde ou noite)\n📅 Sábados (manhã)\n\nQual dia e horário funciona melhor pra você?\n\nE se quiser conhecer antes de fechar o plano, podemos agendar uma aula experimental por R$50 — desconta se fechar!`, analysis: "Detectado: interesse em agendar. Abordagem: apresente os horários disponíveis e direcione para a aula experimental." };
+        } else {
+            return { response: `Oi! Que bom seu interesse! 😊\n\nDeixa eu te explicar como funciona aqui na Fit You:\n\n🏊 Natação com turmas separadas por nível\n💧 Piscina com ionização (sem cloro agressivo)\n🌡️ 30°C o ano inteiro\n👨‍🏫 Máximo 3 alunos por raia — atenção individual\n💪 Musculação gratuita em qualquer plano\n\nQuer agendar uma aula experimental? Custa R$50 mas desconta ao fechar o plano!\n\nQual modalidade te interessa mais?`, analysis: "Gerei uma resposta completa com diferenciais da Fit You e convite para aula experimental. Adapte conforme a necessidade do cliente." };
+        }
+    }
+
+    // Direct questions
+    if (hasConv) {
+        return { response: `Quando o cliente mencionar convênio (Gympass, Totalpass), essa é sua abordagem:\n\n"Entendo que você usa o convênio! É uma ótima opção. Mas saiba que pelas regras do app, as vagas são LIMITADAS — você precisa agendar um dia antes e pode não ter vaga. Com o plano direto da Fit You, sua vaga é FIXA e garantida no seu horário. E ganha musculação gratuita! Quer que eu te mande os valores?"\n\n💡 Nunca desmereça o convênio. Mostre que o plano direto é MELHOR, não que o convênio é ruim.`, analysis: "Abordagem correta: converter convênio → plano direto, destacando vaga fixa e musculação inclusa." };
+    }
+    if (hasPrice) {
+        return { response: `Quando o cliente perguntar o preço, NÃO comece pelo valor. Primeiro pergunte:\n\n"Qual modalidade te interessa? Quantas vezes por semana você quer treinar?"\n\nDepois apresente o plano ANUAL primeiro (melhor preço): 12x R$179,99 + musculação grátis. Explique: "São menos de R$6 por aula completa!"\n\nSe achar caro, ofereça o mensal (R$199,99) como alternativa sem fidelidade.`, analysis: "Dica: nunca dê preço direto. Descubra a necessidade primeiro e apresente o plano com melhor custo-benefício." };
+    }
+    if (hasClose) {
+        return { response: `Para fechar a venda, use essas técnicas:\n\n1️⃣ ESCASSEZ: "Essa condição é válida só até [data]"\n2️⃣ PROVA SOCIAL: "Temos mais de 200 alunos na natação"\n3️⃣ GARANTIA: "Se não gostar da primeira aula, devolvemos o valor"\n4️⃣ URGÊNCIA: "As vagas da turma da tarde estão acabando"\n5️⃣ COMPROMISSO: "Posso te mandar os horários agora?"\n\nSempre termine com uma PERGUNTA para manter o diálogo.`, analysis: "Técnicas de fechamento: escassez + prova social + garantia + urgência + pergunta aberta." };
+    }
+    if (hasExperimental) {
+        return { response: `A aula experimental é sua melhor ferramenta de venda! 🎯\n\nComo oferecer:\n"Você pode agendar uma aula experimental por R$50 — mas se fechar o plano no mesmo dia, esse valor é descontado!"\n\nO que o aluno precisa trazer:\n• Roupa de banho\n• Touca\n• Óculos de natação\n\nA piscina está a 30°C, ionizada (sem cloro), e o professor vai receber ele personalizado. É impossível não gostar!`, analysis: "A aula experimental é a porta de entrada. R$50 que viram desconto eliminam o risco percebido pelo cliente." };
+    }
+    if (hasPool) {
+        return { response: `Nossa piscina é um dos maiores diferenciais da Fit You! 🏊\n\n📍 Características:\n• Comprimento: 20 metros\n• Temperatura: 29-32°C (média 30°C)\n• Profundidade: 0,80m a 1,65m\n• Raia baby: 80cm de profundidade\n• Sistema: IONIZAÇÃO (sem cloro agressivo)\n• Máximo: 3 alunos por raia\n\n🌡️ A ionização mantém a água limpa sem o cheiro e irritação do cloro. É mais confortável para pele e olhos.\n\nIsso é referência no Piqueri!`, analysis: "Diferencial técnico: ionização + temperatura constante + limite de alunos = qualidade incomparável." };
+    }
+    if (hasModalities) {
+        return { response: `Aqui estão todas as modalidades da Fit You:\n\n🏊 NATAÇÃO:\n• Adulto (iniciante a avançado) — 3x/semana + sábado\n• Infantil (a partir de 1 ano) — turmas por nível\n• Baby (1 ano+) — responsável na água\n\n💪 MUSCULAÇÃO — inclusa em TODOS os planos\n🏊‍♀️ HIDROGINÁSTICA — água quente, baixo impacto\n🥋 MUAY THAI — segunda e quarta às 19h\nBJJ MORGANTI — segunda e quarta às 20h30\n\n🏆 GOLD COMPLETO: acesso a TUDO por R$239,99/mês (anual)`, analysis: "Lista completa de modalidades. Destaque que musculação é gratuíta em qualquer plano!" };
+    }
+    if (hasObjections) {
+        return { response: `As objeções mais comuns e como responder:\n\n💰 "É caro"\n→ "São menos de R$6 por aula completa + musculação grátis!"\n\n🔄 "Tenho Gympass"\n→ "Pelo app as vagas são limitadas. Plano direto garante vaga fixa!"\n\n👶 "Criança pequena"\n→ "Turmas por nível, avaliação 3-4x/ano, medalha e certificado!"\n\n🤔 "Preciso pensar"\n→ "Claro! Mas essa condição é válida até [data]. Posso te mandar os detalhes?"\n\n📍 "Fica longe"\n→ "Entendo! Qual bairro você mora? Talvez tenha uma opção mais perto."`, analysis: "Guia rápido de objeções. O segredo é: EMPIATIA primeiro, depois DIFERENCIAL, depois CHAMADA PARA AÇÃO." };
+    }
+    if (hasShort) {
+        return { response: `Mensagem curta do cliente? Não tenha medo!\n\nResponda com calor humano e pergunte:\n"Olá! Tudo bem? 😊 Esse é o contato oficial da Fit You. Em que posso te ajudar?"\n\nDepois liste as opções:\n🏊 Natação adulto, infantil e baby\n💪 Musculação\n🥋 Muay Thai e Jiu Jitsu\n🏊‍♀️ Hidroginástica\n\nE termine: "Qual modalidade te interessa mais?"`, analysis: "Mensagens curtas são oportunidades! Apresente-se, liste opções e faça uma pergunta para engajar." };
+    }
+
+    return { response: `Olá! 😊 Sou a Simone, e tô aqui pra te ajudar com qualquer dúvida sobre a Fit You!\n\nPosso te ajudar com:\n💰 Preços e planos\n🏊 Modalidades e horários\n🔄 Como lidar com convênios\n🎯 Técnicas de fechamento\n🏊‍♀️ Informações sobre a piscina\n\nManda sua pergunta que eu resolvo!`, analysis: "Pergunta geral. Apresente os tópicos disponíveis para direcionar a conversa." };
+}
+
+function addSosMsg(chatAreaId, text, isUser) {
+    const chatArea = document.getElementById(chatAreaId);
+    const msg = document.createElement('div');
+    msg.className = `sos-msg ${isUser ? 'user' : 'simone'}`;
+    if (!isUser) msg.innerHTML = `<div class="sos-msg-name">Prof. Simone</div>`;
+    msg.innerHTML += text.replace(/\n/g, '<br>');
+    chatArea.appendChild(msg);
+    chatArea.scrollTop = chatArea.scrollHeight;
+}
+
+function showSosTyping(typingId, chatAreaId, text, isUser) {
+    const typing = document.getElementById(typingId);
+    typing.classList.add('active');
+    const chatArea = document.getElementById(chatAreaId);
+    chatArea.scrollTop = chatArea.scrollHeight;
+
+    setTimeout(() => {
+        typing.classList.remove('active');
+        addSosMsg(chatAreaId, text, isUser);
+    }, 1200 + Math.random() * 800);
+}
+
+// Main SOS Chat (section)
+function sendSosMsg() {
+    const input = document.getElementById('sosInput');
+    const text = input.value.trim();
+    if (!text) return;
+    input.value = '';
+    addSosMsg('sosChatArea', text, true);
+    showSosTyping('sosTyping', 'sosChatArea', '', false);
+    setTimeout(() => {
+        const result = generateSimoneResponse(text);
+        addSosMsg('sosChatArea', result.response, false);
+        if (result.analysis) {
+            setTimeout(() => addSosMsg('sosChatArea', `<em style="color:var(--primary-light);font-size:0.82rem;">📊 ${result.analysis}</em>`, false), 400);
+        }
+    }, 1800);
+}
+
+function sosQuickAsk(question) {
+    document.getElementById('sosInput').value = question;
+    sendSosMsg();
+}
+
+// Floating SOS Character
+let sosSpeechTimer = null;
+function showCharSpeech(text, duration) {
+    const speech = document.getElementById('sosCharSpeech');
+    if (!speech) return;
+    speech.textContent = text;
+    speech.classList.add('show');
+    clearTimeout(sosSpeechTimer);
+    sosSpeechTimer = setTimeout(() => speech.classList.remove('show'), duration || 4000);
+}
+
+function toggleSosFloat() {
+    const panel = document.getElementById('sosFloatPanel');
+    const isOpen = panel.classList.contains('active');
+    panel.classList.toggle('active');
+    if (!isOpen) {
+        document.getElementById('sosFloatInput').focus();
+        showCharSpeech('Manda sua dúvida! 😊', 3000);
+    }
+}
+
+// Show speech bubble periodically when closed
+setInterval(() => {
+    const panel = document.getElementById('sosFloatPanel');
+    if (panel && !panel.classList.contains('active')) {
+        const phrases = ['Precisa de ajuda? 😊', 'Tô aqui pra ajudar!', 'Pergunta pra Prof. Simone!', 'Dúvidas sobre vendas? 🙋‍♀️', 'Coloca a conversa aqui! 💬'];
+        showCharSpeech(phrases[Math.floor(Math.random() * phrases.length)], 4000);
+    }
+}, 12000);
+
+function sendSosFloatMsg() {
+    const input = document.getElementById('sosFloatInput');
+    const text = input.value.trim();
+    if (!text) return;
+    input.value = '';
+    addSosMsg('sosFloatChatArea', text, true);
+    showSosTyping('sosFloatTyping', 'sosFloatChatArea', '', false);
+    setTimeout(() => {
+        const result = generateSimoneResponse(text);
+        addSosMsg('sosFloatChatArea', result.response, false);
+        if (result.analysis) {
+            setTimeout(() => addSosMsg('sosFloatChatArea', `<em style="color:var(--primary-light);font-size:0.82rem;">📊 ${result.analysis}</em>`, false), 400);
+        }
+    }, 1800);
+}
+
+function sosFloatQuickAsk(question) {
+    document.getElementById('sosFloatInput').value = question;
+    sendSosFloatMsg();
+}
+
+// ===== STATE =====
+let completedModules = new Set();
+let currentModule = null;
+let currentLessonIndex = 0;
+let quizAnswers = [];
+let quizScore = 0;
+let quizStarted = false;
+let certUnlocked = false;
+
+function loadState() {
+    try {
+        const s = localStorage.getItem('fityou-vendas-state');
+        if (s) { const d = JSON.parse(s); completedModules = new Set(d.completedModules || []); quizScore = d.quizScore || 0; quizStarted = d.quizStarted || false; certUnlocked = d.certUnlocked || false; }
+    } catch(e) {}
+}
+function saveState() {
+    try { localStorage.setItem('fityou-vendas-state', JSON.stringify({ completedModules: [...completedModules], quizScore, quizStarted, certUnlocked })); } catch(e) {}
+}
+
+// ===== RENDER =====
+function renderModules() {
+    const g = document.getElementById('modulesGrid');
+    g.innerHTML = modulesData.map((m, i) => {
+        const done = completedModules.has(m.id);
+        return `<div class="module-card ${done ? 'completed' : ''}" onclick="openModule(${i})">
+            <div class="card-bg" style="background-image:url('${m.bgImage}')"></div>
+            <div class="module-header"><div class="module-number">${done ? '✓' : m.id}</div><span class="module-status status-${done ? 'completed' : 'available'}">${done ? '✅ Concluído' : 'Módulo '+m.id}</span></div>
+            <h3>${m.title}</h3><p>${m.description}</p>
+            <div class="module-topics">${m.topics.map(t => `<span class="module-topic">${t}</span>`).join('')}</div>
+            <div class="module-progress"><div class="module-progress-bar"><div class="module-progress-fill" style="width:${done?100:0}%"></div></div></div>
+        </div>`;
+    }).join('');
+}
+
+function renderTemplates() {
+    document.getElementById('templatesGrid').innerHTML = templatesData.map((t, i) => `
+        <div class="template-card" onclick="toggleTemplate(${i})" id="tpl-${i}">
+            <div class="template-icon" style="background:${t.color}">${t.icon}</div>
+            <h3>${t.title}</h3><p>${t.description}</p>
+            <button class="copy-btn" onclick="event.stopPropagation();copyTemplate(${i})">📋 Copiar</button>
+            <div class="template-preview"><p style="white-space:pre-line;">${t.text}</p></div>
+        </div>`).join('');
+}
+
+function renderObjections() {
+    document.getElementById('objectionsList').innerHTML = objectionsData.map((o, i) => `
+        <div class="objection-card" id="obj-${i}">
+            <div class="objection-header" onclick="toggleObjection(${i})">
+                <div class="objection-question"><div class="objection-icon">${o.icon}</div><h4>"${o.question}"</h4></div>
+                <div class="objection-toggle">▼</div>
+            </div>
+            <div class="objection-body"><div class="objection-content">${o.answer}</div></div>
+        </div>`).join('');
+}
+
+function renderSimulator() {
+    const a = document.getElementById('simulatorArea');
+    a.innerHTML = `
+        <h3>🤖 Simulador com Inteligência Artificial</h3>
+        <div class="sim-scenario" id="simScenario"><p><strong>Cenário:</strong> <span id="simScenarioText"></span></p></div>
+        <div class="sim-chat" id="simChat"></div>
+        <div class="sim-input">
+            <input type="text" id="simInput" placeholder="Digite sua resposta como vendedor..." onkeypress="if(event.key==='Enter')sendSimMsg()">
+            <button onclick="sendSimMsg()">Enviar</button>
+        </div>
+        <div class="sim-feedback" id="simFeedback"></div>
+        <div class="ai-analysis" id="aiAnalysis"></div>
+        <div style="margin-top:15px;display:flex;gap:10px;flex-wrap:wrap;">
+            <button class="copy-btn" onclick="nextScenario()">🔄 Próximo Cenário</button>
+            <button class="copy-btn" onclick="resetScenario()">↩ Resetar</button>
+        </div>`;
+    loadScenario(0);
+}
+
+function renderQuiz() {
+    const c = document.getElementById('quizContainer');
+    if (!quizStarted) { c.innerHTML = `<div class="quiz-main-question" style="text-align:center;"><h3>🧠 Quiz Final — 10 Perguntas</h3><p style="color:var(--text-secondary);margin:15px 0;">Teste seus conhecimentos sobre vendas da Fit You!</p><p style="color:var(--text-muted);font-size:0.9rem;margin-bottom:25px;">Acerte pelo menos 7 de 10.</p><button class="btn-primary" onclick="startQuiz()">Iniciar Quiz →</button></div>`; return; }
+    if (quizAnswers.length >= quizData.length) {
+        const p = quizScore >= 7;
+        c.innerHTML = `<div class="quiz-main-question quiz-score"><h2>${quizScore}/10</h2><p>${p ? '🎉 Parabéns! Você passou!' : '😢 Não foi dessa vez. Revise e tente novamente.'}</p>${p ? '<button class="btn-primary" style="margin-top:20px;" onclick="unlockCertificate()">🏆 Ver Certificado</button>' : '<button class="btn-primary" style="margin-top:20px;" onclick="resetQuiz()">🔄 Tentar Novamente</button>'}</div>`;
+        return;
+    }
+    const qi = quizAnswers.length, q = quizData[qi];
+    c.innerHTML = `<div class="quiz-progress"><div class="quiz-progress-bar"><div class="quiz-progress-fill" style="width:${(qi/quizData.length)*100}%"></div></div><span class="quiz-progress-text">${qi+1} / ${quizData.length}</span></div>
+    <div class="quiz-main-question"><h3>${q.question}</h3><div class="quiz-options" id="quizOptions">${q.options.map((o,oi) => `<button class="quiz-option" onclick="answerQuiz(${oi})"><span class="quiz-option-letter">${String.fromCharCode(65+oi)}</span>${o}</button>`).join('')}</div><div class="quiz-feedback" id="quizFeedback"></div></div>`;
+}
+
+// ===== ACTIONS =====
+let currentScenarioIdx = 0;
+let scenarioStep = 0;
+
+function loadScenario(idx) {
+    currentScenarioIdx = idx;
+    scenarioStep = 0;
+    const s = scenariosData[idx];
+    document.getElementById('simScenarioText').innerHTML = `<strong>${s.clientName}:</strong> ${s.context}`;
+    document.getElementById('simChat').innerHTML = `<div class="chat-bg" style="background-image:url('${s.bgImage}')"></div><div class="chat-bubble received">${s.openingMessage}</div>`;
+    document.getElementById('simFeedback').style.display = 'none';
+    document.getElementById('aiAnalysis').style.display = 'none';
+    document.getElementById('simInput').value = '';
+    document.getElementById('simInput').focus();
+}
+
+function sendSimMsg() {
+    const input = document.getElementById('simInput');
+    const text = input.value.trim();
+    if (!text) return;
+
+    const chat = document.getElementById('simChat');
+    chat.innerHTML += `<div class="chat-bubble sent">${text}</div>`;
+    input.value = '';
+
+    const s = scenariosData[currentScenarioIdx];
+    const flow = s.conversationFlow;
+
+    // Analyze user response (only on first message for scoring)
+    if (scenarioStep === 0) {
+        const analysis = analyzeAIResponse(text, s.aiRules);
+        const aiDiv = document.getElementById('aiAnalysis');
+        aiDiv.style.display = 'block';
+        aiDiv.innerHTML = `
+            <h4>🤖 Análise da IA</h4>
+            <div class="ai-total-score">
+                <div class="score-number" style="color:${analysis.total>=70?'var(--wpp-green)':analysis.total>=50?'var(--accent-gold)':'#ff3b30'}">${analysis.total}/100</div>
+                <div class="score-label">Pontuação Geral</div>
+            </div>
+            <div class="ai-scores">
+                <div class="ai-score-item"><div class="ai-score-label">Relevância (${analysis.scores.relevance}%)</div><div class="ai-score-bar"><div class="ai-score-fill" style="width:${analysis.scores.relevance}%;background:${analysis.scores.relevance>=70?'var(--wpp-green)':'var(--accent-gold)'}"></div></div></div>
+                <div class="ai-score-item"><div class="ai-score-label">Técnica de Venda (${analysis.scores.technique}%)</div><div class="ai-score-bar"><div class="ai-score-fill" style="width:${analysis.scores.technique}%;background:${analysis.scores.technique>=70?'var(--wpp-green)':'var(--accent-gold)'}"></div></div></div>
+                <div class="ai-score-item"><div class="ai-score-label">Empatia (${analysis.scores.empathy}%)</div><div class="ai-score-bar"><div class="ai-score-fill" style="width:${analysis.scores.empathy}%;background:${analysis.scores.empathy>=70?'var(--wpp-green)':'var(--accent-gold)'}"></div></div></div>
+                <div class="ai-score-item"><div class="ai-score-label">Completude (${analysis.scores.completeness}%)</div><div class="ai-score-bar"><div class="ai-score-fill" style="width:${analysis.scores.completeness}%;background:${analysis.scores.completeness>=70?'var(--wpp-green)':'var(--accent-gold)'}"></div></div></div>
+            </div>
+            <div class="ai-tips">${analysis.tips.map(t => `<div class="ai-tip">${t}</div>`).join('')}</div>`;
+
+        const fb = document.getElementById('simFeedback');
+        if (analysis.total >= 70) {
+            fb.className = 'sim-feedback good';
+            fb.innerHTML = `✅ <strong>Boa resposta!</strong> A IA analisou sua mensagem e identificou ótimos argumentos de venda.`;
+        } else if (analysis.total >= 45) {
+            fb.className = 'sim-feedback ok';
+            fb.innerHTML = `⚡ <strong>Razoável!</strong> Sua resposta tem pontos positivos, mas pode melhorar. Veja a análise da IA abaixo.`;
+        } else {
+            fb.className = 'sim-feedback bad';
+            fb.innerHTML = `⚠️ <strong>Precisa melhorar.</strong> Sua resposta não usou técnicas de venda eficazes. Veja as sugestões da IA.`;
+        }
+    }
+
+    // Match conversation flow triggers
+    setTimeout(() => {
+        let matched = false;
+        if (scenarioStep < flow.length) {
+            const step = flow[scenarioStep];
+            const lower = text.toLowerCase();
+            matched = step.triggers.some(t => lower.includes(t.toLowerCase()));
+            if (matched) {
+                chat.innerHTML += `<div class="chat-bubble received">${step.response}</div>`;
+                scenarioStep++;
+
+                // Show suggestion after client response
+                const suggestion = generateSuggestion(text, s);
+                const sugDiv = document.createElement('div');
+                sugDiv.className = 'suggestion-box';
+                sugDiv.innerHTML = `<h5>💡 Sugestão de Resposta</h5><p>${suggestion}</p><button class="copy-suggestion" onclick="navigator.clipboard.writeText(this.previousElementSibling.textContent).then(()=>showToast('✅ Sugestão copiada!'))">📋 Copiar sugestão</button>`;
+                chat.appendChild(sugDiv);
+
+                // Check if conversation is complete
+                if (scenarioStep >= flow.length) {
+                    setTimeout(() => {
+                        chat.innerHTML += `<div class="chat-bubble received" style="font-style:italic;color:var(--wpp-green);">🎉 Parabéns! Você conduziu o lead até o fechamento. Cenário completo!</div>`;
+                    }, 600);
+                }
+            } else {
+                chat.innerHTML += `<div class="chat-bubble received" style="font-style:italic;color:var(--text-muted);">[O lead continua com dúvidas — tente abordar os diferenciais da Fit You]</div>`;
+            }
+        } else {
+            chat.innerHTML += `<div class="chat-bubble received" style="font-style:italic;color:var(--wpp-green);">🎉 Cenário completo! Você concluiu a simulação.</div>`;
+        }
+        chat.scrollTop = chat.scrollHeight;
+    }, 800);
+
+    chat.scrollTop = chat.scrollHeight;
+}
+
+function nextScenario() { loadScenario((currentScenarioIdx + 1) % scenariosData.length); }
+function resetScenario() { loadScenario(currentScenarioIdx); }
+
+function openModule(i) { currentModule = modulesData[i]; currentLessonIndex = 0; document.getElementById('lessonOverlay').classList.add('active'); document.body.style.overflow = 'hidden'; renderLesson(); }
+function closeLesson() { document.getElementById('lessonOverlay').classList.remove('active'); document.body.style.overflow = ''; updateProgress(); renderModules(); }
+function renderLesson() {
+    const l = currentModule.lessons[currentLessonIndex], t = currentModule.lessons.length;
+    document.getElementById('lessonTitle').textContent = `${currentModule.title} — Aula ${currentLessonIndex+1}`;
+    document.getElementById('lessonBody').innerHTML = `<div class="lesson-content active">${l.content}</div>`;
+    document.getElementById('lessonPrev').style.display = currentLessonIndex===0?'none':'block';
+    document.getElementById('lessonNext').textContent = currentLessonIndex===t-1?'✓ Concluir Módulo':'Próximo →';
+    document.getElementById('lessonDots').innerHTML = Array.from({length:t},(_,i)=>`<div class="lesson-dot ${i===currentLessonIndex?'active':''}"></div>`).join('');
+    document.getElementById('lessonBody').scrollTop = 0;
+}
+function nextLesson() { if (currentLessonIndex < currentModule.lessons.length-1) { currentLessonIndex++; renderLesson(); } else { completedModules.add(currentModule.id); saveState(); closeLesson(); showToast(`🎉 Módulo ${currentModule.id} concluído!`); } }
+function prevLesson() { if (currentLessonIndex > 0) { currentLessonIndex--; renderLesson(); } }
+function updateProgress() { document.getElementById('progress-section').style.display='block'; const p=Math.round((completedModules.size/modulesData.length)*100); document.getElementById('progress-fill').style.width=p+'%'; document.getElementById('progress-percent').textContent=p+'%'; document.getElementById('progress-text').textContent=`${completedModules.size} de ${modulesData.length} módulos concluídos`; }
+function toggleTemplate(i) { document.getElementById(`tpl-${i}`).classList.toggle('expanded'); }
+function copyTemplate(i) { navigator.clipboard.writeText(templatesData[i].text).then(()=>showToast('✅ Template copiado!')).catch(()=>showToast('❌ Erro ao copiar')); }
+function toggleObjection(i) { const c=document.getElementById(`obj-${i}`), o=c.classList.contains('open'); document.querySelectorAll('.objection-card').forEach(x=>x.classList.remove('open')); if(!o) c.classList.add('open'); }
+function startQuiz() { quizStarted=true; quizAnswers=[]; quizScore=0; saveState(); renderQuiz(); }
+function answerQuiz(oi) { const qi=quizAnswers.length, q=quizData[qi], ok=oi===q.correct; if(ok)quizScore++; quizAnswers.push(oi); saveState(); document.querySelectorAll('#quizOptions .quiz-option').forEach((o,i)=>{ o.onclick=null; o.style.cursor='default'; if(i===q.correct)o.classList.add('correct'); if(i===oi&&!ok)o.classList.add('wrong'); }); const fb=document.getElementById('quizFeedback'); fb.className=`quiz-feedback ${ok?'correct':'wrong'}`; fb.innerHTML=`<strong>${ok?'✅ Correto!':'❌ Incorreto.'}</strong> ${q.explanation}`; setTimeout(()=>renderQuiz(),2500); }
+function resetQuiz() { quizStarted=false; quizAnswers=[]; quizScore=0; saveState(); renderQuiz(); }
+function unlockCertificate() { certUnlocked=true; saveState(); document.getElementById('certLocked').style.display='none'; document.getElementById('certUnlocked').style.display='block'; document.getElementById('certificateCard').classList.remove('locked-overlay'); document.getElementById('certDate').textContent=`Concluído em ${new Date().toLocaleDateString('pt-BR')}`; showToast('🏆 Certificado desbloqueado!'); document.getElementById('certificate').scrollIntoView({behavior:'smooth'}); }
+function showToast(msg) { const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),3000); }
+function toggleMobileNav() { document.getElementById('mobileNav').classList.toggle('active'); }
+window.addEventListener('scroll',()=>{ document.getElementById('navbar').classList.toggle('scrolled',window.scrollY>50); });
+
+// ===== INIT =====
+window.scrollTo(0, 0);
+loadState(); renderModules(); renderTemplates(); renderObjections(); renderSimulator(); renderQuiz();
+if(completedModules.size>0) updateProgress();
+if(certUnlocked){ document.getElementById('certLocked').style.display='none'; document.getElementById('certUnlocked').style.display='block'; document.getElementById('certificateCard').classList.remove('locked-overlay'); }
+setTimeout(() => showCharSpeech('Oi! Sou a Prof. Simone! 🙋‍♀️', 5000), 2500);
+window.onload = () => window.scrollTo(0, 0);
+</script>
+</body>
+</html>

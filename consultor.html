@@ -1,0 +1,1725 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FITYOU — Área do Consultor</title>
+    <link rel="icon" href="logo-fityou.png" type="image/png">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #FF6B2C;
+            --primary-dark: #E55A1B;
+            --primary-light: #FF8F5C;
+            --secondary: #1A1A2E;
+            --accent-gold: #F5A623;
+            --accent-blue: #2196F3;
+            --bg-dark: #0a0a0f;
+            --bg-card: #14141f;
+            --bg-card-hover: #1a1a2e;
+            --text-primary: #ffffff;
+            --text-secondary: #a0a0b8;
+            --text-muted: #6b6b80;
+            --border-color: #2a2a3e;
+            --gradient-primary: linear-gradient(135deg, #FF6B2C, #F5A623);
+            --wpp-green: #25D366;
+            --hot: #ff3b30;
+            --warm: #ff9500;
+            --cold: #007aff;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background: var(--bg-dark); color: var(--text-primary); min-height: 100vh; }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: var(--bg-dark); }
+        ::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 3px; }
+
+        .hidden { display: none !important; }
+
+        /* AUTH SCREENS */
+        .auth-container { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; background: linear-gradient(135deg, #1A1A2E 0%, #0a0a0f 50%, #1a1205 100%); }
+        .auth-box { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 20px; padding: 40px; width: 100%; max-width: 420px; }
+        .auth-logo { text-align: center; margin-bottom: 30px; }
+        .auth-logo img { height: 50px; margin-bottom: 10px; }
+        .auth-logo h2 { font-size: 1.3rem; font-weight: 800; background: var(--gradient-primary); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .auth-logo p { color: var(--text-muted); font-size: 0.85rem; margin-top: 5px; }
+        .auth-field { margin-bottom: 16px; }
+        .auth-field label { display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 6px; }
+        .auth-field input { width: 100%; background: rgba(255,255,255,0.04); border: 1px solid var(--border-color); border-radius: 10px; padding: 12px 16px; color: var(--text-primary); font-size: 0.9rem; font-family: inherit; outline: none; transition: border-color 0.3s; }
+        .auth-field input:focus { border-color: var(--primary); }
+        .auth-field input::placeholder { color: var(--text-muted); }
+        .auth-btn { width: 100%; padding: 13px; border: none; border-radius: 12px; background: var(--gradient-primary); color: #fff; font-size: 0.95rem; font-weight: 700; cursor: pointer; font-family: inherit; transition: transform 0.2s, box-shadow 0.2s; margin-top: 8px; }
+        .auth-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(255,107,44,0.3); }
+        .auth-switch { text-align: center; margin-top: 20px; font-size: 0.85rem; color: var(--text-muted); }
+        .auth-switch a { color: var(--primary); text-decoration: none; font-weight: 600; cursor: pointer; }
+        .auth-switch a:hover { text-decoration: underline; }
+        .auth-error { background: rgba(255,59,48,0.1); border: 1px solid rgba(255,59,48,0.2); color: #ff3b30; padding: 10px 14px; border-radius: 10px; font-size: 0.82rem; margin-bottom: 16px; }
+        .auth-photo-upload { display: flex; align-items: center; gap: 14px; margin-bottom: 20px; }
+        .auth-photo-preview { width: 72px; height: 72px; border-radius: 50%; background: var(--bg-card-hover); border: 2px dashed var(--border-color); display: flex; align-items: center; justify-content: center; font-size: 1.8rem; color: var(--text-muted); overflow: hidden; cursor: pointer; transition: border-color 0.3s; flex-shrink: 0; }
+        .auth-photo-preview:hover { border-color: var(--primary); }
+        .auth-photo-preview img { width: 100%; height: 100%; object-fit: cover; }
+        .auth-photo-text { font-size: 0.78rem; color: var(--text-muted); }
+        .auth-photo-text strong { color: var(--text-secondary); }
+
+        /* SIDEBAR */
+        .app-layout { display: flex; min-height: 100vh; }
+        .sidebar { width: 240px; background: var(--bg-card); border-right: 1px solid var(--border-color); display: flex; flex-direction: column; position: fixed; height: 100vh; z-index: 100; transition: transform 0.3s; }
+        .sidebar-header { padding: 20px; border-bottom: 1px solid var(--border-color); display: flex; align-items: center; gap: 12px; }
+        .sidebar-header img { height: 32px; }
+        .sidebar-header span { font-size: 0.85rem; font-weight: 700; color: var(--primary); }
+        .sidebar-user { padding: 16px 20px; border-bottom: 1px solid var(--border-color); display: flex; align-items: center; gap: 12px; }
+        .sidebar-user-photo { width: 40px; height: 40px; border-radius: 50%; background: var(--bg-card-hover); border: 2px solid var(--primary); display: flex; align-items: center; justify-content: center; font-size: 1rem; color: var(--text-muted); overflow: hidden; flex-shrink: 0; }
+        .sidebar-user-photo img { width: 100%; height: 100%; object-fit: cover; }
+        .sidebar-user-info { overflow: hidden; }
+        .sidebar-user-info .name { font-size: 0.85rem; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .sidebar-user-info .role { font-size: 0.7rem; color: var(--text-muted); }
+        .sidebar-nav { flex: 1; padding: 12px 0; overflow-y: auto; }
+        .sidebar-nav a { display: flex; align-items: center; gap: 12px; padding: 11px 20px; color: var(--text-secondary); text-decoration: none; font-size: 0.88rem; font-weight: 500; transition: all 0.2s; border-left: 3px solid transparent; }
+        .sidebar-nav a:hover { background: rgba(255,107,44,0.06); color: var(--text-primary); }
+        .sidebar-nav a.active { background: rgba(255,107,44,0.1); color: var(--primary); border-left-color: var(--primary); font-weight: 600; }
+        .sidebar-nav a .nav-icon { width: 20px; text-align: center; font-size: 1rem; }
+        .sidebar-nav a .nav-badge { margin-left: auto; background: var(--primary); color: #fff; font-size: 0.65rem; font-weight: 700; padding: 2px 7px; border-radius: 10px; }
+        .sidebar-footer { padding: 12px 20px; border-top: 1px solid var(--border-color); }
+        .sidebar-footer a { display: flex; align-items: center; gap: 10px; padding: 8px 0; color: var(--text-muted); text-decoration: none; font-size: 0.82rem; transition: color 0.2s; }
+        .sidebar-footer a:hover { color: var(--text-primary); }
+
+        /* MAIN CONTENT */
+        .main-content { margin-left: 240px; flex: 1; padding: 24px 30px; min-height: 100vh; }
+        .page-header { margin-bottom: 24px; }
+        .page-header h1 { font-size: 1.5rem; font-weight: 800; }
+        .page-header p { color: var(--text-secondary); font-size: 0.88rem; margin-top: 4px; }
+
+        /* DASHBOARD */
+        .dash-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 24px; }
+        .dash-stat { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 14px; padding: 20px; transition: transform 0.2s; }
+        .dash-stat:hover { transform: translateY(-2px); }
+        .dash-stat .stat-icon { font-size: 1.5rem; margin-bottom: 10px; }
+        .dash-stat .stat-value { font-size: 1.8rem; font-weight: 800; }
+        .dash-stat .stat-label { font-size: 0.78rem; color: var(--text-muted); margin-top: 2px; }
+        .dash-stat.hot .stat-value { color: var(--hot); }
+        .dash-stat.warm .stat-value { color: var(--warm); }
+        .dash-stat.cold .stat-value { color: var(--cold); }
+        .dash-stat.revenue .stat-value { color: var(--wpp-green); }
+        .dash-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .dash-card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 14px; padding: 20px; }
+        .dash-card h3 { font-size: 0.95rem; font-weight: 700; margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
+        .dash-followup { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--border-color); }
+        .dash-followup:last-child { border-bottom: none; }
+        .dash-followup .fu-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+        .dash-followup .fu-dot.hot { background: var(--hot); }
+        .dash-followup .fu-dot.warm { background: var(--warm); }
+        .dash-followup .fu-dot.cold { background: var(--cold); }
+        .dash-followup .fu-info { flex: 1; overflow: hidden; }
+        .dash-followup .fu-name { font-size: 0.85rem; font-weight: 600; }
+        .dash-followup .fu-date { font-size: 0.75rem; color: var(--text-muted); }
+        .dash-followup .fu-action { font-size: 0.75rem; color: var(--primary); font-weight: 600; cursor: pointer; white-space: nowrap; }
+        .dash-progress-bar { height: 8px; background: rgba(255,255,255,0.05); border-radius: 8px; overflow: hidden; margin-top: 10px; }
+        .dash-progress-fill { height: 100%; background: var(--gradient-primary); border-radius: 8px; transition: width 0.5s; }
+        .dash-empty { text-align: center; padding: 30px; color: var(--text-muted); font-size: 0.85rem; }
+
+        /* CRM */
+        .crm-toolbar { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; align-items: center; }
+        .crm-search { flex: 1; min-width: 200px; background: rgba(255,255,255,0.04); border: 1px solid var(--border-color); border-radius: 10px; padding: 10px 14px; color: var(--text-primary); font-size: 0.88rem; font-family: inherit; outline: none; }
+        .crm-search:focus { border-color: var(--primary); }
+        .crm-search::placeholder { color: var(--text-muted); }
+        .crm-filter { background: rgba(255,255,255,0.04); border: 1px solid var(--border-color); border-radius: 10px; padding: 10px 14px; color: var(--text-primary); font-size: 0.82rem; font-family: inherit; outline: none; cursor: pointer; }
+        .crm-filter option { background: var(--bg-card); }
+        .crm-btn { padding: 10px 18px; border: none; border-radius: 10px; font-size: 0.85rem; font-weight: 600; cursor: pointer; font-family: inherit; transition: all 0.2s; }
+        .crm-btn-primary { background: var(--gradient-primary); color: #fff; }
+        .crm-btn-primary:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(255,107,44,0.3); }
+        .crm-btn-secondary { background: rgba(255,255,255,0.06); color: var(--text-secondary); border: 1px solid var(--border-color); }
+        .crm-btn-secondary:hover { background: rgba(255,255,255,0.1); }
+        .crm-btn-danger { background: rgba(255,59,48,0.1); color: #ff3b30; border: 1px solid rgba(255,59,48,0.2); }
+        .crm-btn-danger:hover { background: rgba(255,59,48,0.15); }
+        .crm-table-wrap { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 14px; overflow: hidden; }
+        .crm-table { width: 100%; border-collapse: collapse; }
+        .crm-table th { text-align: left; padding: 12px 16px; font-size: 0.75rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; background: rgba(255,255,255,0.02); border-bottom: 1px solid var(--border-color); }
+        .crm-table td { padding: 12px 16px; font-size: 0.85rem; border-bottom: 1px solid var(--border-color); vertical-align: middle; }
+        .crm-table tr:last-child td { border-bottom: none; }
+        .crm-table tr:hover td { background: rgba(255,107,44,0.03); }
+        .crm-status { display: inline-flex; align-items: center; gap: 5px; font-size: 0.75rem; font-weight: 700; padding: 4px 10px; border-radius: 20px; }
+        .crm-status.hot { background: rgba(255,59,48,0.12); color: var(--hot); }
+        .crm-status.warm { background: rgba(255,149,0,0.12); color: var(--warm); }
+        .crm-status.cold { background: rgba(0,122,255,0.12); color: var(--cold); }
+        .crm-status-dot { width: 6px; height: 6px; border-radius: 50%; }
+        .crm-status.hot .crm-status-dot { background: var(--hot); }
+        .crm-status.warm .crm-status-dot { background: var(--warm); }
+        .crm-status.cold .crm-status-dot { background: var(--cold); }
+        .crm-actions { display: flex; gap: 6px; }
+        .crm-action-btn { width: 30px; height: 30px; border-radius: 8px; border: 1px solid var(--border-color); background: transparent; color: var(--text-muted); cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 0.85rem; transition: all 0.2s; }
+        .crm-action-btn:hover { background: rgba(255,107,44,0.1); color: var(--primary); border-color: var(--primary); }
+        .crm-action-btn.delete:hover { background: rgba(255,59,48,0.1); color: var(--hot); border-color: var(--hot); }
+        .crm-value { color: var(--wpp-green); font-weight: 600; }
+        .crm-phone { color: var(--text-muted); font-size: 0.82rem; }
+        .crm-modalidade { background: rgba(255,107,44,0.08); color: var(--primary-light); padding: 3px 8px; border-radius: 6px; font-size: 0.75rem; font-weight: 600; }
+
+        /* MODAL */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 200; display: flex; align-items: center; justify-content: center; padding: 20px; animation: fadeIn 0.2s; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .modal { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 16px; width: 100%; max-width: 600px; max-height: 90vh; overflow-y: auto; animation: slideUp 0.3s; }
+        @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        .modal-header { display: flex; align-items: center; justify-content: space-between; padding: 20px 24px; border-bottom: 1px solid var(--border-color); }
+        .modal-header h3 { font-size: 1.05rem; font-weight: 700; }
+        .modal-close { width: 32px; height: 32px; border-radius: 8px; border: none; background: rgba(255,255,255,0.06); color: var(--text-muted); font-size: 1.2rem; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+        .modal-close:hover { background: rgba(255,59,48,0.1); color: var(--hot); }
+        .modal-body { padding: 24px; }
+        .modal-footer { padding: 16px 24px; border-top: 1px solid var(--border-color); display: flex; gap: 10px; justify-content: flex-end; }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+        .form-group { margin-bottom: 16px; }
+        .form-group label { display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 6px; }
+        .form-group input, .form-group select, .form-group textarea { width: 100%; background: rgba(255,255,255,0.04); border: 1px solid var(--border-color); border-radius: 10px; padding: 10px 14px; color: var(--text-primary); font-size: 0.88rem; font-family: inherit; outline: none; transition: border-color 0.3s; }
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--primary); }
+        .form-group input::placeholder, .form-group textarea::placeholder { color: var(--text-muted); }
+        .form-group textarea { min-height: 100px; resize: vertical; line-height: 1.6; }
+        .form-group select option { background: var(--bg-card); }
+
+        /* AI ANALYSIS BOX */
+        .ai-box { background: rgba(255,107,44,0.05); border: 1px solid rgba(255,107,44,0.15); border-radius: 12px; padding: 16px; margin-top: 14px; }
+        .ai-box h4 { font-size: 0.85rem; font-weight: 700; color: var(--primary); margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
+        .ai-box .ai-temp { display: inline-flex; align-items: center; gap: 5px; padding: 4px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 700; margin-bottom: 10px; }
+        .ai-box .ai-temp.hot { background: rgba(255,59,48,0.12); color: var(--hot); }
+        .ai-box .ai-temp.warm { background: rgba(255,149,0,0.12); color: var(--warm); }
+        .ai-box .ai-temp.cold { background: rgba(0,122,255,0.12); color: var(--cold); }
+        .ai-box .ai-suggestion { font-size: 0.82rem; color: var(--text-secondary); line-height: 1.6; margin-bottom: 6px; }
+        .ai-box .ai-followup { font-size: 0.8rem; color: var(--accent-gold); font-weight: 600; margin-top: 8px; }
+        .ai-extracted { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0; }
+        .ai-extracted-item { background: rgba(33,150,243,0.1); border: 1px solid rgba(33,150,243,0.2); border-radius: 8px; padding: 6px 12px; font-size: 0.78rem; color: var(--accent-blue); display: flex; align-items: center; gap: 6px; }
+        .ai-extracted-item .aei-icon { font-size: 0.9rem; }
+        .ai-extracted-item .aei-label { color: var(--text-muted); }
+        .ai-extracted-item .aei-value { font-weight: 600; color: var(--text-primary); }
+        .ai-autofill-badge { background: rgba(245,166,35,0.15); color: var(--accent-gold); font-size: 0.72rem; font-weight: 700; padding: 2px 8px; border-radius: 6px; animation: pulse 1s infinite; }
+        @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.5; } }
+
+        /* NOTIFICATIONS */
+        .notif-bell { position: relative; cursor: pointer; }
+        .notif-badge { position: absolute; top: -4px; right: -4px; background: var(--hot); color: #fff; font-size: 0.6rem; font-weight: 700; width: 16px; height: 16px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 2px solid var(--bg-card); }
+        .notif-panel { position: fixed; top: 0; right: -380px; width: 360px; height: 100vh; background: var(--bg-card); border-left: 1px solid var(--border-color); z-index: 500; transition: right 0.3s ease; display: flex; flex-direction: column; box-shadow: -4px 0 20px rgba(0,0,0,0.3); }
+        .notif-panel.open { right: 0; }
+        .notif-panel-header { padding: 20px; border-bottom: 1px solid var(--border-color); display: flex; align-items: center; justify-content: space-between; }
+        .notif-panel-header h3 { font-size: 1rem; font-weight: 700; }
+        .notif-panel-close { width: 30px; height: 30px; border-radius: 8px; border: none; background: rgba(255,255,255,0.06); color: var(--text-muted); font-size: 1rem; cursor: pointer; }
+        .notif-panel-close:hover { background: rgba(255,59,48,0.1); color: var(--hot); }
+        .notif-list { flex: 1; overflow-y: auto; padding: 12px; }
+        .notif-item { padding: 14px; border-radius: 10px; margin-bottom: 8px; cursor: pointer; transition: background 0.2s; border-left: 3px solid transparent; }
+        .notif-item:hover { background: rgba(255,255,255,0.03); }
+        .notif-item.urgent { border-left-color: var(--hot); background: rgba(255,59,48,0.04); }
+        .notif-item.action { border-left-color: var(--warm); background: rgba(255,149,0,0.04); }
+        .notif-item.info { border-left-color: var(--accent-blue); background: rgba(33,150,243,0.04); }
+        .notif-item-header { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+        .notif-item-icon { font-size: 1.1rem; }
+        .notif-item-title { font-size: 0.82rem; font-weight: 700; }
+        .notif-item-time { font-size: 0.7rem; color: var(--text-muted); margin-left: auto; }
+        .notif-item-text { font-size: 0.78rem; color: var(--text-secondary); line-height: 1.5; }
+        .notif-item-action { font-size: 0.75rem; color: var(--primary); font-weight: 600; margin-top: 6px; }
+        .notif-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 499; display: none; }
+        .notif-overlay.open { display: block; }
+        .notif-empty { text-align: center; padding: 40px 20px; color: var(--text-muted); font-size: 0.88rem; }
+
+        /* FLOATING SUGGESTIONS */
+        .floating-suggestions { position: fixed; bottom: 20px; right: 20px; width: 320px; max-height: 400px; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 14px; box-shadow: 0 8px 30px rgba(0,0,0,0.4); z-index: 400; display: none; flex-direction: column; overflow: hidden; animation: slideUp 0.3s; }
+        .floating-suggestions.show { display: flex; }
+        .fs-header { padding: 14px 16px; border-bottom: 1px solid var(--border-color); display: flex; align-items: center; justify-content: space-between; }
+        .fs-header h4 { font-size: 0.85rem; font-weight: 700; color: var(--primary); display: flex; align-items: center; gap: 6px; }
+        .fs-close { background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 1rem; }
+        .fs-body { flex: 1; overflow-y: auto; padding: 12px; max-height: 340px; }
+        .fs-tip { padding: 10px 12px; background: rgba(255,255,255,0.03); border-radius: 8px; margin-bottom: 8px; font-size: 0.8rem; color: var(--text-secondary); line-height: 1.5; border-left: 3px solid var(--primary); }
+        .fs-tip strong { color: var(--text-primary); }
+        @media (max-width: 768px) { .floating-suggestions { width: calc(100% - 32px); right: 16px; bottom: 16px; } }
+
+        /* LEAD ACTION ROW */
+        .lead-action-row { display: none; }
+        .lead-action-row.open { display: table-row; }
+        .lead-action-row td { padding: 0 16px 14px; background: rgba(255,255,255,0.02); }
+        .lead-action-card { background: rgba(255,255,255,0.04); border: 1px solid var(--border-color); border-radius: 10px; padding: 14px; margin-top: 4px; }
+        .lead-action-card.urgent { border-left: 3px solid var(--hot); background: rgba(255,59,48,0.04); }
+        .lead-action-card.action { border-left: 3px solid var(--warm); background: rgba(255,149,0,0.04); }
+        .lead-action-card.ok { border-left: 3px solid var(--wpp-green); background: rgba(37,211,102,0.04); }
+        .lead-action-card.info { border-left: 3px solid var(--accent-blue); background: rgba(33,150,243,0.04); }
+        .lac-header { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+        .lac-icon { font-size: 1.1rem; }
+        .lac-title { font-size: 0.82rem; font-weight: 700; }
+        .lac-title.urgent { color: var(--hot); }
+        .lac-title.action { color: var(--warm); }
+        .lac-title.ok { color: var(--wpp-green); }
+        .lac-title.info { color: var(--accent-blue); }
+        .lac-text { font-size: 0.8rem; color: var(--text-secondary); line-height: 1.6; margin-bottom: 8px; }
+        .lac-template { background: rgba(255,255,255,0.05); border-radius: 8px; padding: 10px 12px; font-size: 0.78rem; color: var(--text-secondary); line-height: 1.6; position: relative; }
+        .lac-template-label { font-size: 0.7rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
+        .lac-copy-btn { position: absolute; top: 8px; right: 8px; background: rgba(255,107,44,0.15); border: none; color: var(--primary); font-size: 0.7rem; font-weight: 600; padding: 3px 8px; border-radius: 6px; cursor: pointer; }
+        .lac-copy-btn:hover { background: rgba(255,107,44,0.25); }
+        .crm-table tr.lead-row { cursor: pointer; }
+        .crm-table tr.lead-row:hover td { background: rgba(255,107,44,0.05); }
+        .crm-action-indicator { display: inline-flex; align-items: center; gap: 4px; font-size: 0.7rem; font-weight: 700; padding: 2px 8px; border-radius: 6px; margin-left: 8px; }
+        .crm-action-indicator.urgent { background: rgba(255,59,48,0.12); color: var(--hot); }
+        .crm-action-indicator.action { background: rgba(255,149,0,0.12); color: var(--warm); }
+        .crm-action-indicator.ok { background: rgba(37,211,102,0.12); color: var(--wpp-green); }
+        .crm-action-indicator.info { background: rgba(33,150,243,0.12); color: var(--accent-blue); }
+
+        /* LEAD DETAIL */
+        .lead-detail-header { display: flex; align-items: center; gap: 16px; margin-bottom: 20px; }
+        .lead-detail-avatar { width: 56px; height: 56px; border-radius: 50%; background: var(--bg-card-hover); border: 2px solid var(--primary); display: flex; align-items: center; justify-content: center; font-size: 1.3rem; font-weight: 700; color: var(--primary); }
+        .lead-detail-info h3 { font-size: 1.1rem; font-weight: 700; }
+        .lead-detail-info p { font-size: 0.82rem; color: var(--text-muted); }
+        .lead-detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 20px; }
+        .lead-detail-item { background: rgba(255,255,255,0.03); border-radius: 10px; padding: 12px; }
+        .lead-detail-item .ldi-label { font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
+        .lead-detail-item .ldi-value { font-size: 0.9rem; font-weight: 600; }
+        .lead-situation { background: rgba(255,255,255,0.03); border-radius: 10px; padding: 14px; margin-bottom: 16px; }
+        .lead-situation h4 { font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px; }
+        .lead-situation p { font-size: 0.88rem; color: var(--text-secondary); line-height: 1.7; white-space: pre-line; }
+        .lead-interactions { margin-top: 16px; }
+        .lead-interactions h4 { font-size: 0.85rem; font-weight: 700; margin-bottom: 12px; }
+        .lead-interaction-item { display: flex; gap: 10px; padding: 10px 0; border-bottom: 1px solid var(--border-color); }
+        .lead-interaction-item:last-child { border-bottom: none; }
+        .lead-interaction-date { font-size: 0.75rem; color: var(--text-muted); white-space: nowrap; min-width: 75px; }
+        .lead-interaction-text { font-size: 0.85rem; color: var(--text-secondary); }
+
+        /* TOAST */
+        .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%) translateY(100px); background: var(--bg-card); border: 1px solid var(--border-color); color: var(--text-primary); padding: 12px 24px; border-radius: 12px; font-size: 0.88rem; font-weight: 500; z-index: 999; transition: transform 0.3s ease; box-shadow: 0 6px 20px rgba(0,0,0,0.3); }
+        .toast.show { transform: translateX(-50%) translateY(0); }
+
+        /* MOBILE */
+        .mobile-toggle { display: none; position: fixed; top: 14px; left: 14px; z-index: 150; width: 40px; height: 40px; border-radius: 10px; background: var(--bg-card); border: 1px solid var(--border-color); color: var(--text-primary); font-size: 1.2rem; cursor: pointer; align-items: center; justify-content: center; }
+        @media (max-width: 768px) {
+            .mobile-toggle { display: flex; }
+            .sidebar { transform: translateX(-100%); }
+            .sidebar.open { transform: translateX(0); }
+            .main-content { margin-left: 0; padding: 60px 16px 16px; }
+            .dash-grid { grid-template-columns: 1fr; }
+            .form-row { grid-template-columns: 1fr; }
+            .crm-toolbar { flex-direction: column; }
+            .crm-search { min-width: 100%; }
+            .crm-table-wrap { overflow-x: auto; }
+            .crm-table { min-width: 700px; }
+            .lead-detail-grid { grid-template-columns: 1fr; }
+        }
+
+        /* EMPTY STATE */
+        .empty-state { text-align: center; padding: 50px 20px; }
+        .empty-state .empty-icon { font-size: 3rem; margin-bottom: 14px; }
+        .empty-state h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 8px; }
+        .empty-state p { color: var(--text-muted); font-size: 0.88rem; margin-bottom: 20px; }
+
+        /* BACKUP BAR */
+        .backup-bar { display: flex; align-items: center; gap: 8px; padding: 8px 0; margin-bottom: 16px; background: rgba(255,149,0,0.06); border: 1px solid rgba(255,149,0,0.15); border-radius: 10px; padding: 10px 16px; font-size: 0.78rem; color: var(--accent-gold); }
+        .backup-bar button { margin-left: auto; }
+    </style>
+</head>
+<body>
+
+<!-- ========== AUTH: LOGIN ========== -->
+<div id="authLogin" class="auth-container">
+    <div class="auth-box">
+        <div class="auth-logo">
+            <img src="logo-fityou.png" alt="Fit You">
+            <h2>Área do Consultor</h2>
+            <p>Faça login para acessar o CRM</p>
+        </div>
+        <div id="loginError" class="auth-error hidden"></div>
+        <div class="auth-field">
+            <label>Email</label>
+            <input type="email" id="loginEmail" placeholder="seu@email.com">
+        </div>
+        <div class="auth-field">
+            <label>Senha</label>
+            <input type="password" id="loginPassword" placeholder="Sua senha" onkeypress="if(event.key==='Enter')doLogin()">
+        </div>
+        <button class="auth-btn" onclick="doLogin()">Entrar</button>
+        <div class="auth-switch">Não tem conta? <a onclick="showScreen('authRegister')">Criar conta</a></div>
+    </div>
+</div>
+
+<!-- ========== AUTH: REGISTER ========== -->
+<div id="authRegister" class="auth-container hidden">
+    <div class="auth-box">
+        <div class="auth-logo">
+            <img src="logo-fityou.png" alt="Fit You">
+            <h2>Criar Conta</h2>
+            <p>Preencha seus dados para começar</p>
+        </div>
+        <div id="registerError" class="auth-error hidden"></div>
+        <div class="auth-photo-upload">
+            <div class="auth-photo-preview" id="regPhotoPreview" onclick="document.getElementById('regPhotoInput').click()">📷</div>
+            <div class="auth-photo-text"><strong>Foto opcional</strong><br>Clique para adicionar</div>
+            <input type="file" id="regPhotoInput" accept="image/*" style="display:none" onchange="handleRegPhoto(event)">
+        </div>
+        <div class="auth-field">
+            <label>Nome completo</label>
+            <input type="text" id="regName" placeholder="Seu nome">
+        </div>
+        <div class="auth-field">
+            <label>Email</label>
+            <input type="email" id="regEmail" placeholder="seu@email.com">
+        </div>
+        <div class="auth-field">
+            <label>Senha</label>
+            <input type="password" id="regPassword" placeholder="Mínimo 4 caracteres">
+        </div>
+        <div class="auth-field">
+            <label>Confirmar senha</label>
+            <input type="password" id="regPasswordConfirm" placeholder="Repita a senha" onkeypress="if(event.key==='Enter')doRegister()">
+        </div>
+        <button class="auth-btn" onclick="doRegister()">Criar Conta</button>
+        <div class="auth-switch">Já tem conta? <a onclick="showScreen('authLogin')">Fazer login</a></div>
+    </div>
+</div>
+
+<!-- ========== APP ========== -->
+<div id="appArea" class="hidden">
+    <button class="mobile-toggle" onclick="toggleSidebar()">☰</button>
+
+    <!-- SIDEBAR -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <img src="logo-fityou.png" alt="Fit You">
+            <span>Consultor</span>
+        </div>
+        <div class="sidebar-user" id="sidebarUser"></div>
+        <nav class="sidebar-nav">
+            <a href="#" onclick="navigate('dashboard')" id="nav-dashboard" class="active"><span class="nav-icon">📊</span> Dashboard</a>
+            <a href="#" onclick="navigate('crm')" id="nav-crm"><span class="nav-icon">📋</span> CRM <span class="nav-badge" id="crmBadge">0</span></a>
+            <a href="#" onclick="navigate('course')" id="nav-course"><span class="nav-icon">📚</span> Curso</a>
+            <a href="#" onclick="navigate('settings')" id="nav-settings"><span class="nav-icon">⚙️</span> Configurações</a>
+            <a href="#" onclick="toggleNotifPanel()" id="nav-notifs" style="margin-top:auto;"><span class="nav-icon notif-bell">🔔<span class="notif-badge hidden" id="notifBadge">0</span></span> Notificações</a>
+        </nav>
+        <div class="sidebar-footer">
+            <a href="index.html">← Voltar ao curso</a>
+            <a href="#" onclick="doLogout()">🚪 Sair</a>
+        </div>
+    </div>
+
+    <!-- MAIN -->
+    <div class="main-content">
+
+        <!-- DASHBOARD -->
+        <div id="page-dashboard" class="page">
+            <div class="page-header">
+                <h1>Dashboard</h1>
+                <p>Visão geral das suas vendas</p>
+            </div>
+            <div class="backup-bar">
+                ⚠️ Faça backup regularmente para não perder seus dados.
+                <button class="crm-btn crm-btn-secondary" onclick="exportBackup()">📥 Exportar</button>
+                <button class="crm-btn crm-btn-secondary" onclick="document.getElementById('importFile').click()">📤 Importar</button>
+                <input type="file" id="importFile" accept=".json" style="display:none" onchange="importBackup(event)">
+            </div>
+            <div class="dash-stats" id="dashStats"></div>
+            <div class="dash-grid">
+                <div class="dash-card">
+                    <h3>🔥 Próximos Follow-ups</h3>
+                    <div id="dashFollowups"><div class="dash-empty">Nenhum follow-up pendente</div></div>
+                </div>
+                <div class="dash-card">
+                    <h3>📈 Progresso no Curso</h3>
+                    <div id="dashCourseProgress"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- CRM -->
+        <div id="page-crm" class="page hidden">
+            <div class="page-header">
+                <h1>CRM de Vendas</h1>
+                <p>Gerencie seus leads e não perca nenhuma venda</p>
+            </div>
+            <div class="crm-toolbar">
+                <input type="text" class="crm-search" id="crmSearch" placeholder="🔍 Buscar por nome ou telefone..." oninput="renderCRM()">
+                <select class="crm-filter" id="crmFilter" onchange="renderCRM()">
+                    <option value="all">Todos</option>
+                    <option value="hot">🔥 Quentes</option>
+                    <option value="warm">☀️ Mornos</option>
+                    <option value="cold">❄️ Frios</option>
+                </select>
+                <select class="crm-filter" id="crmModalityFilter" onchange="renderCRM()">
+                    <option value="all">Todas modalidades</option>
+                    <option value="Natação Adulto">Natação Adulto</option>
+                    <option value="Natação Infantil">Natação Infantil</option>
+                    <option value="Natação Baby">Natação Baby</option>
+                    <option value="Musculação">Musculação</option>
+                    <option value="Hidroginástica">Hidroginástica</option>
+                    <option value="Muay Thai">Muay Thai</option>
+                    <option value="Jiu Jitsu">Jiu Jitsu</option>
+                    <option value="Gold Completo">Gold Completo</option>
+                </select>
+                <button class="crm-btn crm-btn-primary" onclick="openLeadModal()">+ Novo Lead</button>
+            </div>
+            <div class="crm-table-wrap">
+                <table class="crm-table">
+                    <thead>
+                        <tr>
+                            <th>Status</th>
+                            <th>Nome</th>
+                            <th>Telefone</th>
+                            <th>Modalidade</th>
+                            <th>Valor</th>
+                            <th>Contato</th>
+                            <th>Follow-up</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="crmTableBody"></tbody>
+                </table>
+            </div>
+            <div id="crmEmpty" class="empty-state hidden">
+                <div class="empty-icon">📋</div>
+                <h3>Nenhum lead cadastrado</h3>
+                <p>Adicione seu primeiro lead para começar a gerenciar suas vendas</p>
+                <button class="crm-btn crm-btn-primary" onclick="openLeadModal()">+ Novo Lead</button>
+            </div>
+        </div>
+
+        <!-- COURSE -->
+        <div id="page-course" class="page hidden">
+            <div class="page-header">
+                <h1>Meu Curso</h1>
+                <p>Acompanhe seu progresso no curso de vendas</p>
+            </div>
+            <div class="dash-card" id="courseArea"></div>
+        </div>
+
+        <!-- SETTINGS -->
+        <div id="page-settings" class="page hidden">
+            <div class="page-header">
+                <h1>Configurações</h1>
+                <p>Gerencie seu perfil e dados</p>
+            </div>
+            <div class="dash-card" style="max-width:500px;">
+                <h3>👤 Meu Perfil</h3>
+                <div style="display:flex;align-items:center;gap:16px;margin:16px 0;">
+                    <div id="settingsPhoto" style="width:72px;height:72px;border-radius:50%;background:var(--bg-card-hover);border:2px solid var(--primary);display:flex;align-items:center;justify-content:center;font-size:1.8rem;color:var(--text-muted);overflow:hidden;cursor:pointer;" onclick="document.getElementById('settingsPhotoInput').click()">📷</div>
+                    <div>
+                        <input type="file" id="settingsPhotoInput" accept="image/*" style="display:none" onchange="updateProfilePhoto(event)">
+                        <button class="crm-btn crm-btn-secondary" onclick="document.getElementById('settingsPhotoInput').click()">Trocar foto</button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Nome</label>
+                    <input type="text" id="settingsName">
+                </div>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" id="settingsEmail" disabled style="opacity:0.5">
+                </div>
+                <button class="crm-btn crm-btn-primary" onclick="saveSettings()" style="margin-top:8px;">Salvar</button>
+            </div>
+            <div class="dash-card" style="max-width:500px;margin-top:20px;">
+                <h3>💾 Backup e Dados</h3>
+                <p style="font-size:0.85rem;color:var(--text-secondary);margin:12px 0;">Exporte seus dados regularmente para evitar perdas.</p>
+                <div style="display:flex;gap:10px;flex-wrap:wrap;">
+                    <button class="crm-btn crm-btn-primary" onclick="exportBackup()">📥 Exportar Backup</button>
+                    <button class="crm-btn crm-btn-secondary" onclick="document.getElementById('importFile2').click()">📤 Importar Backup</button>
+                    <input type="file" id="importFile2" accept=".json" style="display:none" onchange="importBackup(event)">
+                    <button class="crm-btn crm-btn-danger" onclick="clearAllData()">🗑️ Limpar Todos os Dados</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ========== LEAD MODAL ========== -->
+<div id="leadModal" class="modal-overlay hidden">
+    <div class="modal">
+        <div class="modal-header">
+            <h3 id="leadModalTitle">Novo Lead</h3>
+            <button class="modal-close" onclick="closeLeadModal()">×</button>
+        </div>
+        <div class="modal-body">
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Nome do cliente *</label>
+                    <input type="text" id="leadName" placeholder="Nome completo">
+                </div>
+                <div class="form-group">
+                    <label>Telefone</label>
+                    <input type="tel" id="leadPhone" placeholder="(11) 99999-9999">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Modalidade</label>
+                    <select id="leadModality">
+                        <option value="Natação Adulto">Natação Adulto</option>
+                        <option value="Natação Infantil">Natação Infantil</option>
+                        <option value="Natação Baby">Natação Baby</option>
+                        <option value="Musculação">Musculação</option>
+                        <option value="Hidroginástica">Hidroginástica</option>
+                        <option value="Muay Thai">Muay Thai</option>
+                        <option value="Jiu Jitsu">Jiu Jitsu</option>
+                        <option value="Gold Completo">Gold Completo</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Valor proposto (R$)</label>
+                    <input type="number" id="leadValue" placeholder="0,00" step="0.01">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Data do contato</label>
+                    <input type="date" id="leadDate">
+                </div>
+                <div class="form-group">
+                    <label>Data do follow-up</label>
+                    <input type="date" id="leadFollowup">
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Situação / Texto da conversa</label>
+                <textarea id="leadText" placeholder="Cole aqui o resumo da conversa ou a conversa do WhatsApp...&#10;&#10;A IA vai analisar automaticamente e indicar se o lead é quente, morno ou frio."></textarea>
+            </div>
+            <div id="leadAiAnalysis" class="hidden"></div>
+        </div>
+        <div class="modal-footer">
+            <button class="crm-btn crm-btn-secondary" onclick="closeLeadModal()">Cancelar</button>
+            <button class="crm-btn crm-btn-primary" id="leadSaveBtn" onclick="saveLead()">Salvar Lead</button>
+        </div>
+    </div>
+</div>
+
+<!-- ========== LEAD DETAIL MODAL ========== -->
+<div id="leadDetailModal" class="modal-overlay hidden">
+    <div class="modal">
+        <div class="modal-header">
+            <h3>Detalhes do Lead</h3>
+            <button class="modal-close" onclick="closeDetailModal()">×</button>
+        </div>
+        <div class="modal-body" id="leadDetailBody"></div>
+        <div class="modal-footer">
+            <button class="crm-btn crm-btn-secondary" onclick="closeDetailModal()">Fechar</button>
+        </div>
+    </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<!-- NOTIFICATION PANEL -->
+<div class="notif-overlay" id="notifOverlay" onclick="closeNotifPanel()"></div>
+<div class="notif-panel" id="notifPanel">
+    <div class="notif-panel-header">
+        <h3>🔔 Notificações</h3>
+        <button class="notif-panel-close" onclick="closeNotifPanel()">×</button>
+    </div>
+    <div class="notif-list" id="notifList"></div>
+</div>
+
+<!-- FLOATING SUGGESTIONS -->
+<div class="floating-suggestions" id="floatingSuggestions">
+    <div class="fs-header">
+        <h4>💡 Dicas da IA</h4>
+        <button class="fs-close" onclick="closeFloatingSuggestions()">×</button>
+    </div>
+    <div class="fs-body" id="fsBody"></div>
+</div>
+
+<script>
+// ===== AUTH SYSTEM =====
+function getUsers() { return JSON.parse(localStorage.getItem('fityou-users') || '[]'); }
+function saveUsers(u) { localStorage.setItem('fityou-users', JSON.stringify(u)); }
+function getCurrentUser() { return JSON.parse(localStorage.getItem('fityou-current-user') || 'null'); }
+function setCurrentUser(u) { localStorage.setItem('fityou-current-user', JSON.stringify(u)); }
+
+let regPhotoData = null;
+
+function showScreen(id) {
+    ['authLogin','authRegister','appArea'].forEach(s => document.getElementById(s).classList.add('hidden'));
+    document.getElementById(id).classList.remove('hidden');
+}
+
+function handleRegPhoto(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = function(ev) {
+        regPhotoData = ev.target.result;
+        document.getElementById('regPhotoPreview').innerHTML = `<img src="${ev.target.result}">`;
+    };
+    reader.readAsDataURL(file);
+}
+
+function doRegister() {
+    const name = document.getElementById('regName').value.trim();
+    const email = document.getElementById('regEmail').value.trim().toLowerCase();
+    const pass = document.getElementById('regPassword').value;
+    const pass2 = document.getElementById('regPasswordConfirm').value;
+    const errEl = document.getElementById('registerError');
+    errEl.classList.add('hidden');
+
+    if (!name || !email || !pass) { errEl.textContent = 'Preencha todos os campos.'; errEl.classList.remove('hidden'); return; }
+    if (pass.length < 4) { errEl.textContent = 'A senha deve ter pelo menos 4 caracteres.'; errEl.classList.remove('hidden'); return; }
+    if (pass !== pass2) { errEl.textContent = 'As senhas não conferem.'; errEl.classList.remove('hidden'); return; }
+
+    const users = getUsers();
+    if (users.find(u => u.email === email)) { errEl.textContent = 'Já existe uma conta com este email.'; errEl.classList.remove('hidden'); return; }
+
+    const user = { id: Date.now().toString(), name, email, password: pass, photo: regPhotoData || null, createdAt: new Date().toISOString() };
+    users.push(user);
+    saveUsers(users);
+    setCurrentUser(user);
+    enterApp();
+    showToast('✅ Conta criada com sucesso!');
+}
+
+function doLogin() {
+    const email = document.getElementById('loginEmail').value.trim().toLowerCase();
+    const pass = document.getElementById('loginPassword').value;
+    const errEl = document.getElementById('loginError');
+    errEl.classList.add('hidden');
+
+    if (!email || !pass) { errEl.textContent = 'Preencha email e senha.'; errEl.classList.remove('hidden'); return; }
+
+    const users = getUsers();
+    const user = users.find(u => u.email === email && u.password === pass);
+    if (!user) { errEl.textContent = 'Email ou senha incorretos.'; errEl.classList.remove('hidden'); return; }
+
+    setCurrentUser(user);
+    enterApp();
+}
+
+function doLogout() {
+    localStorage.removeItem('fityou-current-user');
+    showScreen('authLogin');
+    document.getElementById('loginEmail').value = '';
+    document.getElementById('loginPassword').value = '';
+}
+
+function enterApp() {
+    showScreen('appArea');
+    renderSidebarUser();
+    navigate('dashboard');
+    renderCRM();
+}
+
+function renderSidebarUser() {
+    const user = getCurrentUser();
+    if (!user) return;
+    const photoHtml = user.photo ? `<img src="${user.photo}">` : user.name.charAt(0).toUpperCase();
+    document.getElementById('sidebarUser').innerHTML = `
+        <div class="sidebar-user-photo">${photoHtml}</div>
+        <div class="sidebar-user-info">
+            <div class="name">${user.name}</div>
+            <div class="role">Consultor</div>
+        </div>`;
+}
+
+// ===== LEADS DATA =====
+function getLeads() { return JSON.parse(localStorage.getItem('fityou-leads') || '[]'); }
+function saveLeads(l) { localStorage.setItem('fityou-leads', JSON.stringify(l)); }
+function getUserLeads() {
+    const user = getCurrentUser();
+    if (!user) return [];
+    return getLeads().filter(l => l.userId === user.id);
+}
+
+// ===== AI ANALYSIS ENGINE =====
+function extractDataFromText(text) {
+    const extracted = { name: null, phone: null, value: null, modality: null, dates: [], convenio: null };
+
+    // Extract name
+    const namePatterns = [
+        /(?:falar com|atividade de|nome[:\s]+|meu nome é|sou o[a]?\s+|aqui é o[a]?\s+|do[a]?\s+)([A-ZÁÉÍÓÚÃÕÊ][a-záéíóúãõê]+(?:\s+[A-ZÁÉÍÓÚÃÕÊ][a-záéíóúãõê]+){0,2})/i,
+        /(?:Olá|Oi|Bom dia|Boa tarde|Boa noite),?\s+(?:aqui é o[a]?\s+)?(?:sr\.|sra\.|Dr\.|Dra\.)?\s*([A-ZÁÉÍÓÚÃÕÊ][a-záéíóúãõê]+(?:\s+[A-ZÁÉÍÓÚÃÕÊ][a-záéíóúãõê]+){0,2})/i,
+        /(?:chamo|me chamo)\s+(?:de\s+)?([A-ZÁÉÍÓÚÃÕÊ][a-záéíóúãõê]+(?:\s+[A-ZÁÉÍÓÚÃÕÊ][a-záéíóúãõê]+){0,2})/i
+    ];
+    for (const p of namePatterns) {
+        const m = text.match(p);
+        if (m && m[1] && m[1].length > 1) {
+            extracted.name = m[1].trim();
+            break;
+        }
+    }
+
+    // Extract phone
+    const phoneMatch = text.match(/(?:\(?\d{2}\)?\s*)?(?:9\s*)?\d{4}[\s\-]?\d{4}/);
+    if (phoneMatch) {
+        const digits = phoneMatch[0].replace(/\D/g, '');
+        if (digits.length >= 10) {
+            extracted.phone = phoneMatch[0].trim();
+        }
+    }
+
+    // Extract monetary values
+    const valuePatterns = [
+        /R\$\s*(\d{1,3}(?:\.\d{3})*(?:,\d{2})?)/g,
+        /(\d{1,3}(?:\.\d{3})*,\d{2})\s*(?:reais?|R\$)/gi,
+        /(?:valor|preço|custa|custa|plano|mensalidade|pagar)\s*(?:de\s+)?(?:R\$\s*)?(\d{1,3}(?:\.\d{3})*(?:,\d{2})?)/gi
+    ];
+    const values = [];
+    for (const p of valuePatterns) {
+        let m;
+        while ((m = p.exec(text)) !== null) {
+            const num = parseFloat(m[1].replace(/\./g, '').replace(',', '.'));
+            if (num > 0 && num < 50000) values.push({ raw: m[1], num });
+        }
+    }
+    if (values.length > 0) {
+        values.sort((a, b) => b.num - a.num);
+        extracted.value = values[0].num;
+    }
+
+    // Extract modality
+    const modalities = {
+        'natação adulto': 'Natação Adulto', 'natação de adultos': 'Natação Adulto', 'natação': 'Natação Adulto',
+        'natação infantil': 'Natação Infantil', 'infantil': 'Natação Infantil',
+        'natação baby': 'Natação Baby', 'baby': 'Natação Baby', 'natação bebê': 'Natação Baby',
+        'musculação': 'Musculação', 'academia': 'Musculação', 'muscula': 'Musculação',
+        'hidroginástica': 'Hidroginástica', 'hidro': 'Hidroginástica', 'hidrogi': 'Hidroginástica',
+        'muay thai': 'Muay Thai', 'muay': 'Muay Thai', 'thai': 'Muay Thai', 'boxe': 'Muay Thai',
+        'jiu jitsu': 'Jiu Jitsu', 'jiu-jitsu': 'Jiu Jitsu', 'bjj': 'Jiu Jitsu', 'jitsu': 'Jiu Jitsu',
+        'gold': 'Gold Completo', 'completo': 'Gold Completo', 'gold completo': 'Gold Completo',
+        'todos os modalidades': 'Gold Completo', 'todas as modalidades': 'Gold Completo'
+    };
+    const lower = text.toLowerCase();
+    for (const [key, val] of Object.entries(modalities)) {
+        if (lower.includes(key)) { extracted.modality = val; break; }
+    }
+
+    // Extract dates
+    const datePatterns = [
+        /(\d{1,2})\s*(?:de\s*)?((?:janeiro|fevereiro|março|abril|maio|junho|julho|agosto|setembro|outubro|novembro|dezembro))\s*(?:de\s*(?:20)?(\d{2}))?/gi,
+        /(\d{1,2})[\/\-](\d{1,2})(?:[\/\-](\d{2,4}))?/g
+    ];
+    const monthMap = { janeiro: '01', fevereiro: '02', março: '03', abril: '04', maio: '05', junho: '06', julho: '07', agosto: '08', setembro: '09', outubro: '10', novembro: '11', dezembro: '12' };
+    for (const p of datePatterns) {
+        let m;
+        while ((m = p.exec(text)) !== null) {
+            let dateStr = null;
+            if (monthMap[m[2].toLowerCase()]) {
+                const day = m[1].padStart(2, '0');
+                const month = monthMap[m[2].toLowerCase()];
+                const year = m[3] ? `20${m[3]}` : new Date().getFullYear();
+                dateStr = `${year}-${month}-${day}`;
+            } else if (m[3]) {
+                const d = m[1].padStart(2, '0');
+                const mo = m[2].padStart(2, '0');
+                const y = m[3].length === 4 ? m[3] : `20${m[3]}`;
+                dateStr = `${y}-${mo}-${d}`;
+            } else if (m[2]) {
+                const d = m[1].padStart(2, '0');
+                const mo = m[2].padStart(2, '0');
+                dateStr = `${new Date().getFullYear()}-${mo}-${d}`;
+            }
+            if (dateStr) extracted.dates.push(dateStr);
+        }
+    }
+
+    // Extract convenio
+    const convenios = ['gympass', 'totalpass', 'wellhub', 'fitclub', 'onepass', 'pass', 'convênio', 'convenio'];
+    for (const c of convenios) {
+        if (lower.includes(c)) { extracted.convenio = c.charAt(0).toUpperCase() + c.slice(1); break; }
+    }
+
+    return extracted;
+}
+
+function autoFillFromExtracted(extracted) {
+    let filled = [];
+    if (extracted.name && !document.getElementById('leadName').value.trim()) {
+        document.getElementById('leadName').value = extracted.name;
+        filled.push(`Nome: ${extracted.name}`);
+    }
+    if (extracted.phone && !document.getElementById('leadPhone').value.trim()) {
+        document.getElementById('leadPhone').value = extracted.phone;
+        filled.push(`Telefone: ${extracted.phone}`);
+    }
+    if (extracted.modality) {
+        document.getElementById('leadModality').value = extracted.modality;
+        filled.push(`Modalidade: ${extracted.modality}`);
+    }
+    if (extracted.value && !document.getElementById('leadValue').value) {
+        document.getElementById('leadValue').value = extracted.value.toFixed(2);
+        filled.push(`Valor: R$ ${extracted.value.toLocaleString('pt-BR', {minimumFractionDigits:2})}`);
+    }
+    if (extracted.dates.length > 0 && !document.getElementById('leadDate').value) {
+        document.getElementById('leadDate').value = extracted.dates[0];
+        filled.push(`Data: ${new Date(extracted.dates[0] + 'T12:00:00').toLocaleDateString('pt-BR')}`);
+    }
+    if (extracted.dates.length > 1 && !document.getElementById('leadFollowup').value) {
+        document.getElementById('leadFollowup').value = extracted.dates[1];
+        filled.push(`Follow-up: ${new Date(extracted.dates[1] + 'T12:00:00').toLocaleDateString('pt-BR')}`);
+    }
+    return filled;
+}
+
+function analyzeLeadText(text) {
+    const lower = text.toLowerCase();
+    let score = 50;
+    let signals = [];
+    let suggestions = [];
+
+    const hotWords = ['quero', 'vou', 'bora', 'topa', 'fechar', 'agora', 'interessad', 'amei', 'perfeito', 'show', 'beleza', 'pode ser', 'manda', 'envia', 'agendar', 'marcar', 'aula experimental', 'como faço', 'quando começo', 'matricular'];
+    const warmWords = ['pensando', 'depois', 'ver', 'talvez', 'ainda não', 'depois eu', 'vou ver', 'deixa eu', 'pretendo', 'quero mas', 'caro', 'preço'];
+    const coldWords = ['não', 'não quero', 'não tenho', 'não posso', 'obrigado mas', 'não acho', 'não faz sentido', 'já tenho', 'não me interessa', 'depois não', 'af'];
+
+    let hotCount = 0, warmCount = 0, coldCount = 0;
+    hotWords.forEach(w => { if (lower.includes(w)) { hotCount++; score += 8; signals.push(`Interesse detectado: "${w}"`); }});
+    warmWords.forEach(w => { if (lower.includes(w)) { warmCount++; score -= 3; signals.push(`Hesitação: "${w}"`); }});
+    coldWords.forEach(w => { if (lower.includes(w)) { coldCount++; score -= 10; signals.push(`Rejeição/fragueza: "${w}"`); }});
+
+    if (lower.includes('?')) { score += 5; signals.push('Fez perguntas (interesse)'); }
+    if (lower.includes('r$') || lower.includes('preço') || lower.includes('quanto') || lower.includes('valor')) { score += 3; signals.push('Perguntou sobre preço'); }
+    if (lower.includes('gympass') || lower.includes('totalpass') || lower.includes('convênio')) { signals.push('Usa convênio — abordar vantagem do plano direto'); }
+    if (lower.includes('experimental') || lower.includes('aula')) { score += 10; signals.push('Interesse em aula experimental'); }
+    if (lower.includes('segurança') || lower.includes('medo') || lower.includes('filho') || lower.includes('bebê')) { signals.push('Preocupação com segurança — explorar diferenciais'); }
+    if (text.length < 20) { score -= 5; signals.push('Mensagem muito curta'); }
+    if (text.length > 200) { score += 5; signals.push('Mensagem detalhada (maior engajamento)'); }
+
+    const extracted = extractDataFromText(text);
+    if (extracted.name) { score += 5; signals.push(`Nome identificado: ${extracted.name}`); }
+    if (extracted.phone) { signals.push(`Telefone encontrado: ${extracted.phone}`); }
+    if (extracted.value) { score += 5; signals.push(`Valor mencionado: R$ ${extracted.value.toFixed(2)}`); }
+    if (extracted.modality) { signals.push(`Modalidade: ${extracted.modality}`); }
+    if (extracted.convenio) { signals.push(`Convênio: ${extracted.convenio}`); }
+    if (extracted.dates.length > 0) { signals.push(`Data encontrada: ${new Date(extracted.dates[0] + 'T12:00:00').toLocaleDateString('pt-BR')}`); }
+
+    score = Math.max(0, Math.min(100, score));
+
+    let temperature, followUpDays;
+    if (score >= 65) { temperature = 'hot'; followUpDays = 1; }
+    else if (score >= 40) { temperature = 'warm'; followUpDays = 3; }
+    else { temperature = 'cold'; followUpDays = 7; }
+
+    if (hotCount > 0) suggestions.push('Cliente demonstrou interesse! Agende uma aula experimental rapidamente.');
+    if (warmCount > 0) suggestions.push('Cliente está em dúvida. Envie mais informações sobre benefícios e diferenciais.');
+    if (coldCount > 0) suggestions.push('Cliente frio. Não force. Envie uma mensagem amigável em alguns dias.');
+    if (lower.includes('gympass') || lower.includes('convênio')) suggestions.push('Mostre as vantagens do plano direto sobre o convênio (vaga fixa + musculação grátis).');
+    if (lower.includes('preço') || lower.includes('caro')) suggestions.push('Reenquadre o valor: "São menos de R$6 por aula completa + musculação grátis!".');
+    if (lower.includes('segurança') || lower.includes('filho')) suggestions.push('Destaque: ionização, temperatura 30°C, professor dedicado, turmas por nível.');
+    if (lower.includes('aula') || lower.includes('experimental')) suggestions.push('Ofereça agendamento de aula experimental. Mostre que o primeiro contato é R$50 mas abate no plano.');
+    if (lower.includes('horário') || lower.includes('hora') || lower.includes('quando')) suggestions.push('Informa horários: Seg-Sex 06h-22h | Sáb 07h30-12h. Pergunte qual período prefere.');
+    if (lower.includes('piscina') || lower.includes('água') || lower.includes('temperatura')) suggestions.push('Destaque diferenciais: tratamento por ionização (sem cloro!), água 29-32°C, 20m, máx 3 por faixa.');
+    if (suggestions.length === 0) suggestions.push('Mantenha o contato. Envie informações sobre as modalidades e diferenciais da Fit You.');
+
+    const followUpDate = new Date();
+    followUpDate.setDate(followUpDate.getDate() + followUpDays);
+    const followUpStr = followUpDate.toLocaleDateString('pt-BR');
+
+    return { temperature, score, signals, suggestions, extracted, followUpDate: followUpStr, followUpDays };
+}
+
+function getTemperatureLabel(t) {
+    if (t === 'hot') return { label: '🔥 Quente', class: 'hot' };
+    if (t === 'warm') return { label: '☀️ Morno', class: 'warm' };
+    return { label: '❄️ Frio', class: 'cold' };
+}
+
+function getLeadAction(l) {
+    const today = new Date().toISOString().split('T')[0];
+    const name = l.name.split(' ')[0];
+    const modality = l.modality || 'natação';
+    const value = l.value ? parseFloat(l.value) : null;
+    const valueText = value ? `R$ ${value.toLocaleString('pt-BR', {minimumFractionDigits:2})}` : null;
+    const text = (l.text || '').toLowerCase();
+    const daysSinceContact = l.contactDate ? Math.floor((new Date(today) - new Date(l.contactDate)) / 86400000) : null;
+    const daysSinceUpdate = l.updatedAt ? Math.floor((new Date(today) - new Date(l.updatedAt)) / 86400000) : null;
+
+    // Overdue follow-up
+    if (l.followUp && l.followUp < today && l.status !== 'won') {
+        const daysOverdue = Math.floor((new Date(today) - new Date(l.followUp)) / 86400000);
+        let template = '';
+        if (l.temperature === 'hot') {
+            template = `Oi ${name}! Tudo bem? 😊 Vim dar continuidade na nossa conversa sobre ${modality}. ${valueText ? `O plano por ${valueText} ainda está disponível.` : 'Ainda posso te ajudar a fechar!'}`;
+        } else if (l.temperature === 'warm') {
+            template = `Oi ${name}! Como vai? Passando para saber se conseguiu pensar melhor sobre a proposta. Tenho uma novidade que acho que você vai curtir! 🏊`;
+        } else {
+            template = `Oi ${name}! Tudo bem? 😊 A Fit You tem uma condição especial esse mês. Se quiser, posso te contar os detalhes.`;
+        }
+        return {
+            type: 'urgent',
+            icon: '⏰',
+            shortLabel: `Atrasado ${daysOverdue}d`,
+            title: `Follow-up atrasado há ${daysOverdue} dia(s)! Retorne AGORA`,
+            description: daysOverdue >= 3
+                ? `${name} está esperando há ${daysOverdue} dias. Lead ${l.temperature === 'hot' ? 'quente' : l.temperature === 'warm' ? 'morno' : 'frio'} — quanto mais espera, mais frio fica.`
+                : `${name} precisa de um retorno. ${l.temperature === 'hot' ? 'Esse lead está quente, não perca a oportunidade!' : 'Mantenha o contato para não perder o lead.'}`,
+            template
+        };
+    }
+
+    // Follow-up is today
+    if (l.followUp === today && l.status !== 'won') {
+        return {
+            type: 'action',
+            icon: '📅',
+            shortLabel: 'Hoje',
+            title: `Entre em contato com ${name} HOJE`,
+            description: `Follow-up agendado para hoje. ${l.temperature === 'hot' ? 'Lead quente — feche agora!' : 'Hora de dar continuidade.'}`,
+            template: `Oi ${name}! Tudo certo? 😊 Vim dar continuidade na nossa conversa. ${valueText ? `O valor que te passei foi ${valueText}.` : 'Posso te tirar qualquer dúvida.'} Podemos alinhar os próximos passos?`
+        };
+    }
+
+    // Hot lead with no recent interaction
+    if (l.temperature === 'hot' && l.status !== 'won') {
+        if (daysSinceUpdate !== null && daysSinceUpdate >= 1) {
+            return {
+                type: 'urgent',
+                icon: '🔥',
+                shortLabel: 'Agir',
+                title: `Lead quente esfriando! Fale com ${name}`,
+                description: `${name} demonstrou muito interesse mas já se passou ${daysSinceUpdate} dia(s) sem contato. Lead quente esfri rápido!`,
+                template: `Oi ${name}! 🎉 Tive uma novidade sobre ${modality} que acho que vai te interessar. Podemos bater um papinho rápido?`
+            };
+        }
+        return {
+            type: 'ok',
+            icon: '🔥',
+            shortLabel: 'Quente',
+            title: `${name} está pronto para fechar!`,
+            description: `Lead classificado como quente. Mantenha o contato para converter em venda.`,
+            template: valueText
+                ? `Oi ${name}! 🏊 Tudo bem? O plano de ${modality} por ${valueText} + musculação grátis continua disponível. Quer agendar uma aula experimental para conhecer?`
+                : `Oi ${name}! 🏊 Posso te ajudar a finalizar? Que tal agendar uma aula experimental gratuita?`
+        };
+    }
+
+    // Warm lead - needs nurturing
+    if (l.temperature === 'warm' && l.status !== 'won') {
+        const noFollowUp = !l.followUp || l.followUp >= today;
+        if (noFollowUp && daysSinceUpdate !== null && daysSinceUpdate >= 2) {
+            return {
+                type: 'action',
+                icon: '☀️',
+                shortLabel: 'Nurturar',
+                title: `${name} está em dúvida — envie mais informações`,
+                description: `Lead morno há ${daysSinceUpdate} dia(s). Envie conteúdo que ajude na decisão: depoimentos, benefícios, ou uma oferta.`,
+                template: `Oi ${name}! 😊 Tudo bem? Separei algumas informações que talvez te ajudem: a Fit You tem piscina por ionização (sem cloro!), água morna a 30°C e musculação grátis no plano. Quer que eu te conte mais?`
+            };
+        }
+        return {
+            type: 'info',
+            icon: '☀️',
+            shortLabel: 'Morno',
+            title: `${name} está avaliando`,
+            description: `Lead morno — demonstre interesse sem pressionar. Ofereça valor.`,
+            template: `Oi ${name}! 🏊 Só passando para saber se ficou com alguma dúvida sobre ${modality}. Posso te enviar um vídeo da piscina para você ver como é!`
+        };
+    }
+
+    // Cold lead
+    if (l.temperature === 'cold' && l.status !== 'won') {
+        if (daysSinceUpdate !== null && daysSinceUpdate >= 5) {
+            return {
+                type: 'info',
+                icon: '❄️',
+                shortLabel: 'Reativar',
+                title: `Tentar reativar ${name}`,
+                description: `Última interação há ${daysSinceUpdate} dias. Envie algo leve para reabrir a conversa sem pressionar.`,
+                template: `Oi ${name}! 😊 Tudo bem? A Fit You está com uma condição especial esse mês e lembrei de você. Se quiser dar uma olhada, estou à disposição!`
+            };
+        }
+        return {
+            type: 'info',
+            icon: '❄️',
+            shortLabel: 'Frio',
+            title: `${name} não demonstrou interesse`,
+            description: `Lead frio. Não force — mantenha presença para quando ele estiver pronto.`,
+            template: null
+        };
+    }
+
+    // Won
+    if (l.status === 'won') {
+        return { type: 'ok', icon: '🏆', shortLabel: 'Fechou!', title: `${name} já é cliente!`, description: 'Parabéns pela venda! Mantenha o relacionamento pós-venda.', template: null };
+    }
+
+    // Default / new lead
+    if (daysSinceContact !== null && daysSinceContact <= 0) {
+        return {
+            type: 'action',
+            icon: '🆕',
+            shortLabel: 'Novo',
+            title: `Novo lead: ${name}`,
+            description: 'Lead recém-cadastrado. Faça o primeiro contato rapidamente!',
+            template: `Oi ${name}! 😊 Aqui é da Fit You Academia. ${modality ? `Vi que você tem interesse em ${modality}.` : 'Vi que você tem interesse em nossas atividades.'} Posso te ajudar com alguma informação?`
+        };
+    }
+
+    return { type: 'info', icon: '📋', shortLabel: '', title: '', description: '', template: null };
+}
+
+function toggleLeadAction(id) {
+    const row = document.getElementById('action-' + id);
+    if (row) {
+        const isOpen = row.classList.contains('open');
+        document.querySelectorAll('.lead-action-row.open').forEach(r => r.classList.remove('open'));
+        if (!isOpen) row.classList.add('open');
+    }
+}
+
+function copyTemplate(id) {
+    const el = document.getElementById('tpl-' + id);
+    if (el) {
+        navigator.clipboard.writeText(el.textContent.trim()).then(() => {
+            showToast('📋 Mensagem copiada!');
+        }).catch(() => {
+            const range = document.createRange();
+            range.selectNodeContents(el);
+            const sel = window.getSelection();
+            sel.removeAllRanges();
+            sel.addRange(range);
+            document.execCommand('copy');
+            sel.removeAllRanges();
+            showToast('📋 Mensagem copiada!');
+        });
+    }
+}
+
+// ===== NAVIGATION =====
+function navigate(page) {
+    document.querySelectorAll('.page').forEach(p => p.classList.add('hidden'));
+    document.querySelectorAll('.sidebar-nav a').forEach(a => a.classList.remove('active'));
+    document.getElementById(`page-${page}`).classList.remove('hidden');
+    document.getElementById(`nav-${page}`).classList.add('active');
+
+    if (page === 'dashboard') renderDashboard();
+    if (page === 'crm') { renderCRM(); scheduleFloatingSuggestions(); }
+    if (page === 'course') renderCourse();
+    if (page === 'settings') renderSettings();
+
+    document.getElementById('sidebar').classList.remove('open');
+}
+
+function toggleSidebar() { document.getElementById('sidebar').classList.toggle('open'); }
+
+// ===== DASHBOARD =====
+function renderDashboard() {
+    const leads = getUserLeads();
+    const temp = { hot: 0, warm: 0, cold: 0 };
+    let totalRevenue = 0;
+    leads.forEach(l => { temp[l.temperature] = (temp[l.temperature] || 0) + 1; if (l.value) totalRevenue += parseFloat(l.value); });
+
+    document.getElementById('crmBadge').textContent = leads.length;
+
+    document.getElementById('dashStats').innerHTML = `
+        <div class="dash-stat hot"><div class="stat-icon">🔥</div><div class="stat-value">${temp.hot}</div><div class="stat-label">Leads Quentes</div></div>
+        <div class="dash-stat warm"><div class="stat-icon">☀️</div><div class="stat-value">${temp.warm}</div><div class="stat-label">Leads Mornos</div></div>
+        <div class="dash-stat cold"><div class="stat-icon">❄️</div><div class="stat-value">${temp.cold}</div><div class="stat-label">Leads Frios</div></div>
+        <div class="dash-stat revenue"><div class="stat-icon">💰</div><div class="stat-value">R$ ${totalRevenue.toLocaleString('pt-BR', {minimumFractionDigits: 0})}</div><div class="stat-label">Valor Total</div></div>`;
+
+    const today = new Date().toISOString().split('T')[0];
+    const followUps = leads.filter(l => l.followUp && l.followUp <= today && l.status !== 'won').sort((a,b) => a.followUp.localeCompare(b.followUp));
+    const fuEl = document.getElementById('dashFollowups');
+    if (followUps.length === 0) {
+        fuEl.innerHTML = '<div class="dash-empty">Nenhum follow-up pendente! 🎉</div>';
+    } else {
+        fuEl.innerHTML = followUps.slice(0, 5).map(l => `
+            <div class="dash-followup">
+                <div class="fu-dot ${l.temperature}"></div>
+                <div class="fu-info">
+                    <div class="fu-name">${l.name}</div>
+                    <div class="fu-date">${l.modality} • ${l.followUp}</div>
+                </div>
+                <div class="fu-action" onclick="viewLead('${l.id}')">Ver →</div>
+            </div>`).join('');
+    }
+
+    const progress = JSON.parse(localStorage.getItem('fityou-vendas-state') || '{}');
+    const completed = (progress.completedModules || []).length;
+    const total = 6;
+    const cert = progress.certUnlocked;
+    document.getElementById('dashCourseProgress').innerHTML = `
+        <p style="font-size:0.88rem;margin-bottom:8px;">${completed} de ${total} módulos concluídos</p>
+        <div class="dash-progress-bar"><div class="dash-progress-fill" style="width:${Math.round((completed/total)*100)}%"></div></div>
+        <p style="font-size:0.82rem;color:var(--text-muted);margin-top:10px;">${cert ? '🏆 Certificado desbloqueado!' : `Faltam ${total - completed} módulos para o certificado.`}</p>
+        <a href="curso-fityou-vendas.html" target="_blank" style="display:inline-block;margin-top:12px;color:var(--primary);font-size:0.85rem;font-weight:600;text-decoration:none;">Acessar curso →</a>`;
+}
+
+// ===== CRM =====
+let editingLeadId = null;
+
+function renderCRM() {
+    const leads = getUserLeads();
+    const search = document.getElementById('crmSearch').value.toLowerCase();
+    const statusFilter = document.getElementById('crmFilter').value;
+    const modalityFilter = document.getElementById('crmModalityFilter').value;
+
+    let filtered = leads.filter(l => {
+        if (statusFilter !== 'all' && l.temperature !== statusFilter) return false;
+        if (modalityFilter !== 'all' && l.modality !== modalityFilter) return false;
+        if (search && !l.name.toLowerCase().includes(search) && !(l.phone || '').includes(search)) return false;
+        return true;
+    });
+
+    filtered.sort((a,b) => (b.updatedAt || b.createdAt).localeCompare(a.updatedAt || a.createdAt));
+
+    const tbody = document.getElementById('crmTableBody');
+    const emptyEl = document.getElementById('crmEmpty');
+    const tableWrap = tbody.closest('.crm-table-wrap');
+
+    if (filtered.length === 0) {
+        tableWrap.classList.add('hidden');
+        emptyEl.classList.remove('hidden');
+        return;
+    }
+    tableWrap.classList.remove('hidden');
+    emptyEl.classList.add('hidden');
+
+    tbody.innerHTML = filtered.map(l => {
+        const t = getTemperatureLabel(l.temperature);
+        const value = l.value ? `R$ ${parseFloat(l.value).toLocaleString('pt-BR', {minimumFractionDigits:2})}` : '—';
+        const followUp = l.followUp ? new Date(l.followUp + 'T12:00:00').toLocaleDateString('pt-BR') : '—';
+        const contactDate = l.contactDate ? new Date(l.contactDate + 'T12:00:00').toLocaleDateString('pt-BR') : '—';
+        const action = getLeadAction(l);
+        return `
+        <tr class="lead-row" onclick="toggleLeadAction('${l.id}')">
+            <td>
+                <span class="crm-status ${t.class}"><span class="crm-status-dot"></span>${t.label}</span>
+                <span class="crm-action-indicator ${action.type}">${action.icon} ${action.shortLabel}</span>
+            </td>
+            <td><strong>${l.name}</strong></td>
+            <td class="crm-phone">${l.phone || '—'}</td>
+            <td><span class="crm-modalidade">${l.modality || '—'}</span></td>
+            <td class="crm-value">${value}</td>
+            <td>${contactDate}</td>
+            <td>${followUp}</td>
+            <td class="crm-actions" onclick="event.stopPropagation()">
+                <button class="crm-action-btn" onclick="viewLead('${l.id}')" title="Ver detalhes">👁️</button>
+                <button class="crm-action-btn" onclick="editLead('${l.id}')" title="Editar">✏️</button>
+                <button class="crm-action-btn delete" onclick="deleteLead('${l.id}')" title="Excluir">🗑️</button>
+            </td>
+        </tr>
+        <tr class="lead-action-row" id="action-${l.id}">
+            <td colspan="8">
+                <div class="lead-action-card ${action.type}">
+                    <div class="lac-header">
+                        <span class="lac-icon">${action.icon}</span>
+                        <span class="lac-title ${action.type}">${action.title}</span>
+                    </div>
+                    <div class="lac-text">${action.description}</div>
+                    ${action.template ? `<div class="lac-template">
+                        <div class="lac-template-label">💬 Modelo de mensagem:</div>
+                        <div id="tpl-${l.id}">${action.template}</div>
+                        <button class="lac-copy-btn" onclick="event.stopPropagation();copyTemplate('${l.id}')">📋 Copiar</button>
+                    </div>` : ''}
+                </div>
+            </td>
+        </tr>`;
+    }).join('');
+}
+
+function openLeadModal(leadId) {
+    editingLeadId = leadId || null;
+    const modal = document.getElementById('leadModal');
+    modal.classList.remove('hidden');
+    document.getElementById('leadModalTitle').textContent = leadId ? 'Editar Lead' : 'Novo Lead';
+    document.getElementById('leadAiAnalysis').classList.add('hidden');
+
+    if (leadId) {
+        const leads = getLeads();
+        const l = leads.find(x => x.id === leadId);
+        if (l) {
+            document.getElementById('leadName').value = l.name;
+            document.getElementById('leadPhone').value = l.phone || '';
+            document.getElementById('leadModality').value = l.modality || 'Natação Adulto';
+            document.getElementById('leadValue').value = l.value || '';
+            document.getElementById('leadDate').value = l.contactDate || '';
+            document.getElementById('leadFollowup').value = l.followUp || '';
+            document.getElementById('leadText').value = l.text || '';
+        }
+    } else {
+        document.getElementById('leadName').value = '';
+        document.getElementById('leadPhone').value = '';
+        document.getElementById('leadModality').value = 'Natação Adulto';
+        document.getElementById('leadValue').value = '';
+        document.getElementById('leadDate').value = new Date().toISOString().split('T')[0];
+        document.getElementById('leadFollowup').value = '';
+        document.getElementById('leadText').value = '';
+    }
+}
+
+function closeLeadModal() {
+    document.getElementById('leadModal').classList.add('hidden');
+    editingLeadId = null;
+}
+
+function saveLead() {
+    const name = document.getElementById('leadName').value.trim();
+    if (!name) { showToast('⚠️ Informe o nome do cliente'); return; }
+
+    const user = getCurrentUser();
+    const text = document.getElementById('leadText').value.trim();
+    const ai = text ? analyzeLeadText(text) : { temperature: 'warm', score: 50, signals: [], suggestions: ['Adicione o texto da conversa para análise da IA.'], extracted: {}, followUpDate: '', followUpDays: 3 };
+
+    const leadData = {
+        name,
+        phone: document.getElementById('leadPhone').value.trim(),
+        modality: document.getElementById('leadModality').value,
+        value: document.getElementById('leadValue').value,
+        contactDate: document.getElementById('leadDate').value,
+        followUp: document.getElementById('leadFollowup').value || ai.followUpDate.split('/').reverse().join('-'),
+        text,
+        temperature: ai.temperature,
+        aiScore: ai.score,
+        aiSignals: ai.signals,
+        aiSuggestions: ai.suggestions,
+        extractedData: ai.extracted || {},
+        updatedAt: new Date().toISOString()
+    };
+
+    let leads = getLeads();
+    if (editingLeadId) {
+        const idx = leads.findIndex(l => l.id === editingLeadId);
+        if (idx !== -1) {
+            const existing = leads[idx];
+            const interactionNote = text ? `Atualização: ${text.substring(0, 150)}${text.length > 150 ? '...' : ''}` : 'Lead atualizado';
+            leadData.interactions = [...(existing.interactions || []), { date: new Date().toISOString(), text: interactionNote }];
+            leads[idx] = { ...existing, ...leadData };
+        }
+    } else {
+        leadData.id = Date.now().toString();
+        leadData.userId = user.id;
+        leadData.createdAt = new Date().toISOString();
+        leadData.interactions = [{ date: new Date().toISOString(), text: text || 'Lead cadastrado' }];
+        leads.push(leadData);
+    }
+
+    saveLeads(leads);
+    closeLeadModal();
+    renderCRM();
+    renderDashboard();
+    showToast(editingLeadId ? '✅ Lead atualizado!' : '✅ Lead cadastrado!');
+}
+
+function editLead(id) { openLeadModal(id); }
+
+function deleteLead(id) {
+    if (!confirm('Tem certeza que deseja excluir este lead?')) return;
+    let leads = getLeads();
+    leads = leads.filter(l => l.id !== id);
+    saveLeads(leads);
+    renderCRM();
+    renderDashboard();
+    showToast('🗑️ Lead excluído');
+}
+
+function viewLead(id) {
+    const leads = getLeads();
+    const l = leads.find(x => x.id === id);
+    if (!l) return;
+
+    const t = getTemperatureLabel(l.temperature);
+    const value = l.value ? `R$ ${parseFloat(l.value).toLocaleString('pt-BR', {minimumFractionDigits:2})}` : '—';
+    const contactDate = l.contactDate ? new Date(l.contactDate + 'T12:00:00').toLocaleDateString('pt-BR') : '—';
+    const followUp = l.followUp ? new Date(l.followUp + 'T12:00:00').toLocaleDateString('pt-BR') : '—';
+
+    const initials = l.name.split(' ').map(w => w[0]).join('').substring(0,2).toUpperCase();
+
+    let interactionsHtml = '';
+    if (l.interactions && l.interactions.length) {
+        interactionsHtml = l.interactions.map(i => {
+            const d = new Date(i.date).toLocaleDateString('pt-BR') + ' ' + new Date(i.date).toLocaleTimeString('pt-BR', {hour:'2-digit',minute:'2-digit'});
+            return `<div class="lead-interaction-item"><div class="lead-interaction-date">${d}</div><div class="lead-interaction-text">${i.text}</div></div>`;
+        }).join('');
+    }
+
+    let aiHtml = '';
+    if (l.aiSuggestions && l.aiSuggestions.length) {
+        aiHtml = `<div class="ai-box">
+            <h4>🤖 Análise da IA</h4>
+            <div class="ai-temp ${t.class}">${t.label} — Score: ${l.aiScore || '—'}/100</div>
+            ${l.extractedData && (l.extractedData.name || l.extractedData.phone || l.extractedData.value || l.extractedData.modality || l.extractedData.convenio) ? `<div class="ai-extracted">
+                ${l.extractedData.name ? `<div class="ai-extracted-item"><span class="aei-icon">👤</span><span class="aei-value">${l.extractedData.name}</span></div>` : ''}
+                ${l.extractedData.phone ? `<div class="ai-extracted-item"><span class="aei-icon">📱</span><span class="aei-value">${l.extractedData.phone}</span></div>` : ''}
+                ${l.extractedData.value ? `<div class="ai-extracted-item"><span class="aei-icon">💰</span><span class="aei-value">R$ ${parseFloat(l.extractedData.value).toLocaleString('pt-BR', {minimumFractionDigits:2})}</span></div>` : ''}
+                ${l.extractedData.modality ? `<div class="ai-extracted-item"><span class="aei-icon">🏊</span><span class="aei-value">${l.extractedData.modality}</span></div>` : ''}
+                ${l.extractedData.convenio ? `<div class="ai-extracted-item"><span class="aei-icon">💳</span><span class="aei-value">${l.extractedData.convenio}</span></div>` : ''}
+            </div>` : ''}
+            ${l.aiSignals ? l.aiSignals.map(s => `<div class="ai-suggestion">• ${s}</div>`).join('') : ''}
+            <hr style="border-color:var(--border-color);margin:10px 0;">
+            <div style="font-weight:600;font-size:0.82rem;margin-bottom:6px;">Sugestões:</div>
+            ${l.aiSuggestions.map(s => `<div class="ai-suggestion">💡 ${s}</div>`).join('')}
+            <div class="ai-followup">📅 Retornar em: ${followUp}</div>
+        </div>`;
+    }
+
+    document.getElementById('leadDetailBody').innerHTML = `
+        <div class="lead-detail-header">
+            <div class="lead-detail-avatar">${initials}</div>
+            <div class="lead-detail-info">
+                <h3>${l.name}</h3>
+                <p>${l.phone || 'Sem telefone'} • ${l.modality || ''}</p>
+            </div>
+        </div>
+        <div class="lead-detail-grid">
+            <div class="lead-detail-item"><div class="ldi-label">Status</div><div class="ldi-value"><span class="crm-status ${t.class}"><span class="crm-status-dot"></span>${t.label}</span></div></div>
+            <div class="lead-detail-item"><div class="ldi-label">Valor Proposto</div><div class="ldi-value crm-value">${value}</div></div>
+            <div class="lead-detail-item"><div class="ldi-label">Data do Contato</div><div class="ldi-value">${contactDate}</div></div>
+            <div class="lead-detail-item"><div class="ldi-label">Follow-up</div><div class="ldi-value">${followUp}</div></div>
+        </div>
+        ${l.text ? `<div class="lead-situation"><h4>📝 Situação / Conversa</h4><p>${l.text}</p></div>` : ''}
+        ${aiHtml}
+        <div class="lead-interactions">
+            <h4>Histórico de Interações</h4>
+            ${interactionsHtml || '<p style="color:var(--text-muted);font-size:0.85rem;">Nenhuma interação registrada</p>'}
+        </div>`;
+
+    document.getElementById('leadDetailModal').classList.remove('hidden');
+}
+
+function closeDetailModal() { document.getElementById('leadDetailModal').classList.add('hidden'); }
+
+// ===== COURSE PROGRESS =====
+function renderCourse() {
+    const progress = JSON.parse(localStorage.getItem('fityou-vendas-state') || '{}');
+    const completed = progress.completedModules || [];
+    const total = 6;
+    const cert = progress.certUnlocked;
+    const modules = [
+        { id: 1, title: 'Conhecendo a Fit You' },
+        { id: 2, title: 'Psicologia da Venda' },
+        { id: 3, title: 'Fluxo de Vendas' },
+        { id: 4, title: 'Modalidades e Planos' },
+        { id: 5, title: 'Objeções e Respostas' },
+        { id: 6, title: 'Prática e Certificação' }
+    ];
+
+    document.getElementById('courseArea').innerHTML = `
+        <h3>Seu Progresso</h3>
+        <p style="font-size:0.88rem;color:var(--text-secondary);margin:12px 0;">${completed.length} de ${total} módulos concluídos</p>
+        <div class="dash-progress-bar" style="margin-bottom:20px;"><div class="dash-progress-fill" style="width:${Math.round((completed.length/total)*100)}%"></div></div>
+        ${modules.map(m => {
+            const done = completed.includes(m.id);
+            return `<div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border-color);">
+                <span style="font-size:1.1rem;">${done ? '✅' : '⬜'}</span>
+                <span style="font-size:0.88rem;${done ? 'text-decoration:line-through;color:var(--text-muted);' : ''}">Módulo ${m.id} — ${m.title}</span>
+            </div>`;
+        }).join('')}
+        <div style="margin-top:16px;">
+            ${cert ? '<p style="color:var(--accent-gold);font-weight:700;">🏆 Certificado desbloqueado!</p>' : `<p style="color:var(--text-muted);font-size:0.85rem;">Complete todos os módulos e acerte o quiz para desbloquear o certificado.</p>`}
+            <a href="curso-fityou-vendas.html" target="_blank" style="display:inline-block;margin-top:12px;color:var(--primary);font-weight:600;text-decoration:none;">Acessar o curso completo →</a>
+        </div>`;
+}
+
+// ===== SETTINGS =====
+function renderSettings() {
+    const user = getCurrentUser();
+    if (!user) return;
+    document.getElementById('settingsName').value = user.name;
+    document.getElementById('settingsEmail').value = user.email;
+    if (user.photo) {
+        document.getElementById('settingsPhoto').innerHTML = `<img src="${user.photo}" style="width:100%;height:100%;object-fit:cover;">`;
+    }
+}
+
+function updateProfilePhoto(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = function(ev) {
+        const user = getCurrentUser();
+        user.photo = ev.target.result;
+        setCurrentUser(user);
+        const users = getUsers();
+        const idx = users.findIndex(u => u.id === user.id);
+        if (idx !== -1) users[idx].photo = ev.target.result;
+        saveUsers(users);
+        document.getElementById('settingsPhoto').innerHTML = `<img src="${ev.target.result}" style="width:100%;height:100%;object-fit:cover;">`;
+        renderSidebarUser();
+        showToast('✅ Foto atualizada!');
+    };
+    reader.readAsDataURL(file);
+}
+
+function saveSettings() {
+    const user = getCurrentUser();
+    const name = document.getElementById('settingsName').value.trim();
+    if (!name) { showToast('⚠️ Informe seu nome'); return; }
+    user.name = name;
+    setCurrentUser(user);
+    const users = getUsers();
+    const idx = users.findIndex(u => u.id === user.id);
+    if (idx !== -1) users[idx].name = name;
+    saveUsers(users);
+    renderSidebarUser();
+    showToast('✅ Perfil atualizado!');
+}
+
+// ===== BACKUP/RESTORE =====
+function exportBackup() {
+    const user = getCurrentUser();
+    const leads = getUserLeads();
+    const data = { user, leads, exportDate: new Date().toISOString(), version: 1 };
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `fityou-backup-${user.name.replace(/\s+/g, '-')}-${new Date().toISOString().split('T')[0]}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+    showToast('📥 Backup exportado!');
+}
+
+function importBackup(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = function(ev) {
+        try {
+            const data = JSON.parse(ev.target.result);
+            if (!data.leads) { showToast('❌ Arquivo de backup inválido'); return; }
+            if (!confirm(`Importar ${data.leads.length} leads? Isso ADICIONA aos seus dados atuais.`)) return;
+
+            const user = getCurrentUser();
+            const existing = getUserLeads();
+            const existingIds = new Set(existing.map(l => l.id));
+            const newLeads = data.leads.filter(l => !existingIds.has(l.id)).map(l => ({ ...l, userId: user.id }));
+            const allLeads = getLeads().filter(l => l.userId !== user.id).concat(existing, newLeads);
+            saveLeads(allLeads);
+            renderCRM();
+            renderDashboard();
+            showToast(`✅ ${newLeads.length} leads importados!`);
+        } catch (err) {
+            showToast('❌ Erro ao ler arquivo de backup');
+        }
+    };
+    reader.readAsText(file);
+    e.target.value = '';
+}
+
+function clearAllData() {
+    if (!confirm('⚠️ Isso vai apagar TODOS os seus leads e dados. Tem certeza?')) return;
+    if (!confirm('Última chance! Confirma a exclusão?')) return;
+    const user = getCurrentUser();
+    let leads = getLeads().filter(l => l.userId !== user.id);
+    saveLeads(leads);
+    renderCRM();
+    renderDashboard();
+    showToast('🗑️ Todos os dados foram apagados');
+}
+
+// ===== AUTO ANALYSIS ON TEXT INPUT =====
+document.getElementById('leadText').addEventListener('input', function() {
+    const text = this.value.trim();
+    const analysisEl = document.getElementById('leadAiAnalysis');
+    if (text.length < 10) { analysisEl.classList.add('hidden'); return; }
+
+    const ai = analyzeLeadText(text);
+    const t = getTemperatureLabel(ai.temperature);
+    const filled = autoFillFromExtracted(ai.extracted);
+
+    let extractedHtml = '';
+    const ext = ai.extracted;
+    if (ext.name || ext.phone || ext.value || ext.modality || ext.convenio || ext.dates.length > 0) {
+        extractedHtml = '<div class="ai-extracted">';
+        if (ext.name) extractedHtml += `<div class="ai-extracted-item"><span class="aei-icon">👤</span><span class="aei-label">Nome:</span><span class="aei-value">${ext.name}</span></div>`;
+        if (ext.phone) extractedHtml += `<div class="ai-extracted-item"><span class="aei-icon">📱</span><span class="aei-label">Tel:</span><span class="aei-value">${ext.phone}</span></div>`;
+        if (ext.value) extractedHtml += `<div class="ai-extracted-item"><span class="aei-icon">💰</span><span class="aei-label">Valor:</span><span class="aei-value">R$ ${ext.value.toLocaleString('pt-BR', {minimumFractionDigits:2})}</span></div>`;
+        if (ext.modality) extractedHtml += `<div class="ai-extracted-item"><span class="aei-icon">🏊</span><span class="aei-label">Modalidade:</span><span class="aei-value">${ext.modality}</span></div>`;
+        if (ext.convenio) extractedHtml += `<div class="ai-extracted-item"><span class="aei-icon">💳</span><span class="aei-label">Convênio:</span><span class="aei-value">${ext.convenio}</span></div>`;
+        if (ext.dates.length > 0) extractedHtml += `<div class="ai-extracted-item"><span class="aei-icon">📅</span><span class="aei-label">Data:</span><span class="aei-value">${new Date(ext.dates[0] + 'T12:00:00').toLocaleDateString('pt-BR')}</span></div>`;
+        extractedHtml += '</div>';
+    }
+
+    let filledHtml = '';
+    if (filled.length > 0) {
+        filledHtml = `<div style="margin-top:8px;padding:8px 12px;background:rgba(245,166,35,0.08);border-radius:8px;font-size:0.78rem;">
+            <span class="ai-autofill-badge">AUTO-PREENCHIDO</span>
+            <div style="margin-top:6px;color:var(--text-secondary);">${filled.map(f => `✅ ${f}`).join('<br>')}</div>
+        </div>`;
+    }
+
+    analysisEl.innerHTML = `<div class="ai-box">
+        <h4>🤖 Análise Automática da IA</h4>
+        <div class="ai-temp ${t.class}">${t.label} — Score: ${ai.score}/100</div>
+        ${extractedHtml}
+        ${ai.signals.slice(0, 4).map(s => `<div class="ai-suggestion">• ${s}</div>`).join('')}
+        <div style="font-weight:600;font-size:0.82rem;margin:10px 0 6px;">💡 Sugestões:</div>
+        ${ai.suggestions.map(s => `<div class="ai-suggestion">→ ${s}</div>`).join('')}
+        <div class="ai-followup">📅 Sugestão de retorno: ${ai.followUpDate}</div>
+        ${filledHtml}
+    </div>`;
+    analysisEl.classList.remove('hidden');
+});
+
+// ===== TOAST =====
+function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+// ===== NOTIFICATION SYSTEM =====
+function generateNotifications() {
+    const leads = getUserLeads();
+    const notifs = [];
+    const today = new Date().toISOString().split('T')[0];
+    const yesterday = new Date(Date.now() - 86400000).toISOString().split('T')[0];
+
+    leads.forEach(l => {
+        // Follow-up overdue
+        if (l.followUp && l.followUp < today && l.status !== 'won') {
+            const daysOverdue = Math.ceil((new Date(today) - new Date(l.followUp)) / 86400000);
+            notifs.push({
+                type: 'urgent',
+                icon: '⏰',
+                title: `Follow-up atrasado: ${l.name}`,
+                text: `Era para retornar ${daysOverdue === 1 ? 'ontem' : `há ${daysOverdue} dias`}. ${l.temperature === 'hot' ? 'Lead quente — não perca!' : 'Mantenha o contato.'}`,
+                leadId: l.id,
+                action: 'Ver lead →'
+            });
+        }
+        // Follow-up today
+        else if (l.followUp === today && l.status !== 'won') {
+            notifs.push({
+                type: 'action',
+                icon: '📅',
+                title: `Follow-up hoje: ${l.name}`,
+                text: `${l.modality || ''} • ${l.temperature === 'hot' ? 'Lead quente 🔥' : l.temperature === 'warm' ? 'Lead morno ☀️' : 'Lead frio ❄️'}`,
+                leadId: l.id,
+                action: 'Ver lead →'
+            });
+        }
+        // Hot lead without follow-up
+        if (l.temperature === 'hot' && !l.followUp && l.status !== 'won') {
+            notifs.push({
+                type: 'urgent',
+                icon: '🔥',
+                title: `Lead quente sem follow-up: ${l.name}`,
+                text: 'Lead classificado como quente mas sem data de retorno definida. Agende agora!',
+                leadId: l.id,
+                action: 'Ver lead →'
+            });
+        }
+    });
+
+    // Lead count info
+    const hot = leads.filter(l => l.temperature === 'hot').length;
+    const warm = leads.filter(l => l.temperature === 'warm').length;
+    const cold = leads.filter(l => l.temperature === 'cold').length;
+    const totalValue = leads.reduce((s, l) => s + (parseFloat(l.value) || 0), 0);
+
+    if (leads.length > 0) {
+        notifs.push({
+            type: 'info',
+            icon: '📊',
+            title: 'Resumo do pipeline',
+            text: `${leads.length} leads: ${hot} quentes, ${warm} mornos, ${cold} frios. Valor total: R$ ${totalValue.toLocaleString('pt-BR', {minimumFractionDigits:0})}.`,
+            action: null
+        });
+    }
+
+    // Proactive tips based on data
+    if (hot >= 2) {
+        notifs.push({
+            type: 'action',
+            icon: '🎯',
+            title: 'Você tem leads quentes!',
+            text: `${hot} leads estão prontos para fechar. Priorize contato com eles hoje.`,
+            action: 'Ver CRM →'
+        });
+    }
+    if (warm >= 3) {
+        notifs.push({
+            type: 'action',
+            icon: '💡',
+            title: 'Muitos leads mornos',
+            text: `${warm} leads em dúvida. Considere enviar mais conteúdo: vídeos, depoimentos ou oferta de aula experimental.`,
+            action: null
+        });
+    }
+    if (leads.length === 0) {
+        notifs.push({
+            type: 'info',
+            icon: '🚀',
+            title: 'Comece cadastrando leads',
+            text: 'Vá para o CRM e adicione seus primeiros leads. Cole conversas do WhatsApp para a IA analisar automaticamente.',
+            action: null
+        });
+    }
+
+    return notifs;
+}
+
+function renderNotifications() {
+    const notifs = generateNotifications();
+    const listEl = document.getElementById('notifList');
+    const badgeEl = document.getElementById('notifBadge');
+    const urgentCount = notifs.filter(n => n.type === 'urgent').length;
+
+    if (urgentCount > 0) {
+        badgeEl.textContent = urgentCount;
+        badgeEl.classList.remove('hidden');
+    } else {
+        badgeEl.classList.add('hidden');
+    }
+
+    if (notifs.length === 0) {
+        listEl.innerHTML = '<div class="notif-empty">🎉 Nenhuma notificação no momento</div>';
+        return;
+    }
+
+    listEl.innerHTML = notifs.map(n => `
+        <div class="notif-item ${n.type}" onclick="${n.leadId ? `viewLead('${n.leadId}');closeNotifPanel();` : n.action && n.action.includes('CRM') ? `navigate('crm');closeNotifPanel();` : ''}">
+            <div class="notif-item-header">
+                <span class="notif-item-icon">${n.icon}</span>
+                <span class="notif-item-title">${n.title}</span>
+            </div>
+            <div class="notif-item-text">${n.text}</div>
+            ${n.action ? `<div class="notif-item-action">${n.action}</div>` : ''}
+        </div>
+    `).join('');
+}
+
+function toggleNotifPanel() {
+    renderNotifications();
+    document.getElementById('notifPanel').classList.toggle('open');
+    document.getElementById('notifOverlay').classList.toggle('open');
+}
+
+function closeNotifPanel() {
+    document.getElementById('notifPanel').classList.remove('open');
+    document.getElementById('notifOverlay').classList.remove('open');
+}
+
+// ===== FLOATING SUGGESTIONS =====
+function generateFloatingSuggestions() {
+    const leads = getUserLeads();
+    const tips = [];
+    const today = new Date().toISOString().split('T')[0];
+    const hot = leads.filter(l => l.temperature === 'hot');
+    const overdue = leads.filter(l => l.followUp && l.followUp < today && l.status !== 'won');
+
+    if (overdue.length > 0) {
+        tips.push(`<strong>⏰ ${overdue.length} follow-up(s) atrasado(s)</strong><br>Retorne com: "Olá ${overdue[0].name}! Tudo bem? Vim dar continuidade na nossa conversa sobre ${overdue[0].modality || 'natação'}."`);
+    }
+    if (hot.length > 0) {
+        tips.push(`<strong>🔥 ${hot.length} lead(s) quente(s)</strong><br>Esses clientes estão prontos para fechar. Proponha agendar uma aula experimental com horário fixo.`);
+    }
+
+    tips.push('<strong>💬 Template de retorno:</strong><br>"Oi [Nome]! Tudo bem? A Fit You tem aula experimental por R$50 (abate no plano). Quer agendar?"');
+    tips.push('<strong>🏆 Dica de ouro:</strong><br>Quando o cliente falar "é caro", reenquadre: "São menos de R$6 por aula completa com musculação grátis em cima!"');
+    tips.push('<strong>📋 Checklist do follow-up:</strong><br>1. Cumprimentar 2. Perguntar como foi 3. Reforçar benefício 4. Propor próximo passo');
+
+    return tips;
+}
+
+function showFloatingSuggestions() {
+    const tips = generateFloatingSuggestions();
+    document.getElementById('fsBody').innerHTML = tips.map(t => `<div class="fs-tip">${t}</div>`).join('');
+    document.getElementById('floatingSuggestions').classList.add('show');
+}
+
+function closeFloatingSuggestions() {
+    document.getElementById('floatingSuggestions').classList.remove('show');
+}
+
+// Auto-show floating suggestions after 5 seconds on CRM page
+let floatingTimeout;
+function scheduleFloatingSuggestions() {
+    clearTimeout(floatingTimeout);
+    floatingTimeout = setTimeout(() => {
+        if (!document.getElementById('page-crm').classList.contains('hidden')) {
+            showFloatingSuggestions();
+        }
+    }, 5000);
+}
+
+// ===== INIT =====
+window.scrollTo(0, 0);
+const currentUser = getCurrentUser();
+if (currentUser) { enterApp(); renderNotifications(); } else { showScreen('authLogin'); }
+
+// Auto-refresh notifications every 60 seconds
+setInterval(renderNotifications, 60000);
+</script>
+</body>
+</html>
