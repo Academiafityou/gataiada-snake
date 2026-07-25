@@ -1398,8 +1398,15 @@ function draw(){{
         case 'levelcomplete': drawLevel(); drawLevelComplete(); break;
         case 'gameover': drawLevel(); drawGameOver(); break;
     }}
-    X.fillStyle='rgba(255,255,255,0.3)'; X.font='9px Courier New'; X.textAlign='left';
-    X.fillText('F:'+frameCount+' S:'+game.state+' L:'+game.currentLevel+' boss:'+(boss?boss.alive:0)+' pxy:'+Math.round(player.x)+','+Math.round(player.y)+' lw:'+levelWidth,4,H-4);
+    X.fillStyle='rgba(0,0,0,0.85)'; X.fillRect(W/2-200,H/2-60,400,120);
+    X.strokeStyle='#ff0'; X.lineWidth=2; X.strokeRect(W/2-200,H/2-60,400,120);
+    X.font='bold 16px Courier New'; X.fillStyle='#ff0'; X.textAlign='center';
+    X.fillText('DEBUG BOSS',W/2,H/2-35);
+    X.font='12px Courier New'; X.fillStyle='#fff';
+    X.fillText('boss='+(boss?'EXISTS':'NULL')+(boss?'.alive='+boss.alive:''),W/2,H/2-10);
+    X.fillText('px='+Math.round(player.x)+' py='+Math.round(player.y),W/2,H/2+10);
+    X.fillText('level='+game.currentLevel+' lw='+levelWidth+' state='+game.state,W/2,H/2+30);
+    X.fillText('frame='+frameCount,W/2,H/2+50);
 }}
 
 var frameCount=0;
