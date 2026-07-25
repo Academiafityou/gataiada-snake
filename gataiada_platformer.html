@@ -561,6 +561,7 @@ function updatePlayer(){
 
     if(player.x<0) player.x=0;
     if(player.x>levelWidth-player.w) player.x=levelWidth-player.w;
+    if(player.y<0){ player.y=0; player.vy=0; }
     if(player.y>H+100) playerDie();
     if(player.invincible>0) player.invincible--;
     if(player.powerCooldown>0) player.powerCooldown--;
@@ -1073,21 +1074,11 @@ function drawLevel(){
             X.beginPath(); X.ellipse(e.x+e.w/2+5,e.y-2,6,4,0.3,0,Math.PI*2); X.fill();
             X.fillStyle='#ff0'; X.fillRect(e.x+e.w/2-3,e.y+e.h/2-2,3,3); X.fillRect(e.x+e.w/2+2,e.y+e.h/2-2,3,3);
         } else if(e.type==='xepa'){
-            if(xepaEnemyImg.complete&&xepaEnemyImg.naturalWidth>0){
-                X.save(); X.translate(e.x+e.w/2,e.y+e.h/2); X.scale(e.vx<0?1:-1,1);
-                X.drawImage(xepaEnemyImg,-e.w/2-2,-e.h/2-2,e.w+4,e.h+4);
-                X.restore();
-            }
             X.fillStyle='#ff4444'; X.beginPath(); X.arc(e.x+e.w/2,e.y+e.h/2,e.w/2+4,0,Math.PI*2); X.fill();
             X.fillStyle='#cc2222'; X.fillRect(e.x,e.y,e.w,e.h);
             X.fillStyle='#ff6666'; X.fillRect(e.x+2,e.y+2,8,6); X.fillRect(e.x+e.w-10,e.y+2,8,6);
             X.fillStyle='#fff'; X.fillRect(e.x+4,e.y+4,4,4); X.fillRect(e.x+e.w-8,e.y+4,4,4);
             X.fillStyle='#000'; X.fillRect(e.x+5,e.y+5,2,2); X.fillRect(e.x+e.w-7,e.y+5,2,2);
-            if(xepaEnemyImg.complete&&xepaEnemyImg.naturalWidth>0){
-                X.save(); X.translate(e.x+e.w/2,e.y+e.h/2); X.scale(e.vx<0?1:-1,1);
-                X.drawImage(xepaEnemyImg,-e.w/2,-e.h/2,e.w,e.h);
-                X.restore();
-            }
         } else {
             X.fillStyle='#cc4444'; X.fillRect(e.x,e.y,e.w,e.h);
             X.fillStyle='#ff6666'; X.fillRect(e.x+2,e.y+2,8,6); X.fillRect(e.x+e.w-10,e.y+2,8,6);
