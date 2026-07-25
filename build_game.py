@@ -565,14 +565,14 @@ function getCatPower(){{ return CATS[game.selectedCat].power; }}
 function activatePower(){{
     if(player.powerCooldown>0) return;
     var cat=CATS[game.selectedCat];
-    player.powerActive=true; player.powerTimer=180; player.powerCooldown=300;
+    player.powerActive=true; player.powerTimer=cat.power==='Float'?150:180; player.powerCooldown=300;
     switch(cat.power){{
         case 'Triple Jump':
             player.maxJumps=3;
             spawnParticles(player.x+player.w/2,player.y+player.h,'#ffcc00',12);
             break;
         case 'Float':
-            player.vy=-3;
+            player.vy=-1;
             spawnParticles(player.x+player.w/2,player.y+player.h,'#ff99cc',15);
             break;
         case 'Wall Jump':
@@ -624,7 +624,7 @@ function updatePlayer(){{
         if(player.dashTimer%2===0) spawnParticles(player.x+player.w/2,player.y+player.h/2,'#00ff00',2);
     }}
     var grav=GRAVITY;
-    if(player.powerActive&&getCatPower()==='Float'&&!player.grounded) grav=GRAVITY*0.15;
+    if(player.powerActive&&getCatPower()==='Float'&&!player.grounded){{ grav=0; if(player.vy>0) player.vy=0; if(player.vy<-1) player.vy=-1; }}
     player.vy+=grav; if(player.vy>12) player.vy=12;
     var newX=player.x+player.vx, newY=player.y+player.vy;
     var colL=Math.floor(newX/TILE), colR=Math.floor((newX+player.w)/TILE);
@@ -1144,8 +1144,10 @@ function drawLevel(){{
 
     for(var i=0;i<enemies.length;i++){{
         var e=enemies[i]; if(!e.alive) continue;
-        if(e.x<cameraX-50||e.x>cameraX+W+50) continue;
+        if(e.x<cameraX-80||e.x>cameraX+W+80) continue;
+        X.shadowColor='#ff0000'; X.shadowBlur=6;
         if(e.type==='rat'){{
+            X.fillStyle='#aa4444'; X.fillRect(e.x-2,e.y-2,e.w+4,e.h+4);
             X.fillStyle='#886644'; X.fillRect(e.x,e.y,e.w,e.h);
             X.fillStyle='#aa8866'; X.fillRect(e.x+2,e.y+2,e.w-4,e.h-6);
             X.fillStyle='#ff3333'; X.fillRect(e.x+2,e.y+2,6,5); X.fillRect(e.x+e.w-8,e.y+2,6,5);
@@ -1153,35 +1155,47 @@ function drawLevel(){{
             X.strokeStyle='#886644'; X.lineWidth=1; X.beginPath(); X.moveTo(e.x+e.w,e.y+e.h/3); X.lineTo(e.x+e.w+8,e.y+e.h/3-4); X.stroke();
             X.beginPath(); X.moveTo(e.x+e.w,e.y+e.h/3+3); X.lineTo(e.x+e.w+8,e.y+e.h/3+5); X.stroke();
         }} else if(e.type==='cockroach'){{
+            X.fillStyle='#aa6633'; X.beginPath(); X.ellipse(e.x+e.w/2,e.y+e.h/2,e.w/2+3,e.h/2.5+3,0,0,Math.PI*2); X.fill();
             X.fillStyle='#3a2a1a'; X.beginPath(); X.ellipse(e.x+e.w/2,e.y+e.h/2,e.w/2,e.h/2.5,0,0,Math.PI*2); X.fill();
             X.fillStyle='#5a3a2a'; X.fillRect(e.x+e.w/2-1,e.y-4,1,5); X.fillRect(e.x+e.w/2+1,e.y-4,1,5);
-            X.fillStyle='#111'; X.fillRect(e.x+4,e.y+4,2,2); X.fillRect(e.x+e.w-6,e.y+4,2,2);
-            X.strokeStyle='#3a2a1a'; X.lineWidth=0.5;
-            for(var l=0;l<3;l++){{ X.beginPath(); X.moveTo(e.x,e.y+e.h*0.3+l*3); X.lineTo(e.x-4,e.y+e.h*0.3+l*3-2); X.stroke(); X.beginPath(); X.moveTo(e.x+e.w,e.y+e.h*0.3+l*3); X.lineTo(e.x+e.w+4,e.y+e.h*0.3+l*3-2); X.stroke(); }}
+            X.fillStyle='#ff0'; X.fillRect(e.x+4,e.y+4,3,3); X.fillRect(e.x+e.w-7,e.y+4,3,3);
+            X.strokeStyle='#3a2a1a'; X.lineWidth=1;
+            for(var l=0;l<3;l++){{ X.beginPath(); X.moveTo(e.x,e.y+e.h*0.3+l*3); X.lineTo(e.x-5,e.y+e.h*0.3+l*3-3); X.stroke(); X.beginPath(); X.moveTo(e.x+e.w,e.y+e.h*0.3+l*3); X.lineTo(e.x+e.w+5,e.y+e.h*0.3+l*3-3); X.stroke(); }}
         }} else if(e.type==='spider'){{
+            X.fillStyle='#555'; X.beginPath(); X.arc(e.x+e.w/2,e.y+e.h/2,e.w/2.2+3,0,Math.PI*2); X.fill();
             X.fillStyle='#222'; X.beginPath(); X.arc(e.x+e.w/2,e.y+e.h/2,e.w/2.2,0,Math.PI*2); X.fill();
-            X.fillStyle='#cc0000'; X.fillRect(e.x+e.w/2-3,e.y+e.h/2-2,3,3); X.fillRect(e.x+e.w/2+2,e.y+e.h/2-2,3,3);
-            X.strokeStyle='#222'; X.lineWidth=1.5;
-            for(var l=0;l<4;l++){{ var ang=-0.8+l*0.5; X.beginPath(); X.moveTo(e.x+e.w/2,e.y+e.h/2); X.lineTo(e.x+e.w/2+Math.cos(ang)*e.w,e.y+e.h/2+Math.sin(ang)*e.h); X.stroke(); }}
+            X.fillStyle='#ff0000'; X.fillRect(e.x+e.w/2-4,e.y+e.h/2-2,4,4); X.fillRect(e.x+e.w/2+2,e.y+e.h/2-2,4,4);
+            X.strokeStyle='#222'; X.lineWidth=2;
+            for(var l=0;l<4;l++){{ var ang=-0.8+l*0.5; X.beginPath(); X.moveTo(e.x+e.w/2,e.y+e.h/2); X.lineTo(e.x+e.w/2+Math.cos(ang)*e.w*1.2,e.y+e.h/2+Math.sin(ang)*e.h*1.2); X.stroke(); }}
         }} else if(e.type==='fly'){{
-            X.fillStyle='#444'; X.beginPath(); X.arc(e.x+e.w/2,e.y+e.h/2,5,0,Math.PI*2); X.fill();
-            X.fillStyle='rgba(200,200,255,0.5)';
-            X.beginPath(); X.ellipse(e.x+e.w/2-4,e.y,4,3,-0.3,0,Math.PI*2); X.fill();
-            X.beginPath(); X.ellipse(e.x+e.w/2+4,e.y,4,3,0.3,0,Math.PI*2); X.fill();
-            X.fillStyle='#ff0'; X.fillRect(e.x+e.w/2-2,e.y+e.h/2-1,2,2); X.fillRect(e.x+e.w/2+2,e.y+e.h/2-1,2,2);
+            X.fillStyle='#888'; X.beginPath(); X.arc(e.x+e.w/2,e.y+e.h/2,8,0,Math.PI*2); X.fill();
+            X.fillStyle='#444'; X.beginPath(); X.arc(e.x+e.w/2,e.y+e.h/2,6,0,Math.PI*2); X.fill();
+            X.fillStyle='rgba(200,200,255,0.6)';
+            X.beginPath(); X.ellipse(e.x+e.w/2-5,e.y-2,6,4,-0.3,0,Math.PI*2); X.fill();
+            X.beginPath(); X.ellipse(e.x+e.w/2+5,e.y-2,6,4,0.3,0,Math.PI*2); X.fill();
+            X.fillStyle='#ff0'; X.fillRect(e.x+e.w/2-3,e.y+e.h/2-2,3,3); X.fillRect(e.x+e.w/2+2,e.y+e.h/2-2,3,3);
         }} else if(e.type==='xepa'){{
+            if(xepaEnemyImg.complete&&xepaEnemyImg.naturalWidth>0){{
+                X.save(); X.translate(e.x+e.w/2,e.y+e.h/2); X.scale(e.vx<0?1:-1,1);
+                X.drawImage(xepaEnemyImg,-e.w/2-2,-e.h/2-2,e.w+4,e.h+4);
+                X.restore();
+            }}
+            X.fillStyle='#ff4444'; X.beginPath(); X.arc(e.x+e.w/2,e.y+e.h/2,e.w/2+4,0,Math.PI*2); X.fill();
+            X.fillStyle='#cc2222'; X.fillRect(e.x,e.y,e.w,e.h);
+            X.fillStyle='#ff6666'; X.fillRect(e.x+2,e.y+2,8,6); X.fillRect(e.x+e.w-10,e.y+2,8,6);
+            X.fillStyle='#fff'; X.fillRect(e.x+4,e.y+4,4,4); X.fillRect(e.x+e.w-8,e.y+4,4,4);
+            X.fillStyle='#000'; X.fillRect(e.x+5,e.y+5,2,2); X.fillRect(e.x+e.w-7,e.y+5,2,2);
             if(xepaEnemyImg.complete&&xepaEnemyImg.naturalWidth>0){{
                 X.save(); X.translate(e.x+e.w/2,e.y+e.h/2); X.scale(e.vx<0?1:-1,1);
                 X.drawImage(xepaEnemyImg,-e.w/2,-e.h/2,e.w,e.h);
                 X.restore();
-            }} else {{
-                X.fillStyle='#cc4444'; X.fillRect(e.x,e.y,e.w,e.h);
             }}
         }} else {{
             X.fillStyle='#cc4444'; X.fillRect(e.x,e.y,e.w,e.h);
             X.fillStyle='#ff6666'; X.fillRect(e.x+2,e.y+2,8,6); X.fillRect(e.x+e.w-10,e.y+2,8,6);
             X.fillStyle='#000'; X.fillRect(e.x+4,e.y+4,3,3); X.fillRect(e.x+e.w-8,e.y+4,3,3);
         }}
+        X.shadowBlur=0;
     }}
 
     if(boss&&boss.alive){{
