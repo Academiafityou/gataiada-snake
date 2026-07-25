@@ -1190,6 +1190,12 @@ function drawLevel(){{
     }}
 
     if(boss&&boss.alive){{
+        X.fillStyle='lime'; X.shadowColor='lime'; X.shadowBlur=20+Math.sin(Date.now()*0.01)*10;
+        X.beginPath(); X.arc(boss.x+boss.w/2,boss.y-50,8,0,Math.PI*2); X.fill();
+        X.shadowBlur=0;
+        X.font='bold 12px Courier New'; X.fillStyle='lime'; X.textAlign='center';
+        X.fillText('BOSS HERE ('+Math.round(boss.x)+','+Math.round(boss.y)+')',boss.x+boss.w/2,boss.y-60);
+
         if(game.currentLevel===0&&odairSprite.complete&&odairSprite.naturalWidth>0){{
             X.save();
             X.translate(boss.x+boss.w/2,boss.y+boss.h/2);
