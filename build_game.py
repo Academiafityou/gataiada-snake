@@ -548,6 +548,7 @@ function buildLevel7(){{
 }}
 
 function generateLevel(idx){{
+    boss=null;
     switch(idx){{
         case 0: buildHouseLevel(); break;
         case 1: buildLevel2(); break;
@@ -557,6 +558,10 @@ function generateLevel(idx){{
         case 5: buildLevel6(); break;
         case 6: buildLevel7(); break;
         default: buildLevel2(); break;
+    }}
+    if(!boss){{
+        var L=LEVELS[idx]||LEVELS[1];
+        makeBoss(148,14,L,false);
     }}
 }}
 
@@ -926,28 +931,44 @@ function drawGardenBG(){{
 
 function drawKidsBG(){{
     var t=Date.now();
-    var grad=X.createLinearGradient(0,0,W,H);
-    grad.addColorStop(0,'#FF69B4'); grad.addColorStop(0.3,'#FF1493'); grad.addColorStop(0.6,'#FFD700'); grad.addColorStop(1,'#FF6600');
+    var rc=['#FF0000','#FF6600','#FFCC00','#00CC00','#0066FF','#CC00FF','#FF69B4','#00CED1'];
+    var grad=X.createLinearGradient(0,0,0,H);
+    grad.addColorStop(0,'#FF1493'); grad.addColorStop(0.25,'#FF6B9D'); grad.addColorStop(0.5,'#FFD700'); grad.addColorStop(0.75,'#FF8C00'); grad.addColorStop(1,'#FF4500');
     X.fillStyle=grad; X.fillRect(0,0,W,H);
-    var sz=80;
-    X.save(); X.globalAlpha=0.12;
+    var sz=50;
+    X.save();
     for(var gy=0;gy<H+sz;gy+=sz) for(var gx=-sz;gx<W+sz;gx+=sz){{
-        var idx=Math.floor((gx+cameraX*0.05)/sz)+Math.floor(gy/sz);
-        var cols2=['#FF0000','#FF6600','#FFCC00','#00CC00','#0066FF','#CC00FF','#FF69B4','#00CED1'];
-        X.fillStyle=cols2[Math.abs(idx)%cols2.length]; X.fillRect(gx,gy,sz-2,sz-2);
+        var idx=Math.floor((gx+cameraX*0.03)/sz)+Math.floor(gy/sz);
+        var isEven=(Math.abs(idx)%2===0);
+        if(isEven){{
+            var cidx=Math.floor((gx/sz+gy/sz)/2)%rc.length;
+            X.fillStyle=rc[Math.abs(cidx)%rc.length]; X.globalAlpha=0.25;
+        }} else {{
+            X.fillStyle='rgba(255,255,255,0.15)';
+        }}
+        X.fillRect(gx,gy,sz-1,sz-1);
     }}
-    X.restore();
+    X.restore(); X.globalAlpha=1;
+    for(var si=0;si<8;si++){{
+        var sx=(si*350-cameraX*0.15)%(W+400)-200;
+        var sy=50+si*30+Math.sin(t*0.002+si)*15;
+        var sc=['#FF0000','#FF6600','#FFCC00','#00CC00','#0066FF','#CC00FF','#FF69B4','#00CED1'][si%8];
+        X.save(); X.translate(sx,sy); X.rotate(t*0.001+si);
+        X.fillStyle=sc; X.globalAlpha=0.35;
+        X.beginPath(); for(var pi=0;pi<6;pi++){{ var a=pi*Math.PI*2/6; var r=25+Math.sin(t*0.003+si+pi)*5; if(pi===0) X.moveTo(Math.cos(a)*r,Math.sin(a)*r); else X.lineTo(Math.cos(a)*r,Math.sin(a)*r); }} X.closePath(); X.fill();
+        X.restore();
+    }}
     X.save(); X.translate(-cameraX*0.08,0);
     for(var bi=0;bi<kidsBalloons.length;bi++){{ var b=kidsBalloons[bi];
         var bx=b.x+Math.sin(t*0.001+b.phase)*30;
         var by=b.y+Math.sin(t*0.0005+b.phase)*15;
         b.y+=b.vy; b.x+=b.vx;
         if(by<-50){{ b.y=H+50; b.x=Math.random()*150*TILE; }}
-        X.fillStyle=b.color; X.globalAlpha=0.6;
+        X.fillStyle=b.color; X.globalAlpha=0.75;
         X.beginPath(); X.ellipse(bx,by,b.r*0.7,b.r,0,0,Math.PI*2); X.fill();
-        X.fillStyle='rgba(255,255,255,0.3)';
+        X.fillStyle='rgba(255,255,255,0.4)';
         X.beginPath(); X.ellipse(bx-b.r*0.2,by-b.r*0.3,b.r*0.2,b.r*0.3,-0.3,0,Math.PI*2); X.fill();
-        X.strokeStyle=b.color; X.globalAlpha=0.5; X.lineWidth=1;
+        X.strokeStyle=b.color; X.globalAlpha=0.6; X.lineWidth=1.5;
         X.beginPath(); X.moveTo(bx,by+b.r); X.lineTo(bx+Math.sin(t*0.002+bi)*8,by+b.r+40); X.stroke();
     }}
     X.restore();
@@ -955,7 +976,7 @@ function drawKidsBG(){{
     for(var i=0;i<kidsConfetti.length;i++){{ var cf=kidsConfetti[i];
         cf.x+=cf.vx+Math.sin(t*0.002+i)*0.5; cf.y+=cf.vy; cf.rot+=cf.rotSpeed;
         if(cf.y>H+20){{ cf.y=-20; cf.x=player.x-W/2+Math.random()*W; }}
-        X.save(); X.translate(cf.x,cf.y); X.rotate(cf.rot); X.fillStyle=cf.color; X.globalAlpha=0.7;
+        X.save(); X.translate(cf.x,cf.y); X.rotate(cf.rot); X.fillStyle=cf.color; X.globalAlpha=0.8;
         X.fillRect(-cf.size/2,-cf.size/4,cf.size,cf.size/2);
         X.restore();
     }}
@@ -963,11 +984,11 @@ function drawKidsBG(){{
     X.save(); X.translate(-cameraX*0.2,0);
     for(var ti=0;ti<kidsToys.length;ti++){{ var toy=kidsToys[ti];
         if(toy.x<cameraX-100||toy.x>cameraX+W+100) continue;
-        X.save(); X.translate(toy.x,toy.y); X.rotate(toy.angle+Math.sin(t*0.001+ti)*0.1); X.fillStyle=toy.color; X.globalAlpha=0.8;
+        X.save(); X.translate(toy.x,toy.y); X.rotate(toy.angle+Math.sin(t*0.001+ti)*0.1); X.fillStyle=toy.color; X.globalAlpha=0.85;
         if(toy.type==='block'){{ X.fillRect(-toy.size/2,-toy.size/2,toy.size,toy.size); X.fillStyle='rgba(255,255,255,0.3)'; X.fillRect(-toy.size/2,-toy.size/2,toy.size,3); }}
         else if(toy.type==='ball'){{ X.beginPath(); X.arc(0,0,toy.size/2,0,Math.PI*2); X.fill(); X.fillStyle='rgba(255,255,255,0.4)'; X.beginPath(); X.arc(-toy.size*0.15,-toy.size*0.15,toy.size*0.2,0,Math.PI*2); X.fill(); }}
         else if(toy.type==='duck'){{ X.beginPath(); X.arc(0,0,toy.size/2,0,Math.PI*2); X.fill(); X.fillStyle='#FFD700'; X.beginPath(); X.arc(toy.size*0.4,-toy.size*0.2,toy.size*0.15,0,Math.PI*2); X.fill(); }}
-        else if(toy.type==='star'){{ X.beginPath(); for(var si=0;si<5;si++){{ var a=si*Math.PI*2/5-Math.PI/2; var r1=toy.size/2, r2=toy.size*0.2; if(si===0) X.moveTo(Math.cos(a)*r1,Math.sin(a)*r1); else X.lineTo(Math.cos(a)*r1,Math.sin(a)*r1); var a2=a+Math.PI/5; X.lineTo(Math.cos(a2)*r2,Math.sin(a2)*r2); }} X.closePath(); X.fill(); }}
+        else if(toy.type==='star'){{ X.beginPath(); for(var si2=0;si2<5;si2++){{ var a=si2*Math.PI*2/5-Math.PI/2; var r1=toy.size/2, r2=toy.size*0.2; if(si2===0) X.moveTo(Math.cos(a)*r1,Math.sin(a)*r1); else X.lineTo(Math.cos(a)*r1,Math.sin(a)*r1); var a2=a+Math.PI/5; X.lineTo(Math.cos(a2)*r2,Math.sin(a2)*r2); }} X.closePath(); X.fill(); }}
         else if(toy.type==='ring'){{ X.lineWidth=3; X.strokeStyle=toy.color; X.beginPath(); X.arc(0,0,toy.size/2,0,Math.PI*2); X.stroke(); }}
         X.restore();
     }}
@@ -982,22 +1003,30 @@ function drawKidsBG(){{
         if(getTile(colL,TILE_ROWS-3)>0||getTile(colR,TILE_ROWS-3)>0){{ bl.vx*=-1; }}
         X.save(); X.translate(bl.x+bl.r,bl.y+bl.r); X.rotate(t*0.003*bl.vx);
         X.fillStyle=bl.color; X.beginPath(); X.arc(0,0,bl.r,0,Math.PI*2); X.fill();
-        if(bl.stripe){{ X.strokeStyle='rgba(255,255,255,0.5)'; X.lineWidth=2; X.beginPath(); X.arc(0,0,bl.r*0.6,0,Math.PI*2); X.stroke(); }}
-        X.fillStyle='rgba(255,255,255,0.4)'; X.beginPath(); X.arc(-bl.r*0.2,-bl.r*0.25,bl.r*0.2,0,Math.PI*2); X.fill();
+        if(bl.stripe){{ X.strokeStyle='rgba(255,255,255,0.6)'; X.lineWidth=2; X.beginPath(); X.arc(0,0,bl.r*0.6,0,Math.PI*2); X.stroke(); }}
+        X.fillStyle='rgba(255,255,255,0.5)'; X.beginPath(); X.arc(-bl.r*0.2,-bl.r*0.25,bl.r*0.2,0,Math.PI*2); X.fill();
         X.restore();
     }}
     X.restore();
     X.save();
-    X.strokeStyle='#FF69B4'; X.lineWidth=4; X.setLineDash([20,10]);
-    for(var si=0;si<5;si++){{ var sx=150+si*200-cameraX*0.02;
-        X.beginPath(); X.moveTo(sx,0); X.lineTo(sx,40+Math.sin(t*0.003+si)*10); X.stroke();
-        X.fillStyle=['#FF0000','#FFCC00','#00CC00','#0066FF','#CC00FF'][si]; X.globalAlpha=0.5;
-        X.beginPath(); X.arc(sx,45+Math.sin(t*0.003+si)*10,15+Math.sin(t*0.005+si)*3,0,Math.PI*2); X.fill();
+    for(var si=0;si<7;si++){{
+        var sx=100+si*180-cameraX*0.02;
+        var sy2=30+Math.sin(t*0.003+si)*12;
+        X.strokeStyle=['#FF0000','#FF6600','#FFCC00','#00CC00','#0066FF','#CC00FF','#FF69B4'][si]; X.lineWidth=3; X.setLineDash([12,8]);
+        X.beginPath(); X.moveTo(sx,0); X.lineTo(sx,sy2); X.stroke();
+        X.fillStyle=X.strokeStyle; X.globalAlpha=0.6;
+        X.beginPath(); X.arc(sx,sy2+12,10+Math.sin(t*0.004+si)*3,0,Math.PI*2); X.fill();
     }}
     X.setLineDash([]); X.restore(); X.globalAlpha=1;
+    X.save(); X.globalAlpha=0.12; X.strokeStyle='#fff'; X.lineWidth=1;
+    for(var si2=0;si2<12;si2++){{
+        var sx2=(si2*130+cameraX*0.01)%W;
+        X.beginPath(); X.moveTo(sx2,0); X.lineTo(sx2+Math.sin(t*0.001+si2)*20,H); X.stroke();
+    }}
+    X.restore();
     if(boss&&boss.alive&&Math.abs(player.x-boss.x)<W){{
-        X.fillStyle='rgba(255,20,147,'+(0.05+Math.sin(t*0.005)*0.03)+')'; X.fillRect(0,0,W,H);
-        X.fillStyle='rgba(255,215,0,'+(0.02+Math.sin(t*0.008)*0.02)+')'; X.fillRect(0,0,W,H);
+        X.fillStyle='rgba(255,20,147,'+(0.06+Math.sin(t*0.005)*0.04)+')'; X.fillRect(0,0,W,H);
+        X.fillStyle='rgba(255,215,0,'+(0.03+Math.sin(t*0.008)*0.03)+')'; X.fillRect(0,0,W,H);
     }}
 }}
 
@@ -1190,12 +1219,6 @@ function drawLevel(){{
     }}
 
     if(boss&&boss.alive){{
-        X.fillStyle='lime'; X.shadowColor='lime'; X.shadowBlur=20+Math.sin(Date.now()*0.01)*10;
-        X.beginPath(); X.arc(boss.x+boss.w/2,boss.y-50,8,0,Math.PI*2); X.fill();
-        X.shadowBlur=0;
-        X.font='bold 12px Courier New'; X.fillStyle='lime'; X.textAlign='center';
-        X.fillText('BOSS HERE ('+Math.round(boss.x)+','+Math.round(boss.y)+')',boss.x+boss.w/2,boss.y-60);
-
         if(game.currentLevel===0&&odairSprite.complete&&odairSprite.naturalWidth>0){{
             X.save();
             X.translate(boss.x+boss.w/2,boss.y+boss.h/2);
@@ -1400,16 +1423,6 @@ function draw(){{
         case 'gameover': drawLevel(); drawGameOver(); break;
     }}
     }} catch(drawErr){{ X.fillStyle='#f00'; X.font='bold 14px Courier New'; X.textAlign='center'; X.fillText('DRAW ERROR: '+(drawErr.message||drawErr),W/2,30); }}
-    X.fillStyle='rgba(0,0,0,0.85)'; X.fillRect(W/2-200,H/2-60,400,120);
-    X.strokeStyle='#ff0'; X.lineWidth=2; X.strokeRect(W/2-200,H/2-60,400,120);
-    X.font='bold 16px Courier New'; X.fillStyle='#ff0'; X.textAlign='center';
-    X.fillText('DEBUG BOSS',W/2,H/2-35);
-    X.font='12px Courier New'; X.fillStyle='#fff';
-    X.fillText('boss='+(boss?'EXISTS':'NULL')+(boss?'.alive='+boss.alive:''),W/2,H/2-10);
-    X.fillText('px='+Math.round(player.x)+' py='+Math.round(player.y),W/2,H/2+10);
-    X.fillText('level='+game.currentLevel+' lw='+levelWidth+' state='+game.state,W/2,H/2+30);
-    X.fillText('frame='+frameCount,W/2,H/2+50);
-    if(frameCount===60) alert('BOSS DEBUG: boss='+(boss?'EXISTS alive='+boss.alive:'NULL')+' level='+game.currentLevel+' lw='+levelWidth);
 }}
 
 var frameCount=0;
