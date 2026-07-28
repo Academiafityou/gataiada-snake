@@ -132,7 +132,7 @@ html = f'''<!DOCTYPE html>
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>GATAIADA - O Jogo do Plataforma</title>
+<title>GATAIADA - O Jogo do Plataforma v2.1</title>
 <style>
 * {{ margin:0; padding:0; box-sizing:border-box; }}
 body {{ background:#0d0520; font-family:'Courier New',monospace; overflow:hidden; height:100vh; display:flex; justify-content:center; align-items:center; }}
@@ -549,6 +549,7 @@ function buildLevel7(){{
 
 function generateLevel(idx){{
     boss=null;
+    console.log('generateLevel called: idx='+idx);
     switch(idx){{
         case 0: buildHouseLevel(); break;
         case 1: buildLevel2(); break;
@@ -559,9 +560,12 @@ function generateLevel(idx){{
         case 6: buildLevel7(); break;
         default: buildLevel2(); break;
     }}
+    console.log('after build: boss='+(boss?boss.name+' alive='+boss.alive+' at ('+Math.round(boss.x)+','+Math.round(boss.y)+') w='+boss.w+' h='+boss.h:'NULL'));
     if(!boss){{
+        console.log('BOSS WAS NULL - creating fallback boss!');
         var L=LEVELS[idx]||LEVELS[1];
         makeBoss(148,14,L,false);
+        console.log('Fallback boss created: boss='+(boss?boss.name:'NULL'));
     }}
 }}
 
@@ -1423,6 +1427,8 @@ function draw(){{
         case 'gameover': drawLevel(); drawGameOver(); break;
     }}
     }} catch(drawErr){{ X.fillStyle='#f00'; X.font='bold 14px Courier New'; X.textAlign='center'; X.fillText('DRAW ERROR: '+(drawErr.message||drawErr),W/2,30); }}
+    X.font='9px Courier New'; X.fillStyle='rgba(255,255,255,0.4)'; X.textAlign='right';
+    X.fillText('v2.1',W-5,H-5);
 }}
 
 var frameCount=0;
