@@ -85,13 +85,109 @@ for key, fname in phase_files.items():
     phase_urls[key] = f'cats/{key}_clean.png'
     print(f'  {key}: saved {key}_clean.png')
 
+def trim_to_first_frame(path, out_path):
+    """Auto-crop an image to its largest content block (split by transparent bands)"""
+    try:
+        from PIL import Image
+        import numpy as np
+        img = Image.open(path)
+        arr = np.array(img)
+        h, w = arr.shape[:2]
+        if arr.ndim == 2:
+            alpha = np.ones((h,w), dtype=np.uint8)*255
+        elif arr.shape[2] == 3:
+            alpha = np.ones((h,w), dtype=np.uint8)*255
+        else:
+            alpha = arr[:,:,3]
+        row_content = (alpha > 10).astype(np.uint8).max(axis=1)
+        blocks = []
+        in_block = False
+        bs = 0
+        for y in range(h):
+            if row_content[y] > 0 and not in_block:
+                bs = y
+                in_block = True
+            elif row_content[y] == 0 and in_block:
+                gap = y
+                while gap < h and (alpha[gap:gap+1,:].max() == 0):
+                    gap += 1
+                if gap - y >= 3 and y - bs > 20:
+                    blocks.append((bs, y))
+                    in_block = False
+        if in_block and h - bs > 20:
+            blocks.append((bs, h))
+        if not blocks:
+            blocks = [(0, h)]
+        # Pick the largest block by area
+        best = max(blocks, key=lambda b: (b[1]-b[0]))
+        y0, y1 = best
+        block_alpha = alpha[y0:y1, :]
+        col_content = block_alpha.max(axis=0) > 0
+        cols = np.where(col_content)[0]
+        x0, x1 = (cols[0], cols[-1]+1) if len(cols) > 0 else (0, w)
+        # Try to find the widest sub-panel within this block (split by vertical gaps)
+        v_content = col_content
+        sub_panels = []
+        in_panel = False
+        ps = 0
+        for x in range(x0, x1):
+            if v_content[x] and not in_panel:
+                ps = x
+                in_panel = True
+            elif not v_content[x] and in_panel:
+                gap2 = x
+                while gap2 < x1 and not v_content[gap2]:
+                    gap2 += 1
+                if gap2 - x >= 3 and x - ps > 20:
+                    sub_panels.append((ps, x))
+                    in_panel = False
+        if in_panel and x1 - ps > 20:
+            sub_panels.append((ps, x1))
+        if sub_panels:
+            best_panel = max(sub_panels, key=lambda p: (p[1]-p[0]))
+            x0, x1 = best_panel
+        cropped = img.crop((x0, y0, x1, y1))
+        cropped.save(out_path)
+        return f'{x1-x0}x{y1-y0}'
+    except Exception as e:
+        import shutil
+        shutil.copy(path, out_path)
+        return f'copy (error: {e})'
+
+def crop_face_icon(path, out_path, size=64):
+    """Crop center-upper portion for face icon"""
+    try:
+        from PIL import Image
+        img = Image.open(path)
+        w, h = img.size
+        fw, fh = int(w*0.40), int(h*0.40)
+        cx, cy = w//2, int(h*0.25)
+        x0 = max(0, cx - fw//2)
+        y0 = max(0, cy - fh//2)
+        face = img.crop((x0, y0, x0+fw, y0+fh))
+        face = face.resize((size, size), Image.LANCZOS)
+        face.save(out_path)
+        return f'{size}x{size}'
+    except Exception as e:
+        import shutil
+        shutil.copy(path, out_path)
+        return f'copy (error: {e})'
+
 print("Processing boss/xepa assets...")
 boss_urls = {}
 for key, fname in [('odair_sprite', 'odair_sprite_clean.png'), ('odair_face', 'Rosto telinha.png'), ('xepa_boss', 'xepa_boss_final.png'), ('xepa_enemy', 'xepa_enemy_final.png'), ('pito_fara', 'pito fara\u00f3.png'), ('thia_espirro', 'sele\u00e7\u00e3o thia do espirro.png'), ('princesa_dox', 'sprite princesa d\u00f3x.png')]:
-    out = f'{base}\\{key}_cleaned.png'
-    remove_green(f'{base}\\{fname}', out)
-    boss_urls[key] = f'cats/{key}_cleaned.png'
-    print(f'  {key}: saved {key}_cleaned.png')
+    cleaned = f'{base}\\{key}_cleaned.png'
+    remove_green(f'{base}\\{fname}', cleaned)
+    if key.endswith('_face'):
+        sprite_path = f'{base}\\{key}_icon.png'
+        sz = crop_face_icon(cleaned, sprite_path)
+        boss_urls[key] = f'cats/{key}_icon.png'
+        print(f'  {key}: cropped face icon {sz} -> {key}_icon.png')
+    else:
+        sprite_path = f'{base}\\{key}_sprite.png'
+        sz = trim_to_first_frame(cleaned, sprite_path)
+        boss_urls[key] = f'cats/{key}_sprite.png'
+        print(f'  {key}: trimmed sprite {sz} -> {key}_sprite.png')
 
 print("Building game HTML...")
 
